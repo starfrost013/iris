@@ -26,7 +26,7 @@ namespace Iris
         };
 
         // Bits 15...12 of byte 0o f the opcode/SEA-OW
-        enum InstructionLine
+        enum InstructionLines
         {
             Bit = 0,
             MoveByte = 1,

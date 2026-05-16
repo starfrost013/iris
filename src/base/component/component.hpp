@@ -3,18 +3,18 @@
 
 namespace Iris
 {
-        class Component
-        {
+    class Component
+    {
 
-        public: 
+    public: 
 
-            AddrSpace addressSpace; 
+        AddrSpace addressSpace; 
 
-            int clockSpeed;
-            virtual void Init();
-            virtual void Tick();        // tick sat clcoskpeed
-            virtual void Shutdown();
+        int clockSpeed;
+        virtual void Init() = 0;
+        virtual void Tick() = 0;        // ticks at clock speed
+        virtual void Shutdown() { };
 
-            
-        };
+        
+    };
 }
