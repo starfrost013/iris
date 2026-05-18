@@ -203,9 +203,9 @@ namespace LOGGER_NAMESPACE
 
             if (settings.destinations & LogDestination::File)
             {
-                settings.logStream.open(settings.fileName, std::ios_base::in | std::ios_base::out);
+                settings.logStream.open(settings.fileName, std::ios_base::out | std::ios_base::trunc);
 
-                if (settings.logStream.badbit)
+                if (settings.logStream.bad())
                 {
                     // turn off file and report error
                     std::cout << "SSLS Error 2: Failed to open file at " << settings.fileName << std::endl;
@@ -262,12 +262,18 @@ namespace LOGGER_NAMESPACE
         
             // Log out the ] character
 
-            if (settings.hideDates
-            && channels != LogChannels::Message) // if only message don't bother
-                LogOut("]");
+            if (settings.hideDates) // if only message don't bother
+            {
+                if (channels != LogChannels::Message)
+                    LogOut("]");
+            }
             else // also the date
             {
-                LogOut("] [");
+                // custom handling for only message
+                if (channels == LogChannels::Message)
+                    LogOut("[");
+                else
+                    LogOut("] [");
 
                 std::time_t t = std::time(nullptr);
                 std::tm tm = *std::localtime(&t);
