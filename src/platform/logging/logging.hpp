@@ -78,6 +78,28 @@ namespace LOGGER_NAMESPACE
         MaxValid = (File << 1) - 1,                     // Log to file
     }; 
 
+    /// @brief Enumerates the available console colours
+    enum ConsoleColors
+    {
+		Black,
+		Red,
+		Green,
+		Yellow,
+		Blue,
+		Magenta,
+		Cyan,
+		White,
+		BrightBlack,
+    	FirstBright = BrightBlack,
+		BrightRed,
+		BrightGreen,
+		BrightYellow,
+		BrightBlue,
+		BrightMagenta,
+		BrightCyan,
+		BrightWhite,
+    }; 
+
     class LoggerSettings
     {
         friend class Logger;
@@ -123,7 +145,7 @@ namespace LOGGER_NAMESPACE
         /// @brief Send a message ot the log destination.
         /// @param msg The message to send.
         /// @param newline If a newline should be sent after.
-        void LogOut(const char* msg, bool newline = false)
+        inline static void LogOut(const char* msg, bool newline = false)
         {
             std::ostream* stream;
 
@@ -200,14 +222,14 @@ namespace LOGGER_NAMESPACE
         /// @param channel The channel to send it to.
         /// @param sendChannelName if the channel name should be sent or not.
         /// @param newline Also send a newline.
-        void Log(const char* msg, size_t channels, bool newline = true, bool sendChannelName = true)
+        inline static void Log(const char* msg, size_t channels, bool newline = true, bool sendChannelName = true)
         {
             // for easier checking
             size_t logDest = (size_t)(settings.destinations);
             
             // Keep the lines the same size
             // Message doesn't have one
-            const char* messageNameStr = "[";
+            const char* messageNameStr = "";
             const char* warningNameStr = "[WARNING ";
             const char* errorNameStr   = "[ERROR]  ";
             const char* fatalNameStr   = "[FATAL]  ";
@@ -240,7 +262,8 @@ namespace LOGGER_NAMESPACE
         
             // Log out the ] character
 
-            if (settings.hideDates)
+            if (settings.hideDates
+            && channels != LogChannels::Message) // if only message don't bother
                 LogOut("]");
             else // also the date
             {

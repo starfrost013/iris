@@ -14,6 +14,8 @@ namespace Iris
         Logger::settings.SetDestinations((LogDestination)(LogDestination::Stdout | LogDestination::File));
         Logger::Init();
 
+        Logger::Log("SSLS Test!", LogChannels::Message);
+
         std::cout << APP_NAME << std::endl;
         std::cout << APP_SIGNON << " " << APP_VERSION << std::endl;
         std::cout << "Hi! I'm an SGI Iris 3130!!" << std::endl;
