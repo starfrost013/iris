@@ -1,5 +1,5 @@
 #pragma once
-#include <cstdint>
+#include <Iris.hpp>
 #include <base/component/component.hpp>
 
 namespace Iris

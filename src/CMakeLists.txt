@@ -5,7 +5,7 @@
 
 include_directories(.)
 
-add_executable(Iris
+add_executable(iris
     main.cpp
     base/component/component.cpp
     cpu/mc68020_core.cpp
