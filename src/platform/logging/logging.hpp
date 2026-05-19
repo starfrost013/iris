@@ -24,7 +24,7 @@
 
 #define LOGGER_USE_NAMESPACE                                                    // Comment out to disable namespaces
 
-#define LOGGER_NAMESPACE                Iris                                    // Namespace to use if namespace enabled
+#define LOGGER_NAMESPACE                Iris                                    // Namespace to use if namespace is enabled
 #define LOGGER_MAX_PATH                 260                                     // Max path
 #define LOGGER_MAX_STRING_SHORT         48                                      // Generic maximum length for "short" strings
 #define LOGGER_MAX_STRING_LONG          256                                     // Generic maximum length for "long" strings
@@ -33,8 +33,7 @@
 
 #define STRING_VERSION                  "5.0 (May 19, 2026)"                    // Version number as a string (we don't need it in any other form)
 #define STRING_SIGN_ON                  "SSLS-NG (Starfrost Shared Logging System - Next Gen) " STRING_VERSION " initialised" 
-
-#define STRING_ANSI_PREFIX              "\x1B["                                 // Some console terminal command prefixes use this
+#define STRING_ANSI_PREFIX              "\x1B["                                 // Some ANSI command prefixes use this
 
 #ifdef LOGGER_USE_NAMESPACE
 namespace LOGGER_NAMESPACE
@@ -102,7 +101,7 @@ namespace LOGGER_NAMESPACE
         Stdout = 1,                                     // Log to standard out.
         Stderr = 1 << 1,                                // Log to standard error.
         File = 1 << 2,                                  // Log to a log file.
-        MaxValid = (File << 1) - 1,                     // Log to file
+        MaxValid = (File << 1) - 1,                     // Maximum valid mask
     }; 
 
     /// @brief The settings that the logging system will use. SET BEFORE CALLING Logging::Init!
@@ -296,6 +295,8 @@ namespace LOGGER_NAMESPACE
             initialised = true;
         }
         
+        /// @brief Adds a custom channel to the logger.
+        /// @param channel The custom channel object you want to add. 
         inline static void AddChannel(LogChannel channel)
         {
             customChannels.push_back(channel);
