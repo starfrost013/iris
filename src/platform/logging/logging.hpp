@@ -32,54 +32,18 @@
 
 // Strings, change to localise or whatever
 
-#define STRING_VERSION                  "5.0 (May 18, 2026)"                    // Version number as a string (we don't need it in any other form)
+#define STRING_VERSION                  "5.0 (May 19, 2026)"                    // Version number as a string (we don't need it in any other form)
 #define STRING_SIGN_ON                  "SSLS-NG (Starfrost Shared Logging System - Next Gen) " STRING_VERSION " initialised" 
 
-#define CONSOLE_TERMINAL_COMMAND_PREFIX "\x1B["                                 // Some console terminal command prefixes use this
+#define STRING_ANSI_PREFIX              "\x1B["                                 // Some console terminal command prefixes use this
 
 #ifdef LOGGER_USE_NAMESPACE
 namespace LOGGER_NAMESPACE
 {
 #endif
 
-    /// @brief A logger channel.
-    class LogChannel
-    {
-        friend class Logger;
-
-        char name[LOGGER_MAX_STRING_SHORT];     // the name to use for this log channel.
-        size_t mask;                            // The mask to use for selecting this log channel.
-
-    public:
-        LogChannel(const char* name, size_t mask)
-        {
-            strncpy(this->name, name, LOGGER_MAX_STRING_SHORT);
-            this->mask = mask; 
-        }
-    };
-
-    /// @brief Prebuilt log channels
-    enum LogChannels
-    {
-        Message = 1,                                    // A normal message.
-        Warning = 2,                                    // A warning message.
-        Error = 4,                                      // An error message.
-        FatalError = 8,                                 // A fatal error message.
-        UnsafeShutdown = 16,                            // The memory or some other critical resource is hosed.
-        LastPrebuilt = ((UnsafeShutdown << 1) - 1),     // Sentinel value for custom channels
-    };
-
-    /// @brief Enumerates possible log destinations.
-    enum LogDestination
-    {
-        Stdout = 1,                                     // Log to standard out.
-        Stderr = 1 << 1,                                // Log to standard error.
-        File = 1 << 2,                                  // Log to a log file.
-        MaxValid = (File << 1) - 1,                     // Log to file
-    }; 
-
     /// @brief Enumerates the available console colours
-    enum ConsoleColors
+    enum ConsoleColor
     {
 		Black,
 		Red,
@@ -100,14 +64,67 @@ namespace LOGGER_NAMESPACE
 		BrightWhite,
     }; 
 
+    /// @brief A logger channel.
+    class LogChannel
+    {
+        friend class Logger;
+
+        char name[LOGGER_MAX_STRING_SHORT];     // the name to use for this log channel.
+        size_t mask;                            // The mask to use for selecting this log channel.
+
+        ConsoleColor colorForeground;                       // The current foreground colour
+        ConsoleColor colorBackground;                       // The current background colour 
+
+    public:
+        LogChannel(const char* name, size_t mask)
+        {
+            strncpy(this->name, name, LOGGER_MAX_STRING_SHORT);
+            this->mask = mask; 
+        }
+    };
+
+    /// @brief Prebuilt log channels
+    enum LogChannels
+    {
+        Message = 1,                                    // A normal message.
+        Debug = 1 << 1,                                 // A debug message.
+        Warning = 1 << 2,                               // A warning message.
+        Error = 1 << 3,                                 // An error message.
+        FatalError = 1 << 4,                            // A fatal error message.
+        UnsafeShutdown = 1 << 5,                        // The memory or some other critical resource is hosed.
+        LastPrebuilt = ((UnsafeShutdown << 1) - 1),     // Sentinel value for custom channels
+    };
+
+    /// @brief Enumerates possible log destinations.
+    enum LogDestination
+    {
+        Stdout = 1,                                     // Log to standard out.
+        Stderr = 1 << 1,                                // Log to standard error.
+        File = 1 << 2,                                  // Log to a log file.
+        MaxValid = (File << 1) - 1,                     // Log to file
+    }; 
+
+
     class LoggerSettings
     {
         friend class Logger;
 
     public:
-        void SetAppName(const char* appName) { strncpy(this->appName, appName, sizeof(appName)); };
-        void SetDateFormat(const char* dateFormat) { strncpy(this->dateFormat, dateFormat, sizeof(dateFormat)); };
+    
+        /// @brief Sets the application name; the application name is used as the default log file name
+        /// @param appName The application name to set.
+        void SetAppName(const char* appName) { strncpy(this->appName, appName, LOGGER_MAX_STRING_SHORT); };
+        
+        /// @brief Sets the date format; the default is ISO 8601.
+        /// @param dateFormat The date format to set. If this method is nevr called, ISO 8601 date format is used.
+        void SetDateFormat(const char* dateFormat) { strncpy(this->dateFormat, dateFormat, LOGGER_MAX_STRING_SHORT); };
+        
+        /// @brief Sets the mask of log destinations.
+        /// @param destinations The mask of the log destinations to set. See the LogDesitnations enum for further information
         void SetDestinations(LogDestination destinations) { this->destinations = destinations; };
+        
+        /// @brief Sets the mask of log channels.
+        /// @param channelMask  The mask of the log destinations to set. See the LogDesitnations enum for further information
         void SetChannelMask(LogChannels channelMask) { this->channelMask = channelMask; }; 
 
         /// @brief Set the filename for the logging system to use.
@@ -117,7 +134,6 @@ namespace LOGGER_NAMESPACE
             strncpy(this->appName, appName, sizeof(appName)); 
             overrideDefaultFileName = true; 
         };
-
 
     private: 
 
@@ -130,15 +146,64 @@ namespace LOGGER_NAMESPACE
         char dateFormat[LOGGER_MAX_STRING_SHORT] = {0}; // Optional date format string to use. Otherwise yyyy-mm-dd hh:mm:ss is useed
 
         bool hideSignOnMessage;
-        std::ofstream logStream;                             // The straem to open the log if LogDestination has FILE
+        std::ofstream logStream;                            // The straem to open the log if LogDestination has FILE
         LogDestination destinations;                        // The destinations to send the log
         LogChannels channelMask;                            // Enabled channel mask
+
+        ConsoleColor colorForeground;                       // The current foreground colour
+        ConsoleColor colorBackground;                       // The current background colour 
     }; 
 
 
     class Logger
     {
     private: 
+
+         /// @brief Maps console colours to ANSI escape codes for foreground colours
+        inline static std::unordered_map<ConsoleColor, const char*> colorToAnsiTableFg =
+        {
+            { Black,    STRING_ANSI_PREFIX "30m" },
+            { Red,      STRING_ANSI_PREFIX "31m" },
+            { Green,    STRING_ANSI_PREFIX "32m" },
+            { Yellow,   STRING_ANSI_PREFIX "33m" },
+            { Blue,     STRING_ANSI_PREFIX "34m" },
+            { Magenta,  STRING_ANSI_PREFIX "35m" },
+            { Cyan,     STRING_ANSI_PREFIX "36m" },
+            { White,    STRING_ANSI_PREFIX "37m" },
+            { BrightBlack,    STRING_ANSI_PREFIX "90m" },
+            { BrightRed,      STRING_ANSI_PREFIX "91m" },
+            { BrightGreen,    STRING_ANSI_PREFIX "92m" },
+            { BrightYellow,   STRING_ANSI_PREFIX "93m" },
+            { BrightBlue,     STRING_ANSI_PREFIX "94m" },
+            { BrightMagenta,  STRING_ANSI_PREFIX "95m" },
+            { BrightCyan,     STRING_ANSI_PREFIX "96m" },
+            { BrightWhite,    STRING_ANSI_PREFIX "97m" },
+        };
+
+        /// @brief Maps console colours to ANSI escape codes for foreground colours
+        inline static std::unordered_map<ConsoleColor, const char*> colorToAnsiTableBg =
+        {
+            { Black,    STRING_ANSI_PREFIX "40m" },
+            { Red,      STRING_ANSI_PREFIX "41m" },
+            { Green,    STRING_ANSI_PREFIX "42m" },
+            { Yellow,   STRING_ANSI_PREFIX "43m" },
+            { Blue,     STRING_ANSI_PREFIX "44m" },
+            { Magenta,  STRING_ANSI_PREFIX "45m" },
+            { Cyan,     STRING_ANSI_PREFIX "46m" },
+            { White,    STRING_ANSI_PREFIX "47m" },
+            { BrightBlack,    STRING_ANSI_PREFIX "100m" },
+            { BrightRed,      STRING_ANSI_PREFIX "101m" },
+            { BrightGreen,    STRING_ANSI_PREFIX "102m" },
+            { BrightYellow,   STRING_ANSI_PREFIX "103m" },
+            { BrightBlue,     STRING_ANSI_PREFIX "104m" },
+            { BrightMagenta,  STRING_ANSI_PREFIX "105m" },
+            { BrightCyan,     STRING_ANSI_PREFIX "106m" },
+            { BrightWhite,    STRING_ANSI_PREFIX "107m" },
+        };
+
+        inline static const char* colorResetFgStr = STRING_ANSI_PREFIX "39m";
+        inline static const char* colorResetBgStr = STRING_ANSI_PREFIX "49m";
+        
         inline static std::vector<LogChannel> customChannels;       // custom channels 
 
         inline static bool initialised;                             // determines if we were initialised successfully
@@ -223,7 +288,7 @@ namespace LOGGER_NAMESPACE
         /// @param channel The channel to send it to.
         /// @param sendChannelName if the channel name should be sent or not.
         /// @param newline Also send a newline.
-        inline static void Log(const char* prefix, const char* msg, size_t channels = LogChannels::Message, 
+        inline static void Log(const char* prefix, const char* msg, size_t channelMask = LogChannels::Message, 
             bool newline = true, bool sendChannelName = true, bool sendDate = true)
         {
             // for easier checking
@@ -232,10 +297,17 @@ namespace LOGGER_NAMESPACE
             // Keep the lines the same size
             // Message doesn't have one
             const char* messageNameStr = "";
-            const char* warningNameStr = "[WARNING ";
-            const char* errorNameStr   = "[ERROR]  ";
-            const char* fatalNameStr   = "[FATAL]  ";
+            const char* debugNameStr   = "[DEBUG";
+            const char* warningNameStr = "[WARN ";
+            const char* errorNameStr   = "[ERROR";
+            const char* fatalNameStr   = "[FATAL";
             const char* unsafeNameStr  =  "**** UNSAFE CONDITION - EXITING ****"; // this one doesn't matter
+
+            // needs to be universal for all project
+            #ifdef NDEBUG
+            if (channelMask == LogChannels::Debug)
+                return;
+            #endif
 
             // send out an optional prefix
             if (prefix != nullptr)
@@ -245,27 +317,54 @@ namespace LOGGER_NAMESPACE
                 LogOut("] ");
             }
 
+
             // send our new channel name
             if (sendChannelName)
             {
-                if (channels & LogChannels::Message)
+                if (channelMask & LogChannels::Message)
                     LogOut(messageNameStr);
-                if (channels & LogChannels::Warning)
+
+            // universal to all projects
+            #ifndef NDEBUG 
+                if (channelMask & LogChannels::Debug)
+                {
+                    LogOut(colorToAnsiTableFg[ConsoleColor::BrightBlue]);
+                    LogOut(debugNameStr);
+                }
+            #endif
+
+                if (channelMask & LogChannels::Warning)
+                {
+                    LogOut(colorToAnsiTableFg[ConsoleColor::BrightYellow]);
                     LogOut(warningNameStr);
-                if (channels & LogChannels::Error)
+                }
+
+                // these will all use the same colour
+                if (channelMask & LogChannels::Error 
+                || channelMask & LogChannels::FatalError
+                || channelMask & LogChannels::UnsafeShutdown)
+                {
+                    LogOut(colorToAnsiTableFg[ConsoleColor::BrightRed]);
+                }
+
+                if (channelMask & LogChannels::Error)
                     LogOut(errorNameStr);
-                if (channels & LogChannels::FatalError)
+                if (channelMask & LogChannels::FatalError)
                     LogOut(fatalNameStr);
-                if (channels & LogChannels::UnsafeShutdown)
+                if (channelMask & LogChannels::UnsafeShutdown)
                     LogOut(unsafeNameStr);
 
                 // If there are some custom channels dump their names out
-                if (channels > LogChannels::LastPrebuilt)
+                if (channelMask > LogChannels::LastPrebuilt)
                 {
                     for (LogChannel channel : customChannels)
                     {
-                        if (((size_t)channels) & channel.mask)
+                        if (((size_t)channelMask) & channel.mask)
+                        {
+                            LogOut(colorToAnsiTableFg[channel.colorForeground]);
+                            LogOut(colorToAnsiTableBg[channel.colorBackground]);
                             LogOut(channel.name);
+                        }
                     }
                 }
             }
@@ -280,13 +379,13 @@ namespace LOGGER_NAMESPACE
 
             if (settings.hideDates) // if only message don't bother
             {
-                if (channels != LogChannels::Message)
+                if (channelMask != LogChannels::Message)
                     LogOut("]");
             }
             else // also the date
             {
                 // custom handling for only message
-                if (channels == LogChannels::Message)
+                if (channelMask == LogChannels::Message)
                     LogOut("[");
                 else
                     LogOut("] [");
@@ -311,22 +410,31 @@ namespace LOGGER_NAMESPACE
             if (sendDate || sendChannelName || prefix != nullptr)
                 LogOut(": "); // Log out a colon if we need to
             
-            // Go
+            // finally log the real message
             LogOut(msg);
+
+            // can't hurt
+            // don't need to do it if it's a message only log, it'll save a little bit of time, so may as well do it
+
+            if (channelMask != LogChannels::Message)
+            {
+                LogOut(colorResetFgStr);
+                LogOut(colorResetBgStr);
+            }
 
             // done, dump newline
             if (newline)
                 LogOut("", true);
 
             // It's a fatal so run the fatal function
-            if (channels & LogChannels::FatalError)
+            if (channelMask & LogChannels::FatalError)
             {
                 // Striclty optional
                 if (settings.fatalFunc)
                     settings.fatalFunc();
             }
 
-            if (channels & LogChannels::UnsafeShutdown)
+            if (channelMask & LogChannels::UnsafeShutdown)
             {
                 if (settings.lastChanceUnsafeFunc)
                     settings.lastChanceUnsafeFunc();
@@ -355,8 +463,6 @@ namespace LOGGER_NAMESPACE
 
             initialised = false;
         }
-
-
     }; 
 
 #ifdef LOGGER_USE_NAMESPACE

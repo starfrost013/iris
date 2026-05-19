@@ -18,7 +18,7 @@ namespace Iris
 
         Logger::Log(APP_NAME);
         Logger::Log(APP_SIGNON " " APP_VERSION, LogChannels::Message);
-        Logger::Log("Hi! I'm an SGI Iris 3130!", LogChannels::Message);
+        Logger::Log("CoreSystem", "Hi! I'm an SGI Iris 3130!", LogChannels::Debug);
 
         Logger::Log("SSLS Test - Default");
 
