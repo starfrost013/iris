@@ -71,16 +71,16 @@ namespace LOGGER_NAMESPACE
         char name[LOGGER_MAX_STRING_SHORT];             // the name to use for this log channel.
         size_t mask;                                    // The mask to use for selecting this log channel.
 
-        ConsoleColor colorForeground;                   // The current foreground colour
-        ConsoleColor colorBackground;                   // The current background colour 
+        ConsoleColor colorFg;                           // The current foreground colour
+        ConsoleColor colorBg;                           // The current background colour 
 
     public:
         LogChannel(const char* name, size_t mask, ConsoleColor colorFg = ConsoleColor::Black, ConsoleColor colorBg = ConsoleColor::White)
         {
             strncpy(this->name, name, LOGGER_MAX_STRING_SHORT);
             this->mask = mask; 
-            this->colorBackground = colorBg;
-            this->colorForeground = colorFg;
+            this->colorBg = colorBg;
+            this->colorFg = colorFg;
         }
     };
 
@@ -386,8 +386,8 @@ namespace LOGGER_NAMESPACE
                     {
                         if (((size_t)channelMask) & channel.mask)
                         {
-                            LogOut(colorToAnsiTableFg[channel.colorForeground]);
-                            LogOut(colorToAnsiTableBg[channel.colorBackground]);
+                            LogOut(colorToAnsiTableFg[channel.colorFg]);
+                            LogOut(colorToAnsiTableBg[channel.colorBg]);
                             LogOut(channel.name);
                         }
                     }
