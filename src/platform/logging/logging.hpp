@@ -217,12 +217,13 @@ namespace LOGGER_NAMESPACE
             initialised = true;
         }
 
-        /// @brief Send a single message to a destination. The internal log method called by all the others
+        /// @brief Send a single message to the log. Also the internal log method called by all the others
+        /// @param prefix Component prefix
         /// @param msg The mesasge to send
         /// @param channel The channel to send it to.
         /// @param sendChannelName if the channel name should be sent or not.
         /// @param newline Also send a newline.
-        inline static void Log(const char* msg, size_t channels, bool newline = true, bool sendChannelName = true)
+        inline static void Log(const char* prefix, const char* msg, size_t channels = LogChannels::Message, bool newline = true, bool sendChannelName = true)
         {
             // for easier checking
             size_t logDest = (size_t)(settings.destinations);
@@ -234,6 +235,14 @@ namespace LOGGER_NAMESPACE
             const char* errorNameStr   = "[ERROR]  ";
             const char* fatalNameStr   = "[FATAL]  ";
             const char* unsafeNameStr  =  "**** UNSAFE CONDITION - EXITING ****"; // this one doesn't matter
+
+            // send out an optional prefix
+            if (prefix != nullptr)
+            {
+                LogOut("[");
+                LogOut(prefix);
+                LogOut("] ");
+            }
 
             // send our new channel name
             if (sendChannelName)
@@ -320,7 +329,17 @@ namespace LOGGER_NAMESPACE
             }
         }
 
+        /// @brief Send a single message to the log with no prefix.
+        /// @param msg The mesasge to send to the log.
+        /// @param channel The channel to send it to.
+        /// @param sendChannelName if the channel name should be sent or not.
+        /// @param newline Also send a newline.
+        inline static void Log(const char* msg, size_t channels = LogChannels::Message, bool newline = true, bool sendChannelName = true)
+        {
+            Log(nullptr, msg, channels, newline, sendChannelName);
+        }
 
+        /// @brief Shuts down the logging system
         inline static void Shutdown()
         {
             if (settings.destinations & LogDestination::File)
