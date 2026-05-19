@@ -300,6 +300,13 @@ namespace LOGGER_NAMESPACE
         inline static void Log(const char* prefix, const char* msg, size_t channelMask = LogChannels::Message, 
             bool newline = true, bool sendChannelName = true, bool sendDate = true)
         {
+            // check if the logging was actually initialised properly
+            if (!initialised)
+            {
+                std::cout << "SSLS Error 3: Call Logger::Init! (Or it failed)" << std::endl;
+                return;
+            }
+
             // for easier checking
             size_t logDest = (size_t)(settings.destinations);
             
