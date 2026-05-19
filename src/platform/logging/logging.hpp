@@ -132,7 +132,7 @@ namespace LOGGER_NAMESPACE
         /// @param fileName The filename to use.
         void SetFileName(const char* fileName) 
         { 
-            strncpy(this->fileName, fileName, sizeof(fileName)); 
+            strncpy(this->fileName, fileName, LOGGER_MAX_PATH); 
             overrideDefaultFileName = true; 
         };
 
