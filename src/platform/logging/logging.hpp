@@ -3,7 +3,8 @@
 // Copyright © 2023-2026 starfrost
 //
 // This is a completely rewritten, C++ header only version of SSLS. 
-// It adds the capacity to have custom channels, custom prefixes, custom date formats, stderr suppot and uses C++ concepts. 
+// It adds the capacity to have custom channels, custom prefixes, custom date formats, stderr support and uses C++ concepts. 
+// It almost eliminates fixed-sized buffers and uses streams. It's fully self-contained.
 //
 // For C projects, use SSLS 4.7
 //
@@ -11,10 +12,8 @@
 #pragma once
 
 // Includes
-#include <cstdint>
 #include <cstring>
 #include <fstream>
-#include <iomanip>
 #include <ostream>
 #include <ios>
 #include <iostream>
@@ -64,30 +63,32 @@ namespace LOGGER_NAMESPACE
 		BrightWhite,
     }; 
 
-    /// @brief A logger channel.
+    /// @brief Defines a custom log channel that you can add.
     class LogChannel
     {
         friend class Logger;
 
-        char name[LOGGER_MAX_STRING_SHORT];     // the name to use for this log channel.
-        size_t mask;                            // The mask to use for selecting this log channel.
+        char name[LOGGER_MAX_STRING_SHORT];             // the name to use for this log channel.
+        size_t mask;                                    // The mask to use for selecting this log channel.
 
-        ConsoleColor colorForeground;                       // The current foreground colour
-        ConsoleColor colorBackground;                       // The current background colour 
+        ConsoleColor colorForeground;                   // The current foreground colour
+        ConsoleColor colorBackground;                   // The current background colour 
 
     public:
-        LogChannel(const char* name, size_t mask)
+        LogChannel(const char* name, size_t mask, ConsoleColor colorFg = ConsoleColor::Black, ConsoleColor colorBg = ConsoleColor::White)
         {
             strncpy(this->name, name, LOGGER_MAX_STRING_SHORT);
             this->mask = mask; 
+            this->colorBackground = colorBg;
+            this->colorForeground = colorFg;
         }
     };
 
-    /// @brief Prebuilt log channels
+    /// @brief Built-in log channels
     enum LogChannels
     {
         Message = 1,                                    // A normal message.
-        Debug = 1 << 1,                                 // A debug message.
+        Debug = 1 << 1,                                 // A debug message. Not used on
         Warning = 1 << 2,                               // A warning message.
         Error = 1 << 3,                                 // An error message.
         FatalError = 1 << 4,                            // A fatal error message.
@@ -104,7 +105,7 @@ namespace LOGGER_NAMESPACE
         MaxValid = (File << 1) - 1,                     // Log to file
     }; 
 
-
+    /// @brief The settings that the logging system will use. SET BEFORE CALLING Logging::Init!
     class LoggerSettings
     {
         friend class Logger;
@@ -139,7 +140,7 @@ namespace LOGGER_NAMESPACE
 
         char appName[LOGGER_MAX_STRING_SHORT] = {0};    // Application name to use for log file
         void (*fatalFunc)();                                // Function to call on a fatal error log.
-        void (*lastChanceUnsafeFunc)();                     // "Last chance" for unsafe function
+        void (*lastChanceUnsafeFunc)();                     // "Last chance" for unsafe function. Called right before std::abort so you cand o anything you can
         bool overrideDefaultFileName;                       // If true, override the default filename
         char fileName[LOGGER_MAX_PATH] = {0};           // If overridedefaultfilename is true, use this filename
         bool hideDates;                                     // If the dates should be hidden or not.    
@@ -154,12 +155,12 @@ namespace LOGGER_NAMESPACE
         ConsoleColor colorBackground;                       // The current background colour 
     }; 
 
-
+    /// @brief Container for Logger static methods.
     class Logger
     {
     private: 
 
-         /// @brief Maps console colours to ANSI escape codes for foreground colours
+     /// @brief Maps console colours to ANSI escape codes for foreground colours
         inline static std::unordered_map<ConsoleColor, const char*> colorToAnsiTableFg =
         {
             { Black,    STRING_ANSI_PREFIX "30m" },
@@ -180,7 +181,7 @@ namespace LOGGER_NAMESPACE
             { BrightWhite,    STRING_ANSI_PREFIX "97m" },
         };
 
-        /// @brief Maps console colours to ANSI escape codes for foreground colours
+        /// @brief Maps console colours to ANSI escape codes for background colours
         inline static std::unordered_map<ConsoleColor, const char*> colorToAnsiTableBg =
         {
             { Black,    STRING_ANSI_PREFIX "40m" },
@@ -204,11 +205,14 @@ namespace LOGGER_NAMESPACE
         inline static const char* colorResetFgStr = STRING_ANSI_PREFIX "39m";
         inline static const char* colorResetBgStr = STRING_ANSI_PREFIX "49m";
         
-        inline static std::vector<LogChannel> customChannels;       // custom channels 
+        inline static std::vector<LogChannel> customChannels;       // internal vector of custom channels 
 
         inline static bool initialised;                             // determines if we were initialised successfully
 
-        ///Internal method to send to multiple streams if we need to
+        /// @brief Internal method to send to multiple streams if we need to
+        /// @param msg The message to send
+        /// @param stream The std::ostream to send the msg too
+        /// @param newline The line to send to.
         inline static void LogOutToStream(const char* msg, std::ostream* stream, bool newline = false)
         {
             *stream << msg;
@@ -281,6 +285,11 @@ namespace LOGGER_NAMESPACE
         skipfile:
             initialised = true;
         }
+        
+        inline static void AddChannel(LogChannel channel)
+        {
+            customChannels.push_back(channel);
+        }
 
         /// @brief Send a single message to the log. Also the internal log method called by all the others
         /// @param prefix Component prefix
@@ -316,7 +325,6 @@ namespace LOGGER_NAMESPACE
                 LogOut(prefix);
                 LogOut("] ");
             }
-
 
             // send our new channel name
             if (sendChannelName)
