@@ -16,10 +16,10 @@ namespace Iris
         Logger::Init();
 
 
-        std::cout << APP_NAME << std::endl;
-        std::cout << APP_SIGNON << " " << APP_VERSION << std::endl;
-        std::cout << "Hi! I'm an SGI Iris 3130!!" << std::endl;
-        
+        Logger::Log(APP_NAME);
+        Logger::Log(APP_SIGNON " " APP_VERSION, LogChannels::Message);
+        Logger::Log("Hi! I'm an SGI Iris 3130!", LogChannels::Message);
+
         Logger::Log("SSLS Test - Default");
 
         Logger::Shutdown(); 

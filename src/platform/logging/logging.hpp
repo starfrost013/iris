@@ -106,6 +106,7 @@ namespace LOGGER_NAMESPACE
 
     public:
         void SetAppName(const char* appName) { strncpy(this->appName, appName, sizeof(appName)); };
+        void SetDateFormat(const char* dateFormat) { strncpy(this->dateFormat, dateFormat, sizeof(dateFormat)); };
         void SetDestinations(LogDestination destinations) { this->destinations = destinations; };
         void SetChannelMask(LogChannels channelMask) { this->channelMask = channelMask; }; 
 
@@ -142,30 +143,29 @@ namespace LOGGER_NAMESPACE
 
         inline static bool initialised;                             // determines if we were initialised successfully
 
+        ///Internal method to send to multiple streams if we need to
+        inline static void LogOutToStream(const char* msg, std::ostream* stream, bool newline = false)
+        {
+            *stream << msg;
+
+            if (newline)
+                *stream << std::endl;
+        }
+
         /// @brief Send a message ot the log destination.
         /// @param msg The message to send.
         /// @param newline If a newline should be sent after.
         inline static void LogOut(const char* msg, bool newline = false)
         {
-            std::ostream* stream;
-
             if (settings.destinations & LogDestination::Stdout)
-                stream = &std::cout;
+                LogOutToStream(msg, &std::cout, newline);
             
             if (settings.destinations & LogDestination::Stderr)
-                stream = &std::cerr;
+                LogOutToStream(msg, &std::cerr, newline);
 
             if (settings.destinations & LogDestination::File)
-                stream = &settings.logStream;
-
-            // go 
-            *stream << msg;
-
-            // send newline if we want
-            if (newline)
-                *stream << std::endl;
+                LogOutToStream(msg, &settings.logStream, newline);
         }
-
        
     public: 
         inline static LoggerSettings settings;                // the settings
@@ -219,11 +219,12 @@ namespace LOGGER_NAMESPACE
 
         /// @brief Send a single message to the log. Also the internal log method called by all the others
         /// @param prefix Component prefix
-        /// @param msg The mesasge to send
+        /// @param msg The message to send to the log
         /// @param channel The channel to send it to.
         /// @param sendChannelName if the channel name should be sent or not.
         /// @param newline Also send a newline.
-        inline static void Log(const char* prefix, const char* msg, size_t channels = LogChannels::Message, bool newline = true, bool sendChannelName = true)
+        inline static void Log(const char* prefix, const char* msg, size_t channels = LogChannels::Message, 
+            bool newline = true, bool sendChannelName = true, bool sendDate = true)
         {
             // for easier checking
             size_t logDest = (size_t)(settings.destinations);
@@ -271,6 +272,12 @@ namespace LOGGER_NAMESPACE
         
             // Log out the ] character
 
+            bool hideDates = settings.hideDates;
+
+            // local override in case we want to use multiple log calls for one message
+            if (!sendDate)
+                hideDates = true;
+
             if (settings.hideDates) // if only message don't bother
             {
                 if (channels != LogChannels::Message)
@@ -301,8 +308,8 @@ namespace LOGGER_NAMESPACE
                 LogOut("]");
             }
 
-            // Log out a colon
-            LogOut(": ");
+            if (sendDate || sendChannelName || prefix != nullptr)
+                LogOut(": "); // Log out a colon if we need to
             
             // Go
             LogOut(msg);
@@ -334,9 +341,10 @@ namespace LOGGER_NAMESPACE
         /// @param channel The channel to send it to.
         /// @param sendChannelName if the channel name should be sent or not.
         /// @param newline Also send a newline.
-        inline static void Log(const char* msg, size_t channels = LogChannels::Message, bool newline = true, bool sendChannelName = true)
+        inline static void Log(const char* msg, size_t channels = LogChannels::Message, bool newline = true, bool sendChannelName = true,
+        bool sendDate = true)
         {
-            Log(nullptr, msg, channels, newline, sendChannelName);
+            Log(nullptr, msg, channels, newline, sendChannelName, sendDate);
         }
 
         /// @brief Shuts down the logging system
