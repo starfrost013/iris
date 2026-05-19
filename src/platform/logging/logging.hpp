@@ -136,6 +136,18 @@ namespace LOGGER_NAMESPACE
             overrideDefaultFileName = true; 
         };
 
+        /// @brief Allows you to set the function that is run on a fatal error.
+        /// @param fatalFunc Function pointer to the function that handles a fatal error.
+        void SetFatalFunction(void (*fatalFunc)()) { this->fatalFunc = fatalFunc; }; 
+
+        /// @brief Allows you to set a last-chance unsafe function run on a superfatal / unsafe termination error.
+        /// @param lastChanceUnsafeFunc Function pointer to be run. NOTE: std::abort will be run RIGHT AFTER YOUR FUNCTION COMPLETES!
+        void SetLastChanceUnsafeFunction(void (*lastChanceUnsafeFunc)()) { this->lastChanceUnsafeFunc = fatalFunc; }; 
+
+        // These are safe to set directly
+        bool hideSignOnMessage;
+        bool hideDates;                                     // If the dates should be hidden or not.    
+
     private: 
 
         char appName[LOGGER_MAX_STRING_SHORT] = {0};    // Application name to use for log file
@@ -143,10 +155,8 @@ namespace LOGGER_NAMESPACE
         void (*lastChanceUnsafeFunc)();                     // "Last chance" for unsafe function. Called right before std::abort so you cand o anything you can
         bool overrideDefaultFileName;                       // If true, override the default filename
         char fileName[LOGGER_MAX_PATH] = {0};           // If overridedefaultfilename is true, use this filename
-        bool hideDates;                                     // If the dates should be hidden or not.    
         char dateFormat[LOGGER_MAX_STRING_SHORT] = {0}; // Optional date format string to use. Otherwise yyyy-mm-dd hh:mm:ss is useed
 
-        bool hideSignOnMessage;
         std::ofstream logStream;                            // The straem to open the log if LogDestination has FILE
         LogDestination destinations;                        // The destinations to send the log
         LogChannels channelMask;                            // Enabled channel mask
