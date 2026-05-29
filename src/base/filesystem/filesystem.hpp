@@ -8,7 +8,7 @@
 
 namespace Iris
 {
-    class FileContainer
+    class FileStream
     {
     public: 
         // the stream of the file
@@ -24,8 +24,9 @@ namespace Iris
 
     class Filesystem
     {
-        static FileContainer* Open(const char* path, FileMode mode);
-        static void Close(FileContainer* con);
+    public:
+        static FileStream* Open(const char* path, FileMode mode = FileMode::Text);
+        static void Close(FileStream* con);
 
     };
 }; 

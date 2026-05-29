@@ -1,0 +1,25 @@
+/*
+    emulation.hpp : The core of the emulation thread ()
+*/
+
+#pragma once
+#include <Iris.hpp>
+#include <base/filesystem/filesystem.hpp>
+
+namespace Iris
+{
+    #define CONFIG_PATH "Iris.cfg"
+    class Emulation
+    {
+    public: 
+        static void Start();
+        static void Frame();
+        static void Tick();             // run at the tick for things that need to be regularly updated
+        static void Shutdown();
+
+    private: 
+        inline static bool running = false;
+        
+        static File config; 
+    };
+}

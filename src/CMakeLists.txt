@@ -8,5 +8,7 @@ include_directories(.)
 add_executable(iris
     main.cpp
     base/component/component.cpp
+    base/emulation.cpp
+    base/filesystem/filesystem.cpp
     cpu/mc68020_core.cpp
 )

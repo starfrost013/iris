@@ -7,9 +7,9 @@
 
 namespace Iris
 {
-    FileContainer* Filesystem::Open(const char* path, FileMode mode)
+    FileStream* Filesystem::Open(const char* path, FileMode mode)
     {
-        FileContainer* fc = new FileContainer;
+        FileStream* fc = new FileStream;
 
         auto flags = std::ios_base::in | std::ios_base::out;
 
@@ -28,7 +28,7 @@ namespace Iris
 
     }
 
-    void Filesystem::Close(FileContainer* fc)
+    void Filesystem::Close(FileStream* fc)
     {
         // YOU MUST SET TO NULLPTR!
         delete fc; 

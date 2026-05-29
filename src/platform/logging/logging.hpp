@@ -32,7 +32,7 @@
 // Strings, change to localise or whatever
 
 #define STRING_VERSION                  "5.0 (May 19, 2026)"                    // Version number as a string (we don't need it in any other form)
-#define STRING_SIGN_ON                  "SSLS-NG (Starfrost Shared Logging System - Next Gen) " STRING_VERSION " initialised" 
+#define STRING_SIGN_ON                  "StarfrostLib/SSLS-NG (Starfrost Shared Logging System - Next Gen) " STRING_VERSION " initialised" 
 #define STRING_ANSI_PREFIX              "\x1B["                                 // Some ANSI command prefixes use this
 
 #ifdef LOGGER_USE_NAMESPACE

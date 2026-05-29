@@ -24,3 +24,4 @@
 // Some string lengths
 #define STRING_MAX_SHORT    48
 #define STRING_MAX_LONG     256
+#define STRING_MAX_PATH     260
