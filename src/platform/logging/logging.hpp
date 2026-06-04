@@ -13,6 +13,7 @@
 
 // Includes
 #include <cstring>
+#include <ctime>
 #include <fstream>
 #include <ostream>
 #include <ios>

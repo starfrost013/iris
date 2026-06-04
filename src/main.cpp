@@ -3,7 +3,6 @@ IRIS - A 68000 SGI Emulator!
 Copyright (C) 2026 starfrost
 */
 
-#include <platform/logging/logging.hpp>
 #include <Iris.hpp>
 #include <iostream>
 

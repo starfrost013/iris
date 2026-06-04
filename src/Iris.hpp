@@ -1,8 +1,12 @@
 // iris(tm)
 // Copyright (C) 2026 starfrost
 
+#pragma once
+
 // Standard includes
+#include <cctype>
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <fstream>
 #include <vector>

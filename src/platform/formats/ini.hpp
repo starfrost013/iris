@@ -7,19 +7,39 @@
 #include <Iris.hpp>
 #include <base/filesystem/filesystem.hpp>
 
-#define STRING_VERSION          "StarfrostLib/INI Version 1.0 - May 28, 2026"
+
+#define STRING_VERSION          "StarfrostLib/INI Version 1.0 - June 4, 2026"
 
 namespace Iris
 {
     class INISection
     {
+    public: 
         char name[STRING_MAX_SHORT];
-        
+
+        std::unordered_map<char[STRING_MAX_SHORT], char[STRING_MAX_SHORT]> values;
+    
+        INISection* prev; 
         INISection* next; 
+
+        INISection()
+        {
+            
+        }
     };
 
     class INIFile
     {
+        INISection* firstSection; 
+        INISection* lastSection; 
+
+        enum ParserMode
+        {
+            Section,
+            Key,
+            Value,
+        };
+        
         void Open(const char* path)
         {
             file = Filesystem::Open(path);
@@ -28,10 +48,102 @@ namespace Iris
         void OpenAndParse(const char* path)
         {
             Open(path);
+
+            std::string theString;
+            const char* line; 
+            size_t line_length;
+
+            char keyBuf[STRING_MAX_LONG] = {0};
+            char valueBuf[STRING_MAX_LONG] = {0};
+            ParserMode parserMode = ParserMode::Key; 
+            INISection* curSection;
+
+            size_t keySize = 0, valueSize = 0, sectionNameSize = 0;
+            
+            while (std::getline(file->stream, theString))
+            {
+                line = theString.c_str();
+                line_length = strlen(line);
+
+                for (size_t i = 0; i < line_length; i++)
+                {
+                    char ch = line[i];
+
+                    // check if it is a space
+                    if (isspace(ch))
+                        break; 
+
+                    // comment, skip
+                    if (ch == '#')
+                        break; 
+
+                    switch (ch)
+                    {
+                       
+                        case '=':
+                            parserMode = ParserMode::Value;
+                            break; 
+                        case '[': // section
+                            parserMode = ParserMode::Section;
+                            curSection = new INISection;
+
+                            if (!firstSection)
+                                firstSection = lastSection = curSection;
+                            else
+                            {
+                                lastSection->next = curSection;
+                                curSection->prev = lastSection;
+
+                                lastSection = curSection;
+                            }
+                            
+                            break;
+                        case ']':
+                            if (parserMode != ParserMode::Section)
+                            {
+                                // Trigger Big Error here
+                            }
+                            break;
+                    }          
+                    
+                    switch (parserMode)
+                    {
+                        case ParserMode::Key:
+                            if (keySize < STRING_MAX_LONG)
+                                keyBuf[keySize] = ch;
+                            keySize++;
+                            break;
+                        case ParserMode::Value:
+                            if (valueSize < STRING_MAX_LONG)
+                                valueBuf[valueSize] = ch;
+
+                            valueSize++;
+                            break; 
+                        case ParserMode::Section:
+                            
+                            break;
+
+                    }
+                }
+
+                memset(keyBuf, 0x00, strlen(keyBuf));
+                memset(valueBuf, 0x00, strlen(valueBuf));
+            }
         }
 
         void Close()
         {
+            INISection* currentSection = lastSection;
+            INISection* nextSection = lastSection->prev;
+
+            // delete all our sections
+            while (currentSection)
+            {
+                delete currentSection;
+                currentSection = nextSection;
+                nextSection = currentSection->prev; 
+            }
+
             Filesystem::Close(file);
             open = false;
         }

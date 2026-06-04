@@ -20,6 +20,6 @@ namespace Iris
     private: 
         inline static bool running = false;
         
-        static File config; 
+        static FileStream config; 
     };
 }
