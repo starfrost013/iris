@@ -146,8 +146,25 @@
     Bit 15: Fast timeout on accesses
     (todo)
 
-39000000h -> Parity Control (8-bit)
-    (todo)
+39000000h -> Parity Control (8-bit) & DUART Disable
+
+    Turning bits ON turns on pairty check behaviour
+
+    Bit 7: Check parity on Multibus writes.
+
+    Bit 6: Check parity on Multibus reads
+
+    Bit 5: Disable DUART1
+
+    Bit 4: Disable DUART0 & Debug / Boot LEDs
+
+    Bit 3: Check parity on kernel writes.
+
+    Bit 2: Check parity on kernel reads.
+
+    Bit 1: Check parity on user writes.
+
+    Bit 0: Check parity on user reads.
 
 3A000000h -> Multibus Protect (8-bit)
     
