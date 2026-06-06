@@ -2,10 +2,10 @@
 02100000h -> PROM bss
 30000000h -> PROM Text, then Data
 30000800h -> Mouse button state & IP2 board revision (??)
-    bit 0 - right button down
-    bit 1 - middle button down
-    bit 2 - left button down
-    bit 4 - IP2 board revision (set - RevB, otherwise Reva)
+    * bit 0 - right button down
+    * bit 1 - middle button down
+    * bit 2 - left button down
+    * bit 4 - IP2 board revision (set - RevB, otherwise Reva)
 31000000h -> Mouse movement state
     (todo)
 31800000h -> Switch register (used for system configuration)
