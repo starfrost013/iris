@@ -17,7 +17,7 @@ namespace Iris
     public: 
         char name[STRING_MAX_SHORT];
 
-        std::unordered_map<char[STRING_MAX_SHORT], char[STRING_MAX_SHORT]> values;
+        std::unordered_map<std::string_view, std::string_view> values;
     
         INISection* prev; 
         INISection* next; 
@@ -53,8 +53,8 @@ namespace Iris
             const char* line; 
             size_t line_length;
 
-            char keyBuf[STRING_MAX_LONG] = {0};
-            char valueBuf[STRING_MAX_LONG] = {0};
+            char keyBuf[STRING_MAX_SHORT] = {0};
+            char valueBuf[STRING_MAX_SHORT] = {0};
             ParserMode parserMode = ParserMode::Key; 
             INISection* curSection;
 
@@ -109,12 +109,12 @@ namespace Iris
                     switch (parserMode)
                     {
                         case ParserMode::Key:
-                            if (keySize < STRING_MAX_LONG)
+                            if (keySize < sizeof(keyBuf) - 1)
                                 keyBuf[keySize] = ch;
                             keySize++;
                             break;
                         case ParserMode::Value:
-                            if (valueSize < STRING_MAX_LONG)
+                            if (valueSize < sizeof(valueBuf) - 1)
                                 valueBuf[valueSize] = ch;
 
                             valueSize++;
@@ -125,6 +125,9 @@ namespace Iris
 
                     }
                 }
+
+                // it may be a bad idea 
+                curSection->values[keyBuf] = valueBuf;  
 
                 memset(keyBuf, 0x00, strlen(keyBuf));
                 memset(valueBuf, 0x00, strlen(valueBuf));
