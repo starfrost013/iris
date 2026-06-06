@@ -1,0 +1,36 @@
+* CPU: 1x Motorola MC68020RC16B (U127)
+* Clock crystal: 1x TD308C/TD1100C 32MHz (U126)
+* PROM: 3x 27C256 (32K EPROM) = 96K (Size of PROM!)
+* DUART: 2x SCN68681 Dual asynchronous receiver/transmitter (DUART) (U130/131)
+* Backup RAM: 4x AM2148-55DC 1024x4 Static Ram = 512 bytes x 4 = 2kb (U157/158/159/160)
+* Settings storage (?): 18x CY7C167 16Kbit Static Ram = 2KB = 36KB (32K + Parity?) 
+* RTC: MC146818 [https://www.nxp.com/docs/en/data-sheet/MC146818.pdf]
+
+* 5x AMD AM26LS32PC QUAD EIA-422/423 Line Receiver with Three-State Outputs (U128/150/151/152/153)
+* 3x AM26LS29PC Quad Three-State Single Ended RS-423 Line Driver 26LS29 IC (U129/133/154)
+
+* PALs:
+    IP2/U4 5000-435-01
+    IP2/U8 5000-437-01
+    IP2/U26 5000-451-01
+    IP2/U27 5000-436-01
+    IP2/U32 5000-454-02 (1 crossed out)
+    IP2/U35 5000-444-01
+    IP2/U36 5000-444-01
+    IP2/U37 5000-445-01
+    IP2/U38 5000-445-01
+    IP2/U39 5000-445-01 
+    IP2/U40 5000-445-01 
+    IP2/U71 5000-441-01
+    IP2/UU72 5000-442-01
+    IP2/U76 5000-452-01
+    IP2/U82 5000-450-01
+    IP2/U83 5000-446-01
+    IP2/U84 5000-453-02
+    IP2/U85 5000-438-01
+    IP2/U86 5000-439-01
+    IP2/U97 5000-443-01 
+    IP2/U117 5000-440-01
+    IP2/U118 5000-457-02 (01 crossed out)
+    IP2/U136 5000-448-01
+    IP2/U137 5000-449-01

@@ -15,7 +15,7 @@
 // should be included everywhere as it's standalone
 #include <platform/logging/logging.hpp>
 
-#define APP_NAME            "iris"
+#define APP_NAME            "motion"
 #define APP_SIGNON          "The SGI Emulator"
 #define APP_VERSION         "@ " __DATE__ " " __TIME__
 
