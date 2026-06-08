@@ -5,6 +5,7 @@
 #pragma once
 #include <Iris.hpp>
 #include <base/filesystem/filesystem.hpp>
+#include <base/machine/machine.hpp>
 
 namespace Iris
 {

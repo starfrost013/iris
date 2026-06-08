@@ -11,8 +11,8 @@ namespace Iris
         AddrSpace addressSpace; 
 
         int clockSpeed;
-        virtual void Init() = 0;
-        virtual void Tick() = 0;        // ticks at clock speed
+        virtual void Init() { };
+        virtual void Tick() { };        // ticks at clock speed
         virtual void Shutdown() { };
 
         

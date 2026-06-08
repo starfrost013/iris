@@ -22,6 +22,42 @@ namespace Iris
         char* GetFriendlyName() { return friendlyName; };
         void SetFriendlyName(char* friendlyName) { strncpy(friendlyName, this->name, STRING_MAX_SHORT ); };
 
+        template <std::derived_from<Component> T>   
+        void AddComponent(T component)  
+        {
+            components.push_back(component);
+        } 
+
+        template <std::derived_from<Component> T>
+        T FindComponentByType()
+        {
+            for (Component& component : components)
+            {
+                if (typeid(component) == typeid(T))
+                    return (T)component;
+            }
+
+            return nullptr; 
+        }
+
+        void Init()
+        {
+            for (Component& component : components)
+                component.Init();
+        }
+
+        void Tick()
+        {
+            for (Component& component : components)
+                component.Tick();
+        }
+
+        void Shutdown()
+        {
+            for (Component& component : components)
+                component.Shutdown();
+        }
+
     private: 
         char name[STRING_MAX_SHORT];
         char friendlyName[STRING_MAX_LONG];         // User's name
