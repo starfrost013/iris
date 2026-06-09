@@ -101,7 +101,7 @@ namespace Iris
 
         int clockSpeed = 16777000;  // 16.7MHz (MC68020-BC16)
 
-        void Init() override;
+        void Start() override;
         void Tick() override;
 
 

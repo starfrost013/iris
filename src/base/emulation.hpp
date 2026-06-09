@@ -18,9 +18,16 @@ namespace Iris
         static void Tick();             // run at the tick for things that need to be regularly updated
         static void Shutdown();
 
+        // Called by components to e.g. get the address space
+        static Machine& GetMachine() { return machine; }
+        
+        static bool IsRunning() { return running; }    
+
     private: 
         inline static bool running = false;
         
         static FileStream config; 
+
+        static Machine machine;
     };
 }

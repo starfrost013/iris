@@ -11,4 +11,5 @@ add_executable(iris
     base/emulation.cpp
     base/filesystem/filesystem.cpp
     cpu/mc68020_core.cpp
+    base/component/addrspace.cpp
 )

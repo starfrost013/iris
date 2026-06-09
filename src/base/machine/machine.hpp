@@ -15,6 +15,7 @@ namespace Iris
         Machine()
         {
             components.reserve(COMPONENTS_INITIAL_RESERVED);
+            addressSpace.maxAddr = 0xFFFFFFFF; // 32-bit address space by default
         }
 
         char* GetName() { return name; };
@@ -40,10 +41,10 @@ namespace Iris
             return nullptr; 
         }
 
-        void Init()
+        void Start()
         {
             for (Component& component : components)
-                component.Init();
+                component.Start();
         }
 
         void Tick()
@@ -60,6 +61,8 @@ namespace Iris
 
     private: 
         char name[STRING_MAX_SHORT];
-        char friendlyName[STRING_MAX_LONG];         // User's name
+        char friendlyName[STRING_MAX_LONG];         // User's name for this machine
+
+        AddrSpace addressSpace;                     // The address space of the machine. Components can use this to read/write memory.  
     };
 };

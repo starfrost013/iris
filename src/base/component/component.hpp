@@ -8,10 +8,8 @@ namespace Iris
 
     public: 
 
-        AddrSpace addressSpace; 
-
         int clockSpeed;
-        virtual void Init() { };
+        virtual void Start() { };
         virtual void Tick() { };        // ticks at clock speed
         virtual void Shutdown() { };
 

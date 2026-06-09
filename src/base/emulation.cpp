@@ -5,6 +5,10 @@ namespace Iris
 {
     void Emulation::Start()
     {
+        Logger::Log("Starting emulation...");
+           
+        machine.Start();
+
         running = true; 
     }   
     
@@ -21,6 +25,8 @@ namespace Iris
 
     void Emulation::Shutdown()
     {
-        
+        machine.Shutdown();
+
+        running = false; 
     }
 }

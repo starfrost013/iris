@@ -4,6 +4,7 @@ Copyright (C) 2026 starfrost
 */
 
 #include <Iris.hpp>
+#include <base/emulation.hpp>
 #include <iostream>
 
 namespace Iris
@@ -16,7 +17,16 @@ namespace Iris
 
         Logger::Log(APP_NAME " " APP_VERSION);
         Logger::Log(APP_SIGNON, LogChannels::Message);
-        Logger::Log(LOG_PREFIX_CORE, "Hi! I'm an SGI Iris 3130!", LogChannels::Debug);
+
+        Emulation::Start();
+        
+        // run the emulation
+        // todo: needs to run on its own thread
+
+        while (Emulation::IsRunning())
+        {
+            Emulation::Tick();
+        }   
 
         Logger::Log("Shutting down...");
 

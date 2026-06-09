@@ -3,7 +3,7 @@
 
 namespace Iris
 {
-    void CPU_MC68020::Init()
+    void CPU_MC68020::Start()
     {
         std::cout << "*yawn* I'm a Motorola 68020!" << std::endl;
     }
