@@ -2,14 +2,28 @@
 
 #include <Iris.hpp>
 
+#define LOGGING_PREFIX_ADDRSPACE        "EmuCore - Addressing"
+
 namespace Iris
 {
     // This class implements an address space mapping.
     // The 
     class AddrSpaceMapping
     {
-        // The start address is not stored as is it used as the key in the map.
+    public: 
+        // The start address is used as the key in the map.
+        size_t startAddr;
         size_t endAddr; 
+
+        Component* component;
+
+        // Pointer to member syntax is annoying and complicated >:(
+        void (*onRead8)(Component* component);
+        void (*onRead16)(Component* component);
+        void (*onRead32)(Component* component);
+        void (*onWrite8)(Component* component);
+        void (*onWrite16)(Component* component);
+        void (*onWrite32)(Component* component);
     };
 
     // Class implementing address space.
@@ -27,5 +41,9 @@ namespace Iris
             int8_t ReadS8();
             int16_t ReadS16();
             int32_t ReadS32();
+ 
+            void AddMapping(AddrSpaceMapping mapping);
+        private: 
+            std::unordered_map<size_t, AddrSpaceMapping> mappings;
     };
 }

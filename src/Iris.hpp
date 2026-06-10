@@ -6,6 +6,7 @@
 // Standard includes
 #include <cctype>
 #include <concepts>
+#include <cstdarg>
 #include <cstdint>
 #include <cstring>
 #include <iostream>

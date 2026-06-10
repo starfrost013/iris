@@ -79,7 +79,6 @@ namespace Iris
 
                     switch (ch)
                     {
-                       
                         case '=':
                             parserMode = ParserMode::Value;
                             break; 

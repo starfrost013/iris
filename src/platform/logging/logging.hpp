@@ -310,7 +310,7 @@ namespace LOGGER_NAMESPACE
         /// @param sendChannelName if the channel name should be sent or not.
         /// @param newline Also send a newline.
         inline static void Log(const char* prefix, const char* msg, size_t channelMask = LogChannels::Message, 
-            bool newline = true, bool sendChannelName = true, bool sendDate = true, ...)
+            bool newline = true, bool sendChannelName = true, bool sendDate = true)
         {
             // check if the logging was actually initialised properly
             if (!initialised)
@@ -436,7 +436,7 @@ namespace LOGGER_NAMESPACE
 
             if (sendDate || sendChannelName || prefix != nullptr)
                 LogOut(": "); // Log out a colon if we need to
-            
+
             // finally log the real message
             LogOut(msg);
 
