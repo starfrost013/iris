@@ -26,8 +26,9 @@ namespace Iris
     private: 
         inline static bool running = false;
         
-        static FileStream config; 
+        inline static FileStream config; 
 
-        static Machine machine;
+        /// @brief the machine that is being emulated
+        inline static Machine machine;
     };
 }

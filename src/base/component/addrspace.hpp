@@ -2,6 +2,8 @@
 
 #include <Iris.hpp>
 
+class Component;
+
 #define LOGGING_PREFIX_ADDRSPACE        "EmuCore - Addressing"
 
 namespace Iris
@@ -18,12 +20,12 @@ namespace Iris
         Component* component;
 
         // Pointer to member syntax is annoying and complicated >:(
-        void (*onRead8)(Component* component);
-        void (*onRead16)(Component* component);
-        void (*onRead32)(Component* component);
-        void (*onWrite8)(Component* component);
-        void (*onWrite16)(Component* component);
-        void (*onWrite32)(Component* component);
+        uint8_t (*onRead8)(Component* component, size_t addr);
+        uint16_t (*onRead16)(Component* component, size_t addr);
+        uint32_t (*onRead32)(Component* component, size_t addr);
+        void (*onWrite8)(Component* component, size_t addr, uint8_t value);
+        void (*onWrite16)(Component* component, size_t addr, uint16_t value);
+        void (*onWrite32)(Component* component, size_t addr, uint32_t value);
     };
 
     // Class implementing address space.
@@ -35,15 +37,25 @@ namespace Iris
             // 16-bit - 65536; 24-bit - 16777216; 
             size_t maxAddr;
 
-            uint8_t ReadU8();
-            uint16_t ReadU16();
-            uint32_t ReadU32();
-            int8_t ReadS8();
-            int16_t ReadS16();
-            int32_t ReadS32();
+            uint8_t ReadU8(size_t addr);
+            uint16_t ReadU16(size_t addr);
+            uint32_t ReadU32(size_t addr);
+            int8_t ReadS8(size_t addr);
+            int16_t ReadS16(size_t addr);
+            int32_t ReadS32(size_t addr);
+ 
+            void WriteU8(size_t addr, uint8_t value);
+            void WriteU16(size_t addr, uint16_t value);
+            void WriteU32(size_t addr, uint32_t value);
+            void WriteS8(size_t addr, int8_t value);
+            void WriteS16(size_t addr, int16_t value);
+            void WriteS32(size_t addr, int32_t value);
  
             void AddMapping(AddrSpaceMapping mapping);
         private: 
             std::unordered_map<size_t, AddrSpaceMapping> mappings;
+
+            bool MappingExists(size_t addr);
+
     };
 }
