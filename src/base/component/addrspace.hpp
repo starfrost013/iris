@@ -18,14 +18,6 @@ namespace Iris
         size_t endAddr; 
 
         Component* component;
-
-        // Pointer to member syntax is annoying and complicated >:(
-        uint8_t (*onRead8)(Component* component, size_t addr);
-        uint16_t (*onRead16)(Component* component, size_t addr);
-        uint32_t (*onRead32)(Component* component, size_t addr);
-        void (*onWrite8)(Component* component, size_t addr, uint8_t value);
-        void (*onWrite16)(Component* component, size_t addr, uint16_t value);
-        void (*onWrite32)(Component* component, size_t addr, uint32_t value);
     };
 
     // Class implementing address space.

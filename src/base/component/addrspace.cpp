@@ -11,7 +11,7 @@ namespace Iris
         if (MappingExists(addr))
         {
             AddrSpaceMapping mapping = mappings[addr];
-            return mappings[addr].onRead8(mapping.component, addr);
+            return mapping.component->OnRead8(addr);
         }
         else
             return 0;
@@ -22,7 +22,7 @@ namespace Iris
         if (MappingExists(addr))
         {
             AddrSpaceMapping mapping = mappings[addr];
-            return mappings[addr].onRead16(mapping.component, addr);
+            return mapping.component->OnRead16(addr);
         }
         else
             return 0;
@@ -33,7 +33,7 @@ namespace Iris
         if (MappingExists(addr))
         {
             AddrSpaceMapping mapping = mappings[addr];
-            return mappings[addr].onRead32(mapping.component, addr);
+            return mapping.component->OnRead32(addr);
         }
         else
             return 0;
@@ -83,7 +83,7 @@ namespace Iris
         if (MappingExists(addr))
         {
             AddrSpaceMapping mapping = mappings[addr];
-            mappings[addr].onWrite8(mapping.component, addr, value);
+            return mapping.component->OnWrite8(addr, value);
         }
     }
 
@@ -92,9 +92,8 @@ namespace Iris
         if (MappingExists(addr))
         {
             AddrSpaceMapping mapping = mappings[addr];
-            mappings[addr].onWrite16(mapping.component, addr, value);
+            return mapping.component->OnWrite16(addr, value);
         }
-
     }
 
     void AddrSpace::WriteU32(size_t addr, uint32_t value)
@@ -102,7 +101,7 @@ namespace Iris
         if (MappingExists(addr))
         {
             AddrSpaceMapping mapping = mappings[addr];
-            mappings[addr].onWrite32(mapping.component, addr, value);
+            return mapping.component->OnWrite32(addr, value);
         }
     }
 

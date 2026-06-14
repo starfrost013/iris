@@ -10,7 +10,7 @@ namespace Iris
         #define COMPONENTS_INITIAL_RESERVED     16  
 
         std::vector<Component> components;
-        
+
     public:
         Machine()
         {
@@ -58,6 +58,11 @@ namespace Iris
             for (Component& component : components)
                 component.Shutdown();
         }
+
+
+        // not sure if this is a good idea?
+        size_t ram;
+        
 
     private: 
         char name[STRING_MAX_SHORT];
