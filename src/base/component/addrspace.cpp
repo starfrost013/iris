@@ -1,5 +1,4 @@
 #include <base/component/addrspace.hpp>
-#include <base/component/component.hpp>
 
 namespace Iris
 {

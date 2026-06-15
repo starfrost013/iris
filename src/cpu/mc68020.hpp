@@ -4,7 +4,7 @@
 
 namespace Iris
 {
-    class CPU_MC68020 : Component
+    class CPU_MC68020 : public Component
     {
         #define MC68020_CACHE_SIZE      256
         // We decode per line.

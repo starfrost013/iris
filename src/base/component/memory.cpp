@@ -1,4 +1,3 @@
-#pragma once
 #include <base/emulation.hpp>
 #include <base/component/memory.hpp>
 
@@ -6,7 +5,7 @@ namespace Iris
 {
     void Memory::Start()
     {
-        ram = new uint8_t[Emulation::GetMachine().ram];
+        ram = new uint8_t[Emulation::GetMachine().ramCapacity];
     }
 
     uint8_t Memory::OnRead8(size_t addr)

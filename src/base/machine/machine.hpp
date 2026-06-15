@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Iris.hpp>
+#include <base/component/addrspace.hpp>
 #include <base/component/component.hpp>
 
 namespace Iris
@@ -8,8 +9,9 @@ namespace Iris
     class Machine
     {
         #define COMPONENTS_INITIAL_RESERVED     16  
+        #define MACHINE_LOGO                    "Machine.cfg"
 
-        std::vector<Component> components;
+        std::vector<Component*> components;
 
     public:
         Machine()
@@ -24,15 +26,18 @@ namespace Iris
         void SetFriendlyName(char* friendlyName) { strncpy(friendlyName, this->name, STRING_MAX_SHORT ); };
 
         template <std::derived_from<Component> T>   
-        void AddComponent(T component)  
+        T* AddComponent()  
         {
-            components.push_back(component);
+            T* newComponent = new T();
+            components.push_back(newComponent);
+
+            return newComponent;
         } 
 
         template <std::derived_from<Component> T>
         T FindComponentByType()
         {
-            for (Component& component : components)
+            for (Component* component : components)
             {
                 if (typeid(component) == typeid(T))
                     return (T)component;
@@ -43,27 +48,25 @@ namespace Iris
 
         void Start()
         {
-            for (Component& component : components)
-                component.Start();
+            for (Component* component : components)
+                component->Start();
         }
 
         void Tick()
         {
-            for (Component& component : components)
-                component.Tick();
+            for (Component* component : components)
+                component->Tick();
         }
 
         void Shutdown()
         {
-            for (Component& component : components)
-                component.Shutdown();
+            for (Component* component : components)
+                component->Shutdown();
         }
 
-
         // not sure if this is a good idea?
-        size_t ram;
+        size_t ramCapacity;
         
-
     private: 
         char name[STRING_MAX_SHORT];
         char friendlyName[STRING_MAX_LONG];         // User's name for this machine

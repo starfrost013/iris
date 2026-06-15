@@ -2,6 +2,9 @@
 // Copyright (C) 2026 starfrost
 //
 // Memory.hpp: Defines the actual system RAM on the IRIS 3130.
+// 
+// On the IRIS 3000 (Juniper) machines, memory is implemented as up to 4 IM1 (Inhouse Memory 1) boards, with 2 or 4 MBytes each for a max of 16mb ram.
+// The MMU has 13-bit page numbers and 4kb pages for a theoretical maximum of 32 MB system RAM.
 
 #pragma once
 #include <Iris.hpp>
@@ -9,6 +12,7 @@
 
 namespace Iris
 {
+ 
     class Memory : public Component
     {
         uint8_t* ram;
@@ -24,6 +28,6 @@ namespace Iris
         void OnWrite32(size_t addr, uint32_t value) override;
 
     private: 
-        size_t GetRamCapacity() { return Emulation::GetMachine().ram; };
-    }
+        size_t GetRamCapacity() { return Emulation::GetMachine().ramCapacity; };
+    };
 }

@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <cstring>
 #include <iostream>
+#include <format>
 #include <fstream>
 #include <vector>
 #include <unordered_map>
