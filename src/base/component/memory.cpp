@@ -5,7 +5,10 @@ namespace Iris
 {
     void Memory::Start()
     {
-        ram = new uint8_t[Emulation::GetMachine().ramCapacity];
+        auto capacity = Emulation::GetMachine().ramCapacity;
+        ram = new uint8_t[capacity];
+        Logger::Log(LOG_PREFIX_EMU_MACHINE, std::format("System RAM is {} bytes", capacity).c_str(), LogChannels::Debug);
+
     }
 
     uint8_t Memory::OnRead8(size_t addr)

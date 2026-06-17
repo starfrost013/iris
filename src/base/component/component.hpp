@@ -19,5 +19,8 @@ namespace Iris
         virtual void OnWrite8(size_t addr, uint8_t value) { };
         virtual void OnWrite16(size_t addr, uint16_t value) { };
         virtual void OnWrite32(size_t addr, uint32_t value) { };
+
+        /// @brief get the name of this component. immutable const char*.
+        virtual const char* GetName() { return "Name this component by overriding Component::GetName!"; };
     };
 }

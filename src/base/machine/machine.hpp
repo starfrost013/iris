@@ -9,7 +9,8 @@ namespace Iris
     class Machine
     {
         #define COMPONENTS_INITIAL_RESERVED     16  
-        #define MACHINE_LOGO                    "Machine.cfg"
+        #define MACHINE_CONFIG_PATH             "Machine.cfg"
+        #define LOG_PREFIX_EMU_MACHINE          "Emulation - Machine"
 
         std::vector<Component*> components;
 
@@ -17,7 +18,8 @@ namespace Iris
         Machine()
         {
             components.reserve(COMPONENTS_INITIAL_RESERVED);
-            addressSpace.maxAddr = 0xFFFFFFFF; // 32-bit address space by default
+            addressSpace.maxAddr = 0xFFFFFFFF;  // 32-bit address space by default
+            ramCapacity = 16777216;             // Maximum RAM for IRIS 3130
         }
 
         char* GetName() { return name; };
@@ -29,6 +31,9 @@ namespace Iris
         T* AddComponent()  
         {
             T* newComponent = new T();
+
+            // test. probably slow.
+            Logger::Log(LOG_PREFIX_EMU_MACHINE, std::format("Added component {}", newComponent->GetName()).c_str(), LogChannels::Debug);
             components.push_back(newComponent);
 
             return newComponent;

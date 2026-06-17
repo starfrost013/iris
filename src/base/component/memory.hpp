@@ -27,6 +27,9 @@ namespace Iris
         void OnWrite16(size_t addr, uint16_t value) override;
         void OnWrite32(size_t addr, uint32_t value) override;
 
+        /// @brief get the name of this component. immutable const char*.
+        const char* GetName() { return "System RAM"; };
+
     private: 
         size_t GetRamCapacity() { return Emulation::GetMachine().ramCapacity; };
     };

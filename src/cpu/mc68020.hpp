@@ -20,9 +20,39 @@ namespace Iris
         }; 
 
         // Oh crap! we have a big problem (add to vbt register)
+        // 00 / 04 are used for the initial sp and pc respectively.
+        // SHift left by 2 to get the address to execute
         enum ExceptionVectors
-        {
-
+        {  
+            BusError = 2,
+            AddressError = 3,
+            IllegalInstruction = 4,
+            ZeroDivide = 5,
+            ChkInstruction = 6,
+            TrapInstruction = 7,
+            PrivilegeViolation = 8,
+            Line1010 = 9,
+            Line1111 = 10,
+            Reserved = 11,
+            CoprocViolation = 12,
+            FormatError = 13,
+            UninitialisedInterrupt = 14,
+            Reserved1Start = 15,
+            Reserved1End = 23,
+            SpuriousInterrupt = 24,
+            L1AutoVector = 25,
+            L2AutoVector = 26,
+            L3AutoVector = 27,
+            L4AutoVector = 28,
+            L5AutoVector = 29,
+            L6AutoVector = 30,
+            L7AutoVector = 31,
+            TrapStart = 32,                     // TRAP 0
+            TrapEnd = 47,                       // TRAP 15
+            Reserved2Start = 48,
+            Reserved2End = 63,
+            UserStart = 64,
+            UserEnd = 255,                      // UDV 192
         };
 
         // Bits 15...12 of byte 0o f the opcode/SEA-OW
@@ -104,11 +134,12 @@ namespace Iris
         void Start() override;
         void Tick() override;
 
-
+        /// @brief get the name of this component. immutable const char*.
+        const char* GetName() { return "Motorola MC68020 CPU"; };
     private:
 
         uint32_t cache[MC68020_CACHE_SIZE >> 2];
-        
+
         void Execute(uint16_t opcode); 
 
     };

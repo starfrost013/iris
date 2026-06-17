@@ -5,7 +5,7 @@
 
 include_directories(.)
 
-add_executable(iris
+add_executable(motion
     main.cpp
     base/component/component.cpp
     base/emulation.cpp
@@ -13,4 +13,5 @@ add_executable(iris
     cpu/mc68020_core.cpp
     base/component/addrspace.cpp
     base/component/memory.cpp
+    cpu/coherent/coherent_core.cpp
 )

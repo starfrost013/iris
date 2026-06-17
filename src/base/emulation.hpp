@@ -10,6 +10,7 @@
 namespace Iris
 {
     #define CONFIG_PATH "Iris.cfg"
+
     class Emulation
     {
     public: 
@@ -22,6 +23,9 @@ namespace Iris
         static Machine& GetMachine() { return machine; }
         
         static bool IsRunning() { return running; }    
+
+        /// @brief get the name of this component. immutable const char*.
+        virtual const char* GetName() { return "Motorola MC68020 CPU"; };
 
     private: 
         inline static bool running = false;
