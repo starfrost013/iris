@@ -11,6 +11,7 @@
 
 namespace Iris
 {
+    #define COHERENT_LOG_PREFIX     "Debugger"
     #define COHERENT_VERSION        "StarfrostLib/Coherent 0.0 - June 16, 2026"
 
     class CoherentCommand
@@ -22,6 +23,17 @@ namespace Iris
     /// @brief defines a command extension object. all types that implement this must inherit from this class.
     class CoherentExtension
     {
+    public: 
+        void AddCommand(CoherentCommand* command)
+        {
+            if (!command)
+            {
+                Logger::Log("CoherentExtension::AddCommand - command is nullptr", LogChannels::Error);
+                return;
+            }
+
+            commands.push_back(command);
+        }
 
     private:
         std::vector<CoherentCommand*> commands;
@@ -74,7 +86,16 @@ namespace Iris
         /// @brief SHut down the coherent system.
         static void Shutdown();
 
+        /// @brief Register a coherent extension.
+        /// @param extension A pointer to a valid CoherentExtension* object
+        static void RegisterExtension(CoherentExtension* extension);
     private:
-        std::vector<CoherentExtension> extensions;
+        /// @brief If this value is true, the coherent system has been initialised. 
+        inline static bool initialised;
+
+        std::vector<CoherentExtension*> extensions;
+
+        ///T
+        CoherentSystem* currentSystem;
     };
 }

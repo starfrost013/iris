@@ -15,3 +15,4 @@ add_executable(motion
     base/component/memory.cpp
     cpu/coherent/coherent_core.cpp
 )
+

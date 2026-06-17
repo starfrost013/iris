@@ -6,7 +6,7 @@ namespace Iris
     // FUll-specialistaion templates for certain things
     //
 
-    // Convering registers to decimal 
+    // Convering registers to decimal and hex formats
 
     template<> void CoherentSystem::Register<uint8_t>::TextifyDecimal(uint8_t value, char* buf) { snprintf(buf, sizeof(buf), "%d", value); };
     template<> void CoherentSystem::Register<int8_t>::TextifyDecimal(int8_t value, char* buf) { snprintf(buf, sizeof(buf), "%d", value); };
@@ -27,8 +27,48 @@ namespace Iris
     template<> void CoherentSystem::Register<uint64_t>::TextifyHex(uint64_t value, char* buf) { snprintf(buf, sizeof(buf), "%lx", value); };
 
     //
-    // Core
+    // Coherent clas
+    //
+    
+    void Coherent::Init()
+    {
+        Logger::Log(COHERENT_LOG_PREFIX, COHERENT_VERSION "initialised");
+
+        initialised = true; 
+    }
+
+    void Coherent::ExecStart()
+    {
+
+    }
+
+    void Coherent::ExecEnd()
+    {
+
+    }
+
+    void Coherent::Enter()
+    {
+
+    }
+
+    void Coherent::Leave()
+    {
+
+    }
+    
+    void Coherent::Shutdown()
+    {
+
+    }
+
+    //
+    // Extension registration
     //
 
-    
+    void Coherent::RegisterExtension(CoherentExtension* extension)
+    {
+
+    }
+
 }
