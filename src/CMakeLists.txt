@@ -14,5 +14,6 @@ add_executable(motion
     base/component/addrspace.cpp
     base/component/memory.cpp
     cpu/coherent/coherent_core.cpp
+    cpu/coherent/coherent_gui.cpp
 )
 

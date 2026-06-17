@@ -89,13 +89,15 @@ namespace Iris
         /// @brief Register a coherent extension.
         /// @param extension A pointer to a valid CoherentExtension* object
         static void RegisterExtension(CoherentExtension* extension);
+
+        void SetSystem(CoherentSystem* system) { currentSystem = system; }; 
     private:
         /// @brief If this value is true, the coherent system has been initialised. 
         inline static bool initialised;
 
-        std::vector<CoherentExtension*> extensions;
+        inline static std::vector<CoherentExtension*> extensions;
 
-        ///T
-        CoherentSystem* currentSystem;
+        /// the current coherent system
+        inline static CoherentSystem* currentSystem;
     };
 }
