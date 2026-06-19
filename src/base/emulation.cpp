@@ -7,6 +7,11 @@ namespace Iris
 {
     void Emulation::Start()
     {
+        // TEMP
+        renderer = new RendererSDL3();
+        
+        renderer->Init();
+
         Logger::Log("Starting emulation...");
            
         machine.AddComponent<Memory>();
@@ -18,7 +23,7 @@ namespace Iris
     
     void Emulation::Frame()
     {
-        
+        renderer->Frame();
     }
     
     void Emulation::Tick()
@@ -31,6 +36,7 @@ namespace Iris
 
     void Emulation::Shutdown()
     {
+        renderer->Shutdown();
         machine.Shutdown();
 
         running = false; 

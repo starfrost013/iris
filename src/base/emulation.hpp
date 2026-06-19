@@ -7,6 +7,10 @@
 #include <base/filesystem/filesystem.hpp>
 #include <base/machine/machine.hpp>
 
+// render includes
+#include <render/render.hpp>
+#include <render/sdl3/render_sdl3.hpp>
+
 namespace Iris
 {
     #define CONFIG_PATH "Iris.cfg"
@@ -27,6 +31,7 @@ namespace Iris
         /// @brief get the name of this component. immutable const char*.
         virtual const char* GetName() { return "Motorola MC68020 CPU"; };
 
+        static Renderer* GetRenderer() { return renderer; }; 
     private: 
         inline static bool running = false;
         
@@ -34,5 +39,8 @@ namespace Iris
 
         /// @brief the machine that is being emulated
         inline static Machine machine;
+
+        /// @brief TEMP
+        inline static Renderer* renderer;
     };
 }
