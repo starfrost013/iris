@@ -24,8 +24,12 @@ namespace Iris
         // todo: needs to run on its own thread
 
         while (Emulation::IsRunning())
-        {
+        {            
+            Emulation::Frame();
+
+            // TODO: IMPLEMENT TICKRATE
             Emulation::Tick();
+
         }   
 
         Logger::Log("Shutting down...");

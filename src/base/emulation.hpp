@@ -27,11 +27,14 @@ namespace Iris
         static Machine& GetMachine() { return machine; }
         
         static bool IsRunning() { return running; }    
+        static void SetRunning(bool value) { running = value; };
 
         /// @brief get the name of this component. immutable const char*.
         virtual const char* GetName() { return "Motorola MC68020 CPU"; };
 
         static Renderer* GetRenderer() { return renderer; }; 
+
+        
     private: 
         inline static bool running = false;
         

@@ -18,7 +18,7 @@ namespace Iris
     /// @brief Base renderer class. Other renderers inherit from this
     class RendererSDL3 : public Renderer
     {
-        #define WINDOW_TITLE_DEFAULT APP_NAME " - SGI Emulator (c)2026 Starfrost"
+        #define WINDOW_TITLE_DEFAULT APP_NAME " - SGI Emulator (c) 2026 Starfrost"
 
     public:
         void Init() override;

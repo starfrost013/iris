@@ -7,6 +7,7 @@
     render_sdl3_core.cpp: Core SDL3 renderer stuff (init, shutdown, etc)
 */
 
+#include <base/emulation.hpp>
 #include <render/sdl3/render_sdl3.hpp>
 
 namespace Iris
@@ -34,7 +35,14 @@ namespace Iris
     /// @brief Render a new frame.
     void RendererSDL3::Frame()
     {
+        SDL_Event event;
 
+        while (SDL_PollEvent(&event))
+        {
+            // quit if we need to
+            if (event.type == SDL_EVENT_QUIT)
+                Emulation::SetRunning(false);
+        }
     }
 
     /// @brief Shut down the renderer.

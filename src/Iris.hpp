@@ -5,6 +5,7 @@
 
 // Standard includes
 #include <cctype>
+#include <chrono>
 #include <concepts>
 #include <cstdarg>
 #include <cstdint>
