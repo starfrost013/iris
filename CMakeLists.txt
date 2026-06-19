@@ -6,5 +6,13 @@ set (CMAKE_CXX_STANDARD 23)
 
 project(motion)
 
+# Build SDL static, we like static libraries (esp. on Linux, where the system SDL3 might not be the same version!)
+
+set(SDL_SHARED OFF CACHE BOOL "Build SDL shared library" FORCE)
+set(SDL_STATIC ON CACHE BOOL "Build SDL static library" FORCE)
+
+add_subdirectory(external/sdl3 EXCLUDE_FROM_ALL)
 
 add_subdirectory(src)
+
+target_link_libraries(motion PRIVATE SDL3::SDL3-static)
