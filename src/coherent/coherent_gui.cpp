@@ -18,9 +18,9 @@ namespace Iris
     void Coherent::Frame()
     {
         ImGui::SetNextWindowPos(ImVec2(
-            (Emulation::GetRenderer()->GetWindowSizeX() / 2) - 150,
-            (Emulation::GetRenderer()->GetWindowSizeY() / 2) - 150), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(300, 300));
+            (Emulation::GetRenderer()->GetWindowSizeX() / 2) - 800,
+            (Emulation::GetRenderer()->GetWindowSizeY() / 2) - 600), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(800, 600));
 
         if (!ImGui::Begin("Coherent Debugger", &Coherent::active, ImGuiWindowFlags_MenuBar))
             ImGui::End();

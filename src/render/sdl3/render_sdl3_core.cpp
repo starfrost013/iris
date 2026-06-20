@@ -110,9 +110,6 @@ namespace Iris
 
     void RendererSDL3::FramePostRender()
     {
-    #ifndef NDEBUG
-        ImGui::ShowDemoWindow();
-    #endif    
         ImGui::Render();
 
         // Upload the IMGUI vertex and index buffers to the GPU
