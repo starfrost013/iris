@@ -3,10 +3,21 @@
 
 # Main /src directory makefile
 
-include_directories(.)
-include_directories(./external/sdl3/include)
+include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_SOURCE_DIR}/external/sdl3/include)
+include_directories(${CMAKE_SOURCE_DIR}/external/imgui)
 
 add_executable(motion
+
+    # Dear Imgui
+    ../external/imgui/imgui_demo.cpp
+    ../external/imgui/imgui_draw.cpp
+    ../external/imgui/imgui_tables.cpp
+    ../external/imgui/imgui_widgets.cpp
+    ../external/imgui/imgui.cpp
+    ../external/imgui/backends/imgui_impl_sdlgpu3.cpp
+
+    # Motion Emulator
     main.cpp
     base/component/component.cpp
     base/emulation.cpp

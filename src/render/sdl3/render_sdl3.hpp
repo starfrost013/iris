@@ -3,6 +3,8 @@
     The SGI Emulator
 
     Copyright (c)2026 starfrost
+
+    render_sdl3.hpp: Implements SDL3 + IMGUI SDL3GPU 
 */
 
 #pragma once

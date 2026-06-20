@@ -11,8 +11,11 @@ project(motion)
 set(SDL_SHARED OFF CACHE BOOL "Build SDL shared library" FORCE)
 set(SDL_STATIC ON CACHE BOOL "Build SDL static library" FORCE)
 
+# Add our submodule directories
+
 add_subdirectory(external/sdl3 EXCLUDE_FROM_ALL)
 
+# Also allow us to use our own headers. At some point, we need to have a public/private header distinction...
 add_subdirectory(src)
 
 target_link_libraries(motion PRIVATE SDL3::SDL3-static)
