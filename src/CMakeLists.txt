@@ -15,6 +15,7 @@ add_executable(motion
     ../external/imgui/imgui_tables.cpp
     ../external/imgui/imgui_widgets.cpp
     ../external/imgui/imgui.cpp
+    ../external/imgui/backends/imgui_impl_sdl3.cpp
     ../external/imgui/backends/imgui_impl_sdlgpu3.cpp
 
     # Motion Emulator

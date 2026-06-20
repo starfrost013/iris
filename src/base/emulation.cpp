@@ -23,7 +23,8 @@ namespace Iris
     
     void Emulation::Frame()
     {
-        renderer->Frame();
+        renderer->FramePreRender();
+        renderer->FramePostRender();
     }
     
     void Emulation::Tick()

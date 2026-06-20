@@ -9,10 +9,18 @@ Copyright (C) 2026 starfrost
 
 namespace Iris
 {
+    /// @brief Fatal error function
+    /// @return Emulator shuts down
+    void fatal()
+    {
+        Emulation::SetRunning(false);
+    }
+
     int main(int argc, char** argv)
     {
         Logger::settings.SetAppName(APP_NAME);
         Logger::settings.SetDestinations((LogDestination)(LogDestination::Stdout | LogDestination::File));
+        Logger::settings.SetFatalFunction(fatal);
         Logger::Init();
 
         Logger::Log(APP_NAME " " APP_VERSION);
@@ -38,6 +46,8 @@ namespace Iris
 
         return EXIT_SUCCESS;
     }
+
+
 }
 
 int main(int argc, char** argv)

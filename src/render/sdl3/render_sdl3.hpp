@@ -12,6 +12,9 @@
 #include <render/render.hpp>
 
 #include <SDL3/SDL.h>
+#include <imgui.h>
+#include <backends/imgui_impl_sdl3.h>
+#include <backends/imgui_impl_sdlgpu3.h>
 
 namespace Iris
 {
@@ -24,11 +27,15 @@ namespace Iris
 
     public:
         void Init() override;
-        void Frame() override;
+        void FramePreRender() override;
+        void FramePostRender() override;
         void Shutdown() override;
 
     private:
         SDL_Window* window;
-        SDL_Renderer* renderer; 
+        SDL_GPUDevice* gpuDevice;
+        
+        /// @brief This is a GPURenderer, for convenience (i want to ues SDL_Texture, but IMGUI SDLGPU3 is much better than Renderer3)
+        SDL_Renderer* renderer;  
     };
 }
