@@ -26,8 +26,8 @@ add_executable(motion
     cpu/mc68020_core.cpp
     base/component/addrspace.cpp
     base/component/memory.cpp
-    cpu/coherent/coherent_core.cpp
-    cpu/coherent/coherent_gui.cpp
+    coherent/coherent_core.cpp
+    coherent/coherent_gui.cpp
     render/sdl3/render_sdl3_core.cpp
 )
 

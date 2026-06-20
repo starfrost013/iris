@@ -22,7 +22,7 @@ namespace Iris
 
         Logger::Log(RENDER_SDL3_LOG_PREFIX, "Initialising SDL window...", LogChannels::Debug);
 
-        window = SDL_CreateWindow(WINDOW_TITLE_DEFAULT, 1024, 768, 0);
+        window = SDL_CreateWindow(WINDOW_TITLE_DEFAULT, windowSizeX, windowSizeY, 0);
 
         if (!window) // noreturn
             Logger::Log(RENDER_SDL3_LOG_PREFIX, std::format("Failed to initialise SDL Window!", SDL_GetError()).c_str(), LogChannels::FatalError);
@@ -102,23 +102,17 @@ namespace Iris
             if (event.type == SDL_EVENT_QUIT)
                 Emulation::SetRunning(false);
         }
-
     
         ImGui_ImplSDLGPU3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
-
-        
     }
 
     void RendererSDL3::FramePostRender()
     {
-        
     #ifndef NDEBUG
-        ImGui::ShowDebugLogWindow();
-    #endif
         ImGui::ShowDemoWindow();
-    
+    #endif    
         ImGui::Render();
 
         // Upload the IMGUI vertex and index buffers to the GPU
@@ -152,6 +146,13 @@ namespace Iris
         }
         
         SDL_SubmitGPUCommandBuffer(buffer);
+    }
+
+    // Allow resizing the window
+    void RendererSDL3::SetWindowSize(int32_t x, int32_t y)
+    {
+        if (window)
+            SDL_SetWindowSize(window, x, y);
     }
 
     /// @brief Shut down the renderer.

@@ -1,4 +1,4 @@
-#include <cpu/coherent/coherent.hpp>
+#include <coherent/coherent.hpp>
 
 namespace Iris
 {
@@ -32,7 +32,7 @@ namespace Iris
     
     void Coherent::Init()
     {
-        Logger::Log(COHERENT_LOG_PREFIX, COHERENT_VERSION "initialised");
+        Logger::Log(COHERENT_LOG_PREFIX, COHERENT_VERSION " initialised");
 
         initialised = true; 
     }
@@ -49,12 +49,13 @@ namespace Iris
 
     void Coherent::Enter()
     {
-
+        active = true;
     }
 
-    void Coherent::Leave()
-    {
 
+    void Coherent::Leave()
+    {   
+        active = false; 
     }
     
     void Coherent::Shutdown()

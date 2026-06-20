@@ -12,11 +12,16 @@ namespace Iris
         
         renderer->Init();
 
+        Coherent::Init();
+
         Logger::Log("Starting emulation...");
            
         machine.AddComponent<Memory>();
         machine.AddComponent<CPU_MC68020>();
         machine.Start();
+
+        // enter the coherent debugger
+        Coherent::Enter();
 
         running = true; 
     }   
@@ -24,6 +29,10 @@ namespace Iris
     void Emulation::Frame()
     {
         renderer->FramePreRender();
+
+        if (Coherent::active)
+            Coherent::Frame();
+            
         renderer->FramePostRender();
     }
     
@@ -38,6 +47,7 @@ namespace Iris
     void Emulation::Shutdown()
     {
         renderer->Shutdown();
+        Coherent::Shutdown();
         machine.Shutdown();
 
         running = false; 

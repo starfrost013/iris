@@ -12,7 +12,7 @@
 namespace Iris
 {
     #define COHERENT_LOG_PREFIX     "Debugger"
-    #define COHERENT_VERSION        "StarfrostLib/Coherent 0.0 - June 16, 2026"
+    #define COHERENT_VERSION        "StarfrostLib/Coherent 0.1 - June 20, 2026"
 
     class CoherentCommand
     {
@@ -80,6 +80,9 @@ namespace Iris
         /// @brief On the end of an instruction, call this method.
         static void ExecEnd();
 
+        /// @brief Render a frame of the debugger (see coherent_gui.cpp)
+        static void Frame();
+
         /// @brief Exit the coherent system.
         static void Leave();
 
@@ -90,10 +93,19 @@ namespace Iris
         /// @param extension A pointer to a valid CoherentExtension* object
         static void RegisterExtension(CoherentExtension* extension);
 
-        void SetSystem(CoherentSystem* system) { currentSystem = system; }; 
+        // Getters for private members
+        bool GetInitialised() { return initialised; };
+
+        // Setters for private members
+        static void SetSystem(CoherentSystem* system) { currentSystem = system; }; 
+        
+        /// @brief If this is true, the coherent system is currently active. (needs to be public because of imgui)
+        inline static bool active; 
+
     private:
         /// @brief If this value is true, the coherent system has been initialised. 
         inline static bool initialised;
+
 
         inline static std::vector<CoherentExtension*> extensions;
 

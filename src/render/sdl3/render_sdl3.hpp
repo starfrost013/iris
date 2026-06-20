@@ -31,8 +31,12 @@ namespace Iris
         void FramePostRender() override;
         void Shutdown() override;
 
+        // Setters for private fields
+        void SetWindowSize(int32_t x, int32_t y) override;
+
     private:
         SDL_Window* window;
+
         SDL_GPUDevice* gpuDevice;
         
         /// @brief This is a GPURenderer, for convenience (i want to ues SDL_Texture, but IMGUI SDLGPU3 is much better than Renderer3)
