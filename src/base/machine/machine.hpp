@@ -57,10 +57,45 @@ namespace Iris
                 component->Start();
         }
 
+        /// @brief Tick each component of the emulation.
         void Tick()
         {
             for (Component* component : components)
-                component->Tick();
+            {
+                // 0 clockspeed = run AFAP
+                // THis may not be a good idea. We may have to add fake cycles.
+                if (component->clockSpeed > 0)
+                {
+                    // maybe microseconds would be better ???
+                    auto ns = Chrono_GetTicksNS(Chrono_GetTime());
+                    
+                    bool run = false; 
+
+                    if (component->delayNs != 0)
+                    {
+                        auto nsPerTick = (1.0 / (double)component->clockSpeed) * 1000000000; // use maximum precision available
+
+                        if (component->lastTickNs != 0
+                        || (ns - component->lastTickNs) > nsPerTick)
+                            run = true;
+                    }
+                    else // slower, delay timing
+                    {
+                        if ((ns - component->lastTickNs) > component->delayNs)
+                            run = true;
+                    }
+
+                    if (run)
+                    {
+                        component->lastTickNs = ns;
+                        component->Tick();
+                    }
+                    
+                }
+                else // just run
+                    component->Tick();
+
+            }
         }
 
         void Shutdown()

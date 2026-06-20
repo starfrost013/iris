@@ -1,5 +1,11 @@
-// iris(tm)
-// Copyright (C) 2026 starfrost
+/* 
+    m  o  t  i  o  n
+    The SGI Emulator
+
+    Copyright (c)2026 starfrost
+
+    Iris.hpp: Main file for motion (previously called Iris, but it was too generic) SGI Emulator
+*/
 
 #pragma once
 
@@ -18,6 +24,7 @@
 
 // should be included everywhere as it's standalone
 #include <platform/logging/logging.hpp>
+#include <platform/util/util.hpp>
 
 #define APP_NAME            "motion"
 #define APP_SIGNON          "The SGI Emulator\nEmulation engine © 2026 starfrost\nOriginal hardware and software by Silicon Graphics, Inc. © 1981-1989"

@@ -13,6 +13,7 @@
 
 namespace Iris
 {
+    // Temp until convars are a thi9ng
     #define CONFIG_PATH "Iris.cfg"
 
     class Emulation
@@ -33,7 +34,6 @@ namespace Iris
         virtual const char* GetName() { return "Motorola MC68020 CPU"; };
 
         static Renderer* GetRenderer() { return renderer; }; 
-
         
     private: 
         inline static bool running = false;

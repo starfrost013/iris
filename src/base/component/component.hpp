@@ -8,7 +8,15 @@ namespace Iris
 
     public: 
 
+        /// @brief clock speed in hertz.
         int clockSpeed;
+
+        /// @brief determines when this component was last ticked.
+        uint64_t lastTickNs;
+
+        /// @brief Allows an artificial delay to be implemented for less precise timing.
+        uint64_t delayNs;
+
         virtual void Start() { };
         virtual void Tick() { };        // ticks at clock speed
         virtual void Shutdown() { };

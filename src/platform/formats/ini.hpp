@@ -100,7 +100,7 @@ namespace Iris
                         case ']':
                             if (parserMode != ParserMode::Section)
                             {
-                                // Trigger Big Error here
+                                Logger::Log("INI file parsing error: ] encountered without also [ for section", LogChannels::Error);
                             }
                             break;
                     }          

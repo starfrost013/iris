@@ -27,9 +27,9 @@ namespace Iris
         {            
             Emulation::Frame();
 
-            // TODO: IMPLEMENT TICKRATE
+            // Each component ticks at its own speed. So we implement the tickrate in the Emulation class.
             Emulation::Tick();
-
+                
         }   
 
         Logger::Log("Shutting down...");
