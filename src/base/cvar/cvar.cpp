@@ -27,8 +27,7 @@ namespace Iris
         }
 
         cvar->name = name;
-        cvar->string = value;
-        cvar->value = atof(value);
+        cvar->SetInternal(value);
     }
 
     Cvar* Cvar::Get(const char* name)
@@ -42,5 +41,28 @@ namespace Iris
                 
             cvar = cvar->next;
         }
+
+        Logger::Log(std::format("Cvar::Get or Cvar::Set - The Convar by the name {} does not exist!", name).c_str(), LogChannels::Warning);
+
+        return nullptr;
+    }
+
+    void Cvar::SetInternal(char* newValue)
+    {
+        string = newValue;
+        value = atof(newValue);
+    }
+
+    void Cvar::Set(const char* name, char* value)
+    {
+        Cvar* cvar = Cvar::Get(name);
+
+        // already logged
+        if (!cvar)
+            return;
+
+        
+        cvar->string = value;
+        cvar->value = atof(value);
     }
 }
