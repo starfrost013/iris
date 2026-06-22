@@ -29,5 +29,6 @@ add_executable(motion
     coherent/coherent_core.cpp
     coherent/coherent_gui.cpp
     render/sdl3/render_sdl3_core.cpp
+    base/cvar/cvar.cpp
 )
 
