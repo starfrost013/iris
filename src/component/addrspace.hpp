@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Iris.hpp>
-#include <base/component/component.hpp>
+#include <component/component.hpp>
 
 
 #define LOGGING_PREFIX_ADDRSPACE        "EmuCore - Addressing"

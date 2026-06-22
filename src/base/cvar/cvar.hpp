@@ -36,5 +36,10 @@ namespace Iris
         static inline Cvar* head; 
         static inline Cvar* tail; 
         Cvar* next;
+
+        /// @brief Internal method to set a convar
+        /// @param name The name of the convar to set
+        /// @param value The value
+        void SetInternal(char* newValue);
     };
 }

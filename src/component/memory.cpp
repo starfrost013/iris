@@ -1,5 +1,5 @@
 #include <base/emulation.hpp>
-#include <base/component/memory.hpp>
+#include <component/memory.hpp>
 
 namespace Iris 
 {

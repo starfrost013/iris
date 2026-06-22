@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Iris.hpp>
-#include <base/component/addrspace.hpp>
-#include <base/component/component.hpp>
+#include <component/addrspace.hpp>
+#include <component/component.hpp>
 
 namespace Iris
 {

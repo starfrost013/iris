@@ -61,8 +61,6 @@ namespace Iris
         if (!cvar)
             return;
 
-        
-        cvar->string = value;
-        cvar->value = atof(value);
+        cvar->SetInternal(value);
     }
 }

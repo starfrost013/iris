@@ -20,15 +20,16 @@ add_executable(motion
 
     # Motion Emulator
     main.cpp
-    base/component/component.cpp
     base/emulation.cpp
     base/filesystem/filesystem.cpp
-    cpu/mc68020_core.cpp
-    base/component/addrspace.cpp
-    base/component/memory.cpp
+    base/cvar/cvar.cpp
+    component/component.cpp
+    component/addrspace.cpp
+    component/memory.cpp
+    component/cpu/mc68020_core.cpp
+
     coherent/coherent_core.cpp
     coherent/coherent_gui.cpp
     render/sdl3/render_sdl3_core.cpp
-    base/cvar/cvar.cpp
 )
 
