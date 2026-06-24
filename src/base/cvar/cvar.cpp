@@ -16,15 +16,7 @@ namespace Iris
     {
         Cvar* cvar = new Cvar;
 
-        if (!Cvar::head)
-        {
-            Cvar::head = Cvar::tail = cvar;
-        }
-        else
-        {
-            Cvar::tail->next = cvar;
-            Cvar::tail = cvar; 
-        }
+        Cvar::cvars[cvar->name] = cvar;
 
         cvar->name = name;
         cvar->SetInternal(value);
@@ -32,16 +24,14 @@ namespace Iris
 
     Cvar* Cvar::Get(const char* name)
     {
-        Cvar* cvar = Cvar::head;
+        auto count = Cvar::cvars.count(name);
 
-        while (cvar)
-        {
-            if (!strcmp(cvar->name, name))
-                return cvar;
-                
-            cvar = cvar->next;
-        }
-
+        if (count > 1)
+            Logger::Log(std::format("Cvar::Get - Duplicated convar {}. Any copies will be ignored.", name).c_str(), LogChannels::Warning);
+    
+        if (count >= 1)
+            return Cvar::cvars[name];
+            
         Logger::Log(std::format("Cvar::Get or Cvar::Set - The Convar by the name {} does not exist!", name).c_str(), LogChannels::Warning);
 
         return nullptr;

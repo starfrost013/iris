@@ -33,9 +33,7 @@ namespace Iris
         float value; 
         char* string;  // the linked list prevents whatever string we put here from being delete.d
 
-        static inline Cvar* head; 
-        static inline Cvar* tail; 
-        Cvar* next;
+        static inline std::unordered_map<const char*, Cvar*> cvars;
 
         /// @brief Internal method to set a convar
         /// @param name The name of the convar to set
