@@ -26,6 +26,9 @@
 #include <platform/logging/logging.hpp>
 #include <platform/util/util.hpp>
 
+// Not standalone, but useful for everything
+#include <base/cvar/cvar.hpp>
+
 #define APP_NAME            "motion"
 #define APP_SIGNON          "The SGI Emulator\nEmulation engine © 2026 starfrost\nOriginal hardware and software by Silicon Graphics, Inc. © 1981-1989"
 #define APP_VERSION         "@ " __DATE__ " " __TIME__

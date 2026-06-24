@@ -12,7 +12,7 @@
 
 namespace Iris
 {
-    void Cvar::Add(const char* name, char* value)
+    Cvar* Cvar::Add(const char* name, const char* value)
     {
         Cvar* cvar = new Cvar;
 
@@ -20,9 +20,11 @@ namespace Iris
 
         cvar->name = name;
         cvar->SetInternal(value);
+
+        return cvar;
     }
 
-    Cvar* Cvar::Get(const char* name)
+    Cvar* Cvar::Get(const char* name, const char* value = nullptr)
     {
         auto count = Cvar::cvars.count(name);
 
@@ -32,25 +34,31 @@ namespace Iris
         if (count >= 1)
             return Cvar::cvars[name];
             
-        Logger::Log(std::format("Cvar::Get or Cvar::Set - The Convar by the name {} does not exist!", name).c_str(), LogChannels::Warning);
+        Logger::Log(std::format("Cvar::Get - The Convar by the name {} does not exist. Creating it...", name).c_str(), LogChannels::Warning);
+        
+        if (value == nullptr)
+            value = "0";
 
-        return nullptr;
+        return Cvar::Add(name, value);
     }
 
-    void Cvar::SetInternal(char* newValue)
+    void Cvar::SetInternal(const char* newValue)
     {
         string = newValue;
         value = atof(newValue);
     }
 
-    void Cvar::Set(const char* name, char* value)
+    Cvar* Cvar::Set(const char* name, const char* value)
     {
         Cvar* cvar = Cvar::Get(name);
 
         // already logged
+        // shouldn't happen but just in case
         if (!cvar)
-            return;
+            Add(name, value);
 
         cvar->SetInternal(value);
+
+        return cvar; 
     }
 }

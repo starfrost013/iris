@@ -17,27 +17,27 @@ namespace Iris
 
     public: 
         // Statics (public API)
-        static void Add(const char* name, char* value);
-        static Cvar* Get(const char* name);
-        static void Set(const char* name, char* value);
+        static Cvar* Add(const char* name, const char* value);
+        static Cvar* Get(const char* name, const char* value);
+        static Cvar* Set(const char* name, const char* value);
 
         // Getters for private fields
 
         float GetValue() { return value; };
-        char* GetString() { return string; }
+        const char* GetString() { return string; }
 
         // Settes for private fields 
 
     private: 
         const char* name;
         float value; 
-        char* string;  // the linked list prevents whatever string we put here from being delete.d
+        const char* string;  // the linked list prevents whatever string we put here from being delete.d
 
         static inline std::unordered_map<const char*, Cvar*> cvars;
 
         /// @brief Internal method to set a convar
         /// @param name The name of the convar to set
         /// @param value The value
-        void SetInternal(char* newValue);
+        void SetInternal(const char* newValue);
     };
 }
