@@ -55,9 +55,9 @@ namespace Iris
 
     void AddrSpace::AddMapping(AddrSpaceMapping mapping)
     {
-        if (mapping.endAddr > mapping.startAddr)
+        if (mapping.startAddr > mapping.endAddr)
         {
-            Logger::Log(LOGGING_PREFIX_ADDRSPACE, "AddrSpace::AddMapping - mapping.endAddr > mapping.startAddr");
+            Logger::Log(LOGGING_PREFIX_ADDRSPACE, "AddrSpace::AddMapping - mapping.StartAddr > mapping.endAddr");
             return;
         }
 
