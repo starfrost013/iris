@@ -63,12 +63,7 @@ namespace Iris
 
         auto mappingCount = mappings.count(mapping.startAddr);
 
-        if (mappingCount == 0)
-        {
-            Logger::Log(LOGGING_PREFIX_ADDRSPACE, "AddrSpace::AddMapping - mapping does not exist");
-            return;
-        }
-        else if (mappingCount > 1)
+        if (mappingCount > 1)
         {
             Logger::Log(LOGGING_PREFIX_ADDRSPACE, "AddrSpace::AddMapping - mapping already exists");
             return;
