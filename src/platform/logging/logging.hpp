@@ -32,7 +32,7 @@
 
 // Strings, change to localise or whatever
 
-#define STRING_VERSION                  "5.0 (May 19, 2026)"                    // Version number as a string (we don't need it in any other form)
+#define STRING_VERSION                  "5.0.1 (June 25, 2026)"                    // Version number as a string (we don't need it in any other form)
 #define STRING_SIGN_ON                  "StarfrostLib/SSLS-NG (Starfrost Shared Logging System - Next Gen) " STRING_VERSION " initialised" 
 #define STRING_ANSI_PREFIX              "\x1B["                                 // Some ANSI command prefixes use this
 
@@ -337,14 +337,6 @@ namespace LOGGER_NAMESPACE
                 return;
             #endif
 
-            // send out an optional prefix
-            if (prefix != nullptr)
-            {
-                LogOut("[");
-                LogOut(prefix);
-                LogOut("] ");
-            }
-
             // send our new channel name
             if (sendChannelName)
             {
@@ -396,6 +388,14 @@ namespace LOGGER_NAMESPACE
                 }
             }
         
+            // send out an optional prefix to the message
+            if (prefix != nullptr)
+            {
+                LogOut("[");
+                LogOut(prefix);
+                LogOut("] ");
+            }
+
             // Log out the ] character
 
             bool hideDates = settings.hideDates;

@@ -69,7 +69,7 @@ namespace Iris
             return;
         }
     
-        Logger::Log(LOGGING_PREFIX_ADDRSPACE, std::format("Added address mapping from {} to {} (size {})",
+        Logger::Log(LOGGING_PREFIX_ADDRSPACE, std::format("Added address mapping from 0x{:x} to 0x{:x} (size {})",
             mapping.startAddr, mapping.endAddr, (mapping.endAddr - mapping.startAddr)).c_str(), LogChannels::Debug);
         
         mappings[mapping.startAddr] = mapping;
