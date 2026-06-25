@@ -387,7 +387,14 @@ namespace LOGGER_NAMESPACE
                     }
                 }
             }
-        
+
+            // special handling so the prefix does not look fucked
+            if (prefix != nullptr 
+            && channelMask != LogChannels::Message)
+            {
+                LogOut("] ");
+            }
+
             // send out an optional prefix to the message
             if (prefix != nullptr)
             {
@@ -404,18 +411,9 @@ namespace LOGGER_NAMESPACE
             if (!sendDate)
                 hideDates = true;
 
-            if (settings.hideDates) // if only message don't bother
-            {
-                if (channelMask != LogChannels::Message)
-                    LogOut("]");
-            }
-            else // also the date
-            {
-                // custom handling for only message
-                if (channelMask == LogChannels::Message)
-                    LogOut("[");
-                else
-                    LogOut("] [");
+            if (!settings.hideDates) // also the date
+            { 
+                LogOut("[");
 
                 std::time_t t = std::time(nullptr);
                 std::tm tm = *std::localtime(&t);
