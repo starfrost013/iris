@@ -27,27 +27,27 @@ namespace Iris
     {
         public:
             // 16-bit - 65536; 24-bit - 16777216; 
-            size_t maxAddr;
+            static size_t maxAddr;
 
-            uint8_t ReadU8(size_t addr);
-            uint16_t ReadU16(size_t addr);
-            uint32_t ReadU32(size_t addr);
-            int8_t ReadS8(size_t addr);
-            int16_t ReadS16(size_t addr);
-            int32_t ReadS32(size_t addr);
+            static uint8_t ReadU8(size_t addr);
+            static uint16_t ReadU16(size_t addr);
+            static uint32_t ReadU32(size_t addr);
+            static int8_t ReadS8(size_t addr);
+            static int16_t ReadS16(size_t addr);
+            static int32_t ReadS32(size_t addr);
  
-            void WriteU8(size_t addr, uint8_t value);
-            void WriteU16(size_t addr, uint16_t value);
-            void WriteU32(size_t addr, uint32_t value);
-            void WriteS8(size_t addr, int8_t value);
-            void WriteS16(size_t addr, int16_t value);
-            void WriteS32(size_t addr, int32_t value);
+            static void WriteU8(size_t addr, uint8_t value);
+            static void WriteU16(size_t addr, uint16_t value);
+            static void WriteU32(size_t addr, uint32_t value);
+            static void WriteS8(size_t addr, int8_t value);
+            static void WriteS16(size_t addr, int16_t value);
+            static void WriteS32(size_t addr, int32_t value);
  
-            void AddMapping(AddrSpaceMapping mapping);
+            static void AddMapping(AddrSpaceMapping mapping);
         private: 
-            std::unordered_map<size_t, AddrSpaceMapping> mappings;
+            inline static std::unordered_map<size_t, AddrSpaceMapping> mappings;
 
-            bool MappingExists(size_t addr);
+            static bool MappingExists(size_t addr);
 
     };
 }

@@ -11,6 +11,19 @@ namespace Iris
         promSize = Cvar::Set("promSize", "98304");
 
         rom = new uint8_t[(size_t)promSize->GetValue()];
+
+        // read in the rom, then close
+        FileStream* prom = Filesystem::Open(promPath->GetString(), FileMode::Binary);
+        prom->stream.read((char*)rom, promSize->GetValue());
+        Filesystem::Close(prom);
+
+        AddrSpaceMapping mapping = AddrSpaceMapping();
+
+        mapping.startAddr = PROM_START_ADDRESS;
+        mapping.endAddr = mapping.startAddr + promSize->GetValue();
+
+        mapping.component = this;
+        AddrSpace::AddMapping(mapping);
     }
 
     void PROM::Shutdown()

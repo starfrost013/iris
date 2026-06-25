@@ -3,7 +3,7 @@
 namespace Iris
 {
     // yes, this checks exactly for one. becaue we don't want duplicatges and check for them 
-    bool AddrSpace::MappingExists(size_t addr) { return mappings.count(addr) == 1; }
+    static bool AddrSpace::MappingExists(size_t addr) { return mappings.count(addr) == 1; }
 
     uint8_t AddrSpace::ReadU8(size_t addr)
     {
