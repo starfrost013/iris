@@ -33,9 +33,7 @@ namespace Iris
     
         if (count >= 1)
             return Cvar::cvars[name];
-            
-        Logger::Log(std::format("Cvar::Get - The Convar by the name {} does not exist. Creating it...", name).c_str(), LogChannels::Warning);
-        
+                    
         if (value == nullptr)
             value = "0";
 

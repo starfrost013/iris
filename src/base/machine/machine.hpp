@@ -18,7 +18,7 @@ namespace Iris
         Machine()
         {
             components.reserve(COMPONENTS_INITIAL_RESERVED);
-            addressSpace.maxAddr = 0xFFFFFFFF;  // 32-bit address space by default
+            AddrSpace::maxAddr = 0xFFFFFFFF;  // 32-bit address space by default
             ramCapacity = 16777216;             // Maximum RAM for IRIS 3130
         }
 

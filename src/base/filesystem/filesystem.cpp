@@ -24,6 +24,7 @@ namespace Iris
             return nullptr;
         }
 
+        fc->open = true; 
         return fc; 
 
     }

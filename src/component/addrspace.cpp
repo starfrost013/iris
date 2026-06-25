@@ -3,7 +3,7 @@
 namespace Iris
 {
     // yes, this checks exactly for one. becaue we don't want duplicatges and check for them 
-    static bool AddrSpace::MappingExists(size_t addr) { return mappings.count(addr) == 1; }
+    bool AddrSpace::MappingExists(size_t addr) { return mappings.count(addr) == 1; }
 
     uint8_t AddrSpace::ReadU8(size_t addr)
     {
@@ -73,7 +73,10 @@ namespace Iris
             Logger::Log(LOGGING_PREFIX_ADDRSPACE, "AddrSpace::AddMapping - mapping already exists");
             return;
         }
-
+    
+        Logger::Log(LOGGING_PREFIX_ADDRSPACE, std::format("Added address mapping from {} to {} (size {})",
+            mapping.startAddr, mapping.endAddr, (mapping.endAddr - mapping.startAddr)).c_str(), LogChannels::Debug);
+        
         mappings[mapping.startAddr] = mapping;
     }
 

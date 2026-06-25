@@ -2,6 +2,7 @@
 #include <component/component.hpp>
 #include <component/memory.hpp>
 #include <component/cpu/mc68020.hpp>
+#include <component/rom/prom.hpp>
 
 namespace Iris
 {
@@ -9,7 +10,6 @@ namespace Iris
     {
         // TEMP
         renderer = new RendererSDL3();
-        
         renderer->Init();
 
         Coherent::Init();
@@ -18,6 +18,7 @@ namespace Iris
            
         machine.AddComponent<Memory>();
         machine.AddComponent<CPU_MC68020>();
+        machine.AddComponent<PROM>();
         machine.Start();
 
         // enter the coherent debugger

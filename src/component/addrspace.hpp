@@ -4,7 +4,7 @@
 #include <component/component.hpp>
 
 
-#define LOGGING_PREFIX_ADDRSPACE        "EmuCore - Addressing"
+#define LOGGING_PREFIX_ADDRSPACE        "EmuCore - Memory Mapping"
 
 namespace Iris
 {
@@ -27,7 +27,7 @@ namespace Iris
     {
         public:
             // 16-bit - 65536; 24-bit - 16777216; 
-            static size_t maxAddr;
+            inline static size_t maxAddr;
 
             static uint8_t ReadU8(size_t addr);
             static uint16_t ReadU16(size_t addr);
