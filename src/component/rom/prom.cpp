@@ -23,6 +23,8 @@ namespace Iris
   
         prom->stream.read((char*)rom, promSize->GetValue());
         Filesystem::Close(prom);
+    
+        Logger::Log(PROM_LOG_PREFIX, "Loaded PROM successfully. Mapping it...", LogChannels::Debug);
 
         AddrSpaceMapping mapping = AddrSpaceMapping();
 

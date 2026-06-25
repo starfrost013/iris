@@ -2,7 +2,12 @@
 # Copyright (C) 2026 starfrost
 
 cmake_minimum_required(VERSION 3.20)
-set (CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/)
+
+# Install path
+set(ROM_SRC_DIR "${CMAKE_SOURCE_DIR}/roms")
+set(ROM_DST_DIR "${CMAKE_BINARY_DIR}/output/roms")
 
 project(motion)
 
@@ -19,3 +24,12 @@ add_subdirectory(external/sdl3 EXCLUDE_FROM_ALL)
 add_subdirectory(src)
 
 target_link_libraries(motion PRIVATE SDL3::SDL3-static)
+
+
+# install
+add_custom_target(InstallAssets 
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${ROM_SRC_DIR}" "${ROM_DST_DIR}"
+    COMMENT "Updating ROMs..."
+)
+
+add_dependencies(motion InstallAssets)
