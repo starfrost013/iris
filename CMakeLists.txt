@@ -3,7 +3,10 @@
 
 cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/)
+
+# mingw-w64 doesn't support static linking against the UCRT
 
 # Install path
 set(ROM_SRC_DIR "${CMAKE_SOURCE_DIR}/roms")
@@ -23,8 +26,19 @@ add_subdirectory(external/sdl3 EXCLUDE_FROM_ALL)
 # Also allow us to use our own headers. At some point, we need to have a public/private header distinction...
 add_subdirectory(src)
 
+
+if(WIN32 AND MINGW)
+    target_link_options(motion PRIVATE 
+        -static -static-libgcc -static-libstdc++ 
+        -Wl,-Bstatic -lwinpthread -Wl,-Bdynamic
+    )
+else()
+    target_link_options(motion PRIVATE -static)             # static stdc++
+
+endif()
+
 target_link_libraries(motion PRIVATE SDL3::SDL3-static) # static sdl3
-target_link_options(motion PRIVATE -static)             # static stdc++
+
 
 # install
 add_custom_target(InstallAssets 
