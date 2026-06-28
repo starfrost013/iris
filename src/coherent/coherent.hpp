@@ -58,8 +58,27 @@ namespace Iris
             void TextifyHex(T value, char* buf);            
         };
 
+        /// @brief Disassemble the next instruction. . It's up to you to figure out the buffer size.
+        virtual char* DisasmNext() { return nullptr; };
+        
+        /// @brief Disassemble a range of instructions.
+        /// @param start The instrruction to disassemble.
+        /// @param end The instruction to stop disassembling at.
+        /// @return note: If you provide an unaligned instruction, it will just stop before the end. It's up to you to figure out the buffer size.
+        virtual char* DisasmRange(size_t start, size_t end) { return nullptr; };
+
+        /// @brief the run state of the system
+        enum RunState
+        {
+            Running = 0,
+            Paused = 1,
+            Stopped = 2,
+            Reset = 3,
+        };
+
         template <typename T>
         void AddRegister(Register<T> reg);
+
 
     private: 
 

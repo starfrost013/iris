@@ -43,7 +43,7 @@
 
 # IRIS models
 
-* Around the end of 1983: IRIS 1000 / 1200 - Terminal. PM1 (8MHz 68000) Sun licensed, EXOS101 Ethernet, GF1, UC3, DC3, BP2 (Iris 1200 has a floppy drive and 10 multibus slots) and "MicroRAM" Multibus RAM port. Operating system was simply called "SGI Unix System V" e.g. v1.5 with GL1 API
+* November 1983: IRIS 1000 / 1200 - Terminal. PM1 (8MHz 68000) Sun licensed, EXOS101 Ethernet, GF1, UC3, DC3, BP2 (Iris 1200 has a floppy drive and 10 multibus slots) and "MicroRAM" Multibus RAM port. Operating system was simply called "SGI Unix System V" e.g. v1.5 with GL1 API
 Same time-ish: IRIS 1400 / 1500: Workstation. PM2M1 (10MHz 68010) Sun licensed, Excelan EXOS101, but otherwise the same boards. but with a hard drive now. (ST506).
 
 * 1984-85: IRIS 2000 / 2200: Terminal with PM2 bus and cut down GL2 OS. New GL2 API. GF2, UC4, DC4, BP3 boards. 6MHz GEs, later upgraded to 8MHz.  Excelan EXOS201 ethernet. By this time the software was called GL2 e.g. GL2-W2.5 (for workstation) or T2.5 (for terminal)

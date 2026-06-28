@@ -17,7 +17,8 @@ namespace Iris
     {
         Logger::Log(RENDER_SDL3_LOG_PREFIX, "Initialising SDL3 renderer...");
 
-        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS)) //noreturn
+        // maybe we should rebase against release/3.4.x
+        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS)) //noreturn (SDL_INIT_AUDIO currently broken! )
             Logger::Log(RENDER_SDL3_LOG_PREFIX, std::format("Failed to initialise SDL3: {}!", SDL_GetError()).c_str(), LogChannels::FatalError);
 
         Logger::Log(RENDER_SDL3_LOG_PREFIX, "Initialising SDL window...", LogChannels::Debug);

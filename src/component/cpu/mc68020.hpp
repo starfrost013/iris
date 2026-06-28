@@ -1,13 +1,15 @@
 #pragma once
 #include <Iris.hpp>
 #include <component/component.hpp>
+#include <base/emulation.hpp>
 
 namespace Iris
 {
     class CPU_MC68020 : public Component
     {
         #define MC68020_CACHE_SIZE      256
-        // We decode per line.
+        #define MC68020_NUM_OPCODES     256
+
         #define MC68020_NUM_LINES       16
         #define MC68020_NUM_DATA_REGS   8
         #define MC68020_NUM_ADDR_REGS   7   // 8 is the sp
@@ -55,38 +57,15 @@ namespace Iris
             UserEnd = 255,                      // UDV 192
         };
 
-        // Bits 15...12 of byte 0o f the opcode/SEA-OW
-        enum InstructionLines
-        {
-            Bit = 0,
-            MoveByte = 1,
-            MoveWord = 2,
-            MoveLong = 3,
-            Misc = 4,
-            AddQSubQ = 5, // also scc, dbcc, trapcc
-            Branch = 6,   
-            MoveQ = 7,
-            OrDivSbcd = 8,
-            SubSubx = 9,
-            LineAEmulator = 0x0A, // Unassignerd
-            CmpEor = 0x0B,
-            AndMul = 0x0C, // also ABXC, EXG
-            AddAddx = 0x0D,
-            ShiftRotateBitfield = 0x0E,
-            Coprocessor = 0x0F,
-        };
-
         // The 16 instruction 'lines'
 
-        struct InstructionLine
+        struct Instruction
         {
-            uint8_t cycles;
+            uint16_t opcode;                    // The Single Effective Address Operation Word (SEA OW!)
+            uint16_t cycles;                    // cycle count
             void (CPU_MC68020::*run)();
         }; 
 
-        static constexpr InstructionLine instructions[] = {
-
-        };
 
     public: 
 
@@ -97,8 +76,14 @@ namespace Iris
         // Address registers
         uint32_t addrRegs[MC68020_NUM_ADDR_REGS];
 
-        uint32_t pc;            // Program counter
+        uint8_t PCPeek8() { return AddrSpace::ReadU8(pc); };
+        uint16_t PCPeek16() { return AddrSpace::ReadU16(pc); };
+        uint32_t PCPeek32() { return AddrSpace::ReadU32(pc); };
 
+        uint8_t PCRead8() { pc++; return PCPeek8(); };
+        uint8_t PCRead16() { pc += 2; return PCPeek16(); };
+        uint8_t PCRead32() { pc += 4; return PCPeek32(); };
+        
         // Flags:
         // 000XNZVC - eXtend, Negative, Zero, Overflow, Carry 
         uint8_t ccr;            // Flags
@@ -137,10 +122,16 @@ namespace Iris
         /// @brief get the name of this component. immutable const char*.
         const char* GetName() { return "Motorola MC68020 CPU"; };
     private:
+        uint32_t pc;            // Program counter
 
         uint32_t cache[MC68020_CACHE_SIZE >> 2];
 
-        void Execute(uint16_t opcode); 
+        void Op_Test() { };
+
+        inline static const std::unordered_map<uint16_t, Instruction> instructions =
+        {
+            { 0, {0b0000'0000'0000'0000, 1, &CPU_MC68020::Op_Test} },
+        };
 
     };
 }
