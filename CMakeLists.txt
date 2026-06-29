@@ -33,7 +33,7 @@ if(WIN32 AND MINGW)
         -Wl,-Bstatic -lwinpthread -Wl,-Bdynamic
     )
 else()
-    target_link_options(motion PRIVATE -static)             # static stdc++
+    target_link_options(motion PRIVATE -static-libstdc++ -static-libgcc)             # static stdc++
 
 endif()
 
