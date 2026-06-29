@@ -1,6 +1,7 @@
 [submodule "external/sdl3"]
 	path = external/sdl3
 	url = https://github.com/libsdl-org/sdl.git
+	branch = release/3.4.x
 [submodule "external/imgui"]
 	path = external/imgui
 	url = https://github.com/ocornut/imgui.git
