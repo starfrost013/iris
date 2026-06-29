@@ -20,10 +20,10 @@ namespace Iris
         uint16_t next = PCRead16();
         auto iter = instructions.find(next);
 
+        Logger::Log(std::format("This opcode at 0x{:x} is 0x{:x}", pc, next).c_str(), LogChannels::Debug);
+
         if (iter != instructions.end())
         {
-            Logger::Log(std::format("This is {:x}", iter->second.opcode).c_str(), LogChannels::Debug);
-
             (this->*iter->second.run)();
             delayNs = (1.0 / (float)clockSpeed) * 1000000000.0 * iter->second.cycles;
         }

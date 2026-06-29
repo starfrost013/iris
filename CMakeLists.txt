@@ -33,8 +33,8 @@ if(WIN32 AND MINGW)
         -Wl,-Bstatic -lwinpthread -Wl,-Bdynamic
     )
 else()
+    # if you statically link everything basically pipewrie will KILL SDL lol
     target_link_options(motion PRIVATE -static-libstdc++ -static-libgcc)             # static stdc++
-
 endif()
 
 target_link_libraries(motion PRIVATE SDL3::SDL3-static) # static sdl3

@@ -80,9 +80,9 @@ namespace Iris
         uint16_t PCPeek16() { return AddrSpace::ReadU16(pc); };
         uint32_t PCPeek32() { return AddrSpace::ReadU32(pc); };
 
-        uint8_t PCRead8() { pc++; return PCPeek8(); };
-        uint8_t PCRead16() { pc += 2; return PCPeek16(); };
-        uint8_t PCRead32() { pc += 4; return PCPeek32(); };
+        uint8_t PCRead8() { uint8_t ret = PCPeek8(); pc++; return ret; };
+        uint16_t PCRead16() { uint16_t ret = PCPeek16(); pc += 2; return ret; };
+        uint32_t PCRead32() { uint32_t ret = PCPeek32(); pc += 4; return ret; };
         
         // Flags:
         // 000XNZVC - eXtend, Negative, Zero, Overflow, Carry 
@@ -130,7 +130,7 @@ namespace Iris
 
         inline static const std::unordered_map<uint16_t, Instruction> instructions =
         {
-            { 0, {0b0000'0000'0000'0000, 1, &CPU_MC68020::Op_Test} },
+            { 0, { 0b0000'0000'0000'0000, 1, &CPU_MC68020::Op_Test } },
         };
 
     };

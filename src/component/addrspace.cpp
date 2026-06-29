@@ -3,14 +3,30 @@
 namespace Iris
 {
     // yes, this checks exactly for one. becaue we don't want duplicatges and check for them 
-    bool AddrSpace::MappingExists(size_t addr) { return mappings.count(addr) == 1; }
+    AddrSpaceMapping* AddrSpace::GetMapping(size_t addr) 
+    { 
+        // we are oging to have to optimise this
+        for (auto it : mappings)
+        {
+            if (addr >= it.second.startAddr
+                && addr <= it.second.endAddr)
+            {
+                // guaranteed to succeed since we *know* that the start address is *always* the key. if the impl changes we'll have to change this
+                // yes, it could create an implicit kv pair if we don't
+                return &mappings[it.second.startAddr];
+            }
+        }
+        
+        return nullptr; 
+    }
 
     uint8_t AddrSpace::ReadU8(size_t addr)
     {
-        if (MappingExists(addr))
+        AddrSpaceMapping* mapping = GetMapping(addr);
+
+        if (mapping)
         {
-            AddrSpaceMapping mapping = mappings[addr];
-            return mapping.component->OnRead8(addr);
+            return mapping->component->OnRead8(addr);
         }
         else
             return 0;
@@ -18,10 +34,11 @@ namespace Iris
     
     uint16_t AddrSpace::ReadU16(size_t addr)
     {
-        if (MappingExists(addr))
+        AddrSpaceMapping* mapping = GetMapping(addr);
+
+        if (mapping)
         {
-            AddrSpaceMapping mapping = mappings[addr];
-            return mapping.component->OnRead16(addr);
+            return mapping->component->OnRead16(addr);
         }
         else
             return 0;
@@ -29,10 +46,11 @@ namespace Iris
     
     uint32_t AddrSpace::ReadU32(size_t addr)
     {
-        if (MappingExists(addr))
+        AddrSpaceMapping* mapping = GetMapping(addr);
+
+        if (mapping)
         {
-            AddrSpaceMapping mapping = mappings[addr];
-            return mapping.component->OnRead32(addr);
+            return mapping->component->OnRead32(addr);
         }
         else
             return 0;
@@ -77,28 +95,31 @@ namespace Iris
 
     void AddrSpace::WriteU8(size_t addr, uint8_t value)
     {
-        if (MappingExists(addr))
+        AddrSpaceMapping* mapping = GetMapping(addr);
+
+        if (mapping)
         {
-            AddrSpaceMapping mapping = mappings[addr];
-            return mapping.component->OnWrite8(addr, value);
+            return mapping->component->OnWrite8(addr, value);
         }
     }
 
     void AddrSpace::WriteU16(size_t addr, uint16_t value)
     {
-        if (MappingExists(addr))
+        AddrSpaceMapping* mapping = GetMapping(addr);
+
+        if (mapping)
         {
-            AddrSpaceMapping mapping = mappings[addr];
-            return mapping.component->OnWrite16(addr, value);
+            return mapping->component->OnWrite16(addr, value);
         }
     }
 
     void AddrSpace::WriteU32(size_t addr, uint32_t value)
     {
-        if (MappingExists(addr))
+        AddrSpaceMapping* mapping = GetMapping(addr);
+
+        if (mapping)
         {
-            AddrSpaceMapping mapping = mappings[addr];
-            return mapping.component->OnWrite32(addr, value);
+            return mapping->component->OnWrite32(addr, value);
         }
     }
 

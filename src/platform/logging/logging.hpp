@@ -389,8 +389,7 @@ namespace LOGGER_NAMESPACE
             }
 
             // special handling so the prefix does not look fucked
-            if (prefix != nullptr 
-            && channelMask != LogChannels::Message)
+            if (channelMask != LogChannels::Message)
             {
                 LogOut("] ");
             }

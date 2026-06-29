@@ -47,7 +47,7 @@ namespace Iris
         private: 
             inline static std::unordered_map<size_t, AddrSpaceMapping> mappings;
 
-            static bool MappingExists(size_t addr);
+            static AddrSpaceMapping* GetMapping(size_t addr);
 
     };
 }

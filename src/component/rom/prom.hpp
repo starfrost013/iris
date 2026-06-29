@@ -22,31 +22,40 @@ namespace Iris
 
         uint8_t OnRead8(size_t addr) override 
         { 
+            addr %= (size_t)promSize->GetValue();
             return (rom[addr]); 
         };
 
         uint16_t OnRead16(size_t addr) override 
         { 
+            addr %= (size_t)promSize->GetValue();
             uint16_t* rom16 = (uint16_t*)rom; 
             return rom16[addr >> 1]; 
         };
 
         uint32_t OnRead32(size_t addr) override 
         { 
+            addr %= (size_t)promSize->GetValue();
             uint32_t* rom32 = (uint32_t*)rom; 
             return rom32[addr >> 2]; 
         };
 
-        void OnWrite8(size_t addr, uint8_t value) { rom[addr % (size_t)promSize->GetValue()] = value; };
+        void OnWrite8(size_t addr, uint8_t value) 
+        { 
+            addr %= (size_t)promSize->GetValue();
+            rom[addr] = value; 
+        };
 
         void OnWrite16(size_t addr, uint16_t value) 
         { 
+            addr %= (size_t)promSize->GetValue();
             uint16_t* rom16 = (uint16_t*)rom; 
             rom16[addr >> 1] = value; 
         };
 
         void OnWrite32(size_t addr, uint32_t value)
         { 
+            addr %= (size_t)promSize->GetValue();
             uint32_t* rom32 = (uint32_t*)rom; 
             rom32[addr >> 2] = value; 
         };
