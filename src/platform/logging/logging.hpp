@@ -8,6 +8,10 @@
 //
 // For C projects, use SSLS 4.7
 //
+// Version history:
+// 5.0.0            May 21, 2026        Initial release of SSLS C++ (custom channels, prefixes, channel mask, last-chance unsafe method etc)
+// 5.0.1            June 25, 2026       Message prefix take on the same colour as the channel of a message
+// 5.1.0            June 30, 2026       Add post-log message functions, which run after every call to LogOut, as well as Logger::SetPostLogFunction. Used e.g. for redirecting to UI
 
 #pragma once
 
@@ -32,7 +36,7 @@
 
 // Strings, change to localise or whatever
 
-#define STRING_VERSION                  "5.0.1 (June 25, 2026)"                    // Version number as a string (we don't need it in any other form)
+#define STRING_VERSION                  "5.1.0 (Jume 30, 2026)"                 // Version number as a string (we don't need it in any other form)
 #define STRING_SIGN_ON                  "StarfrostLib/SSLS-NG (Starfrost Shared Logging System - Next Gen) " STRING_VERSION " initialised" 
 #define STRING_ANSI_PREFIX              "\x1B["                                 // Some ANSI command prefixes use this
 
@@ -144,18 +148,25 @@ namespace LOGGER_NAMESPACE
         /// @param lastChanceUnsafeFunc Function pointer to be run. NOTE: std::abort will be run RIGHT AFTER YOUR FUNCTION COMPLETES!
         void SetLastChanceUnsafeFunction(void (*lastChanceUnsafeFunc)()) { this->lastChanceUnsafeFunc = fatalFunc; }; 
 
+        /// @brief Allows you to set a post-logging function that will be run after a log message (e.g. for redirecitng the log to UI)
+        /// @param postLogFunc Function pointer to be run.
+        void SetPostLogFunction (void (*postLogFunc)()) { this->postLogFunc = postLogFunc};
+        
         // These are safe to set directly
         bool hideSignOnMessage;
-        bool hideDates;                                     // If the dates should be hidden or not.    
+
+        /// @brief If the dates should be hidden or not.    
+        bool hideDates;                                     
 
     private: 
 
-        char appName[LOGGER_MAX_STRING_SHORT] = {0};    // Application name to use for log file
+        char appName[LOGGER_MAX_STRING_SHORT] = {0};        // Application name to use for log file
         void (*fatalFunc)();                                // Function to call on a fatal error log.
         void (*lastChanceUnsafeFunc)();                     // "Last chance" for unsafe function. Called right before std::abort so you cand o anything you can
+        void (*postLogFunc)();                              // "Post-logging" function. Run to e..g allow log data to be pushed to a window.
         bool overrideDefaultFileName;                       // If true, override the default filename
-        char fileName[LOGGER_MAX_PATH] = {0};           // If overridedefaultfilename is true, use this filename
-        char dateFormat[LOGGER_MAX_STRING_SHORT] = {0}; // Optional date format string to use. Otherwise yyyy-mm-dd hh:mm:ss is useed
+        char fileName[LOGGER_MAX_PATH] = {0};               // If overridedefaultfilename is true, use this filename
+        char dateFormat[LOGGER_MAX_STRING_SHORT] = {0};     // Optional date format string to use. Otherwise yyyy-mm-dd hh:mm:ss is useed
 
         std::ofstream logStream;                            // The straem to open the log if LogDestination has FILE
         LogDestination destinations;                        // The destinations to send the log
@@ -244,6 +255,9 @@ namespace LOGGER_NAMESPACE
 
             if (settings.destinations & LogDestination::File)
                 LogOutToStream(msg, &settings.logStream, newline);
+            
+            if (settings.postLogFunc)
+                settings.postLogFunc();
         }
        
     public: 
