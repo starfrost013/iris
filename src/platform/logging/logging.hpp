@@ -150,7 +150,7 @@ namespace LOGGER_NAMESPACE
 
         /// @brief Allows you to set a post-logging function that will be run after a log message (e.g. for redirecitng the log to UI)
         /// @param postLogFunc Function pointer to be run.
-        void SetPostLogFunction (void (*postLogFunc)()) { this->postLogFunc = postLogFunc};
+        void SetPostLogFunction (void (*postLogFunc)()) { this->postLogFunc = postLogFunc; };
         
         // These are safe to set directly
         bool hideSignOnMessage;

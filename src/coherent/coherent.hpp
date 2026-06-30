@@ -13,6 +13,7 @@ namespace Iris
 {
     #define COHERENT_LOG_PREFIX     "Debugger"
     #define COHERENT_VERSION        "StarfrostLib/Coherent 0.1 - June 20, 2026"
+    #define LOGBUF_MAX_SIZE         16384
 
     class CoherentCommand
     {
@@ -125,10 +126,16 @@ namespace Iris
         /// @brief If this value is true, the coherent system has been initialised. 
         inline static bool initialised;
 
-
+        /// @brief the list of extensions
         inline static std::vector<CoherentExtension*> extensions;
 
-        /// the current coherent system
+        /// @brief the current coherent system
         inline static CoherentSystem* currentSystem;
+
+        // Methods for drawing specific user interfaces
+
+        void DrawLogWindow();
+
+        char logBuffer[LOGBUF_MAX_SIZE];
     };
 }
