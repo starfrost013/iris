@@ -14,6 +14,7 @@ namespace Iris
     #define COHERENT_LOG_PREFIX     "Debugger"
     #define COHERENT_VERSION        "StarfrostLib/Coherent 0.1 - June 20, 2026"
     #define LOGBUF_MAX_SIZE         16384
+    #define LOGBUF_PURGE_SIZE       2048
 
     class CoherentCommand
     {
@@ -122,6 +123,9 @@ namespace Iris
         /// @brief If this is true, the coherent system is currently active. (needs to be public because of imgui)
         inline static bool active; 
 
+        // SHOULD NOT BE PUBLIC, but because of some things with the design of SSLS 5, it is.
+        static void AddTextToLogWindowBuffer(const char* str);
+
     private:
         /// @brief If this value is true, the coherent system has been initialised. 
         inline static bool initialised;
@@ -134,8 +138,10 @@ namespace Iris
 
         // Methods for drawing specific user interfaces
 
-        void DrawLogWindow();
+        static void DrawMainWindow();
+        static void DrawLogWindow();
 
-        char logBuffer[LOGBUF_MAX_SIZE];
+        inline static char logBuffer[LOGBUF_MAX_SIZE] = {0};
+        inline static bool logWindowTextIsStale = false; // don't bother recopying if it's not stale!
     };
 }

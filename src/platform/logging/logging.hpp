@@ -36,7 +36,7 @@
 
 // Strings, change to localise or whatever
 
-#define STRING_VERSION                  "5.1.0 (Jume 30, 2026)"                 // Version number as a string (we don't need it in any other form)
+#define STRING_VERSION                  "5.1.0 (June 30, 2026)"                 // Version number as a string (we don't need it in any other form)
 #define STRING_SIGN_ON                  "StarfrostLib/SSLS-NG (Starfrost Shared Logging System - Next Gen) " STRING_VERSION " initialised" 
 #define STRING_ANSI_PREFIX              "\x1B["                                 // Some ANSI command prefixes use this
 
@@ -150,7 +150,7 @@ namespace LOGGER_NAMESPACE
 
         /// @brief Allows you to set a post-logging function that will be run after a log message (e.g. for redirecitng the log to UI)
         /// @param postLogFunc Function pointer to be run.
-        void SetPostLogFunction (void (*postLogFunc)()) { this->postLogFunc = postLogFunc; };
+        void SetPostLogFunction (void (*postLogFunc)(const char* str)) { this->postLogFunc = postLogFunc; };
         
         // These are safe to set directly
         bool hideSignOnMessage;
@@ -163,7 +163,7 @@ namespace LOGGER_NAMESPACE
         char appName[LOGGER_MAX_STRING_SHORT] = {0};        // Application name to use for log file
         void (*fatalFunc)();                                // Function to call on a fatal error log.
         void (*lastChanceUnsafeFunc)();                     // "Last chance" for unsafe function. Called right before std::abort so you cand o anything you can
-        void (*postLogFunc)();                              // "Post-logging" function. Run to e..g allow log data to be pushed to a window.
+        void (*postLogFunc)(const char* str);               // "Post-logging" function. Run to e..g allow log data to be pushed to a window.
         bool overrideDefaultFileName;                       // If true, override the default filename
         char fileName[LOGGER_MAX_PATH] = {0};               // If overridedefaultfilename is true, use this filename
         char dateFormat[LOGGER_MAX_STRING_SHORT] = {0};     // Optional date format string to use. Otherwise yyyy-mm-dd hh:mm:ss is useed
@@ -257,7 +257,13 @@ namespace LOGGER_NAMESPACE
                 LogOutToStream(msg, &settings.logStream, newline);
             
             if (settings.postLogFunc)
-                settings.postLogFunc();
+            {
+                settings.postLogFunc(msg);
+
+                // coherent
+                if (newline)
+                    settings.postLogFunc("\n");
+            }
         }
        
     public: 

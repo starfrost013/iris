@@ -15,11 +15,11 @@
 
 namespace Iris
 {
-    void Coherent::Frame()
+    void Coherent::DrawMainWindow()
     {
         ImGui::SetNextWindowPos(ImVec2(
-            (Emulation::GetRenderer()->GetWindowSizeX() / 2) - 800,
-            (Emulation::GetRenderer()->GetWindowSizeY() / 2) - 600), ImGuiCond_FirstUseEver);
+        (Emulation::GetRenderer()->GetWindowSizeX() / 2) - 800,
+        (Emulation::GetRenderer()->GetWindowSizeY() / 2) - 600), ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowSize(ImVec2(800, 600));
 
         if (!ImGui::Begin("Coherent Debugger", &Coherent::active, ImGuiWindowFlags_MenuBar))
@@ -42,13 +42,17 @@ namespace Iris
                 ImGui::EndMenuBar();
             }
 
-            
-            // main window text
-            ImGui::Text("This is the debugger %s", COHERENT_VERSION);
 
+            // main window text
+            ImGui::Text("System Debugger");
             ImGui::End();
         }
-
+    }
+    
+    void Coherent::Frame()
+    {
+        DrawMainWindow();
+        DrawLogWindow();
     }
 
 }

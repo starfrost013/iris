@@ -29,8 +29,9 @@ add_executable(motion
     component/cpu/mc68020_core.cpp
 
     coherent/coherent_core.cpp
-    coherent/coherent_gui.cpp
+    coherent/coherent_gui_main.cpp
     render/sdl3/render_sdl3_core.cpp
     component/rom/prom.cpp
+    coherent/coherent_gui_logging.cpp
 )
 

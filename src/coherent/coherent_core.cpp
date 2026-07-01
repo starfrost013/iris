@@ -27,12 +27,21 @@ namespace Iris
     template<> void CoherentSystem::Register<uint64_t>::TextifyHex(uint64_t value, char* buf) { snprintf(buf, sizeof(buf), "%lx", value); };
 
     //
-    // Coherent clas
+    // Coherent class
     //
-    
+
+    /// @brief a C trampoline. since the logging system is portable across projects which may use various paradigms, its function poitners use the lowest common 
+    /// denominator (ie a function pointer.)
+    /// @param str 
+    void Coherent_CTrampolineForLog(const char* str)
+    {
+        Coherent::AddTextToLogWindowBuffer(str);
+    }
+
     void Coherent::Init()
     {
         Logger::Log(COHERENT_LOG_PREFIX, COHERENT_VERSION " initialised");
+        Logger::settings.SetPostLogFunction(Coherent_CTrampolineForLog);
 
         initialised = true; 
     }
@@ -60,7 +69,7 @@ namespace Iris
     
     void Coherent::Shutdown()
     {
-
+        Logger::settings.SetPostLogFunction(nullptr);
     }
 
     //
@@ -71,5 +80,6 @@ namespace Iris
     {
 
     }
+
 
 }
