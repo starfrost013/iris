@@ -61,7 +61,8 @@ namespace Iris
             copySize--;
         }
 
-        strncpy(logWindowBuf, (logBuffer + offset), copySize - 2);
+        strncpy(logWindowBuf, (logBuffer + offset), copySize);
+        logWindowBuf[copySize] = '\0';
         ImGui::Text(logWindowBuf);
 
         end:
