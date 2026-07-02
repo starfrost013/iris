@@ -22,22 +22,16 @@ namespace Iris
         (Emulation::GetRenderer()->GetWindowSizeY() / 2) - 600), ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowSize(ImVec2(800, 600));
 
-        if (!ImGui::Begin("Coherent Debugger", &Coherent::active, ImGuiWindowFlags_MenuBar))
+        if (!ImGui::Begin(COHERENT_VERSION, &Coherent::active, ImGuiWindowFlags_MenuBar))
             ImGui::End();
         else 
         {
             if (ImGui::BeginMenuBar())
             {
-                if (ImGui::BeginMenu("CPU"))
+                if (ImGui::BeginMenu("Peripherals"))
                 {
-                    ImGui::MenuItem("Start");
-                    ImGui::MenuItem("Stop");
-                    ImGui::MenuItem("Single Step");
                     ImGui::EndMenu();
                 }
-
-                if (ImGui::BeginMenu(COHERENT_VERSION))
-                    ImGui::EndMenu();
 
                 ImGui::EndMenuBar();
             }
@@ -45,6 +39,11 @@ namespace Iris
 
             // main window text
             ImGui::Text("System Debugger");
+
+            ImGui::Button("Start CPU");
+            ImGui::Button("Stop CPU");
+            ImGui::Button("Single Step");
+            ImGui::Button("Clock Speed");
             ImGui::End();
         }
     }

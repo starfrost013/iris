@@ -21,6 +21,8 @@ namespace Iris
         Logger::settings.SetAppName(APP_NAME);
         Logger::settings.SetDestinations((LogDestination)(LogDestination::Stdout | LogDestination::File));
         Logger::settings.SetFatalFunction(fatal);
+        Logger::settings.sendAnsiCodesToFile = false;
+        Logger::settings.postLogMessageIgnoresAnsiCodes = true; //coherent
         Logger::Init();
 
         Logger::Log(APP_NAME " " APP_VERSION);
@@ -46,8 +48,6 @@ namespace Iris
 
         return EXIT_SUCCESS;
     }
-
-
 }
 
 int main(int argc, char** argv)

@@ -118,6 +118,7 @@ namespace Iris
 
         void Start() override;
         void Tick() override;
+        void Shutdown() override; 
 
         /// @brief get the name of this component. immutable const char*.
         const char* GetName() { return "Motorola MC68020 CPU"; };
@@ -132,6 +133,8 @@ namespace Iris
         {
             { 0, { 0b0000'0000'0000'0000, 1, &CPU_MC68020::Op_Test } },
         };
+
+        CoherentSystem* system; 
 
     };
 }

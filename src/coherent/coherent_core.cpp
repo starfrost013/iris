@@ -46,12 +46,12 @@ namespace Iris
         initialised = true; 
     }
 
-    void Coherent::ExecStart()
+    void Coherent::ExecStart(Component* component)
     {
 
     }
 
-    void Coherent::ExecEnd()
+    void Coherent::ExecEnd(Component* component)
     {
 
     }
@@ -69,6 +69,7 @@ namespace Iris
     
     void Coherent::Shutdown()
     {
+        currentSystem->Shutdown();
         Logger::settings.SetPostLogFunction(nullptr);
     }
 

@@ -8,11 +8,12 @@
 
 #pragma once
 #include <Iris.hpp>
+#include <component/component.hpp>
 
 namespace Iris
 {
     #define COHERENT_LOG_PREFIX     "Debugger"
-    #define COHERENT_VERSION        "StarfrostLib/Coherent 0.1 - June 20, 2026"
+    #define COHERENT_VERSION        "Coherent Debugger - Version 0.1, July 2, 2026"
     #define LOGBUF_MAX_SIZE         16384
     #define LOGBUF_PURGE_SIZE       2048
 
@@ -37,6 +38,7 @@ namespace Iris
             commands.push_back(command);
         }
 
+        virtual void AddUI() { };
     private:
         std::vector<CoherentCommand*> commands;
     };
@@ -47,15 +49,26 @@ namespace Iris
 
     public: 
 
-        // We can allow the user to write custom implementations of the REgister class with this.
-        template <typename T>
-        class Register
+        // We can allow the user to write custom implementations of the Register class with this.
+        // Member templates are not allowed for variables, so provide a common base and make the templated register inherit from it. 
+        // Registers are stored type-erased in the 'registers' map below.
+        class RegisterBase
         {
-            T value; 
+        public:
+            virtual ~RegisterBase() = default;
+        };
 
-            T Read() { return value; };
-            void Write(T newValue) { value = newValue; };
+        template <typename T>
+        class Register : public RegisterBase
+        {
+        public:
+            T* value; 
 
+            Register(T* value)
+            {
+                this->value = value;
+            }
+            
             void TextifyDecimal(T value, char* buf);
             void TextifyHex(T value, char* buf);            
         };
@@ -79,11 +92,23 @@ namespace Iris
         };
 
         template <typename T>
-        void AddRegister(Register<T> reg);
+        void AddRegister(Register<T>* reg, const char* name)
+        {
+            Logger::Log(std::format("CoherentSystem::AddRegister - Adding register with name {}", name).c_str(), LogChannels::Debug);
+            registers[name] = reg; 
+        }
 
+        void Shutdown()
+        {
+            for (auto value : registers)
+                delete value.second;
+
+            registers.clear();
+        }
 
     private: 
-
+        // might be slow.
+        std::unordered_map<const char*, RegisterBase*> registers;
     };
 
     class Coherent
@@ -95,11 +120,11 @@ namespace Iris
         /// @brief Enters the Coherent system on command.
         static void Enter();
 
-        /// @brief On the start of an instruction, call this method if enabled.
-        static void ExecStart();
+        /// @brief On the start of a tick for a certain component, call this method if enabled.
+        static void ExecStart(Component* component);
 
         /// @brief On the end of an instruction, call this method.
-        static void ExecEnd();
+        static void ExecEnd(Component* component);
 
         /// @brief Render a frame of the debugger (see coherent_gui.cpp)
         static void Frame();

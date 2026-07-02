@@ -12,6 +12,7 @@
 // 5.0.0            May 21, 2026        Initial release of SSLS C++ (custom channels, prefixes, channel mask, last-chance unsafe method etc)
 // 5.0.1            June 25, 2026       Message prefix take on the same colour as the channel of a message
 // 5.1.0            June 30, 2026       Add post-log message functions, which run after every call to LogOut, as well as Logger::SetPostLogFunction. Used e.g. for redirecting to UI
+// 5.2.0            July 2, 2026        Allow the ability to suppress ANSI escape codes in post-log messages. Allow the ability to not send ANSI escape codes to the file destination.
 
 #pragma once
 
@@ -36,7 +37,7 @@
 
 // Strings, change to localise or whatever
 
-#define STRING_VERSION                  "5.1.0 (June 30, 2026)"                 // Version number as a string (we don't need it in any other form)
+#define STRING_VERSION                  "5.2.0 (July 2, 2026)"                  // Version number as a string (we don't need it in any other form)
 #define STRING_SIGN_ON                  "StarfrostLib/SSLS-NG (Starfrost Shared Logging System - Next Gen) " STRING_VERSION " initialised" 
 #define STRING_ANSI_PREFIX              "\x1B["                                 // Some ANSI command prefixes use this
 
@@ -153,13 +154,20 @@ namespace LOGGER_NAMESPACE
         void SetPostLogFunction (void (*postLogFunc)(const char* str)) { this->postLogFunc = postLogFunc; };
         
         // These are safe to set directly
+
+        /// @brief If true, the sign-on message will be hidden.
         bool hideSignOnMessage;
 
         /// @brief If the dates should be hidden or not.    
-        bool hideDates;                                     
+        bool hideDates;                             
+        
+        /// @brief Set to true if you want to send ansi codes to the file stream. The default value is false
+        bool sendAnsiCodesToFile;
+
+        /// @brief Set to true if you want ANSI escape codes to be filtered out of post-log message function calls. Works because they are their own logout call
+        bool postLogMessageIgnoresAnsiCodes;
 
     private: 
-
         char appName[LOGGER_MAX_STRING_SHORT] = {0};        // Application name to use for log file
         void (*fatalFunc)();                                // Function to call on a fatal error log.
         void (*lastChanceUnsafeFunc)();                     // "Last chance" for unsafe function. Called right before std::abort so you cand o anything you can
@@ -253,12 +261,33 @@ namespace LOGGER_NAMESPACE
             if (settings.destinations & LogDestination::Stderr)
                 LogOutToStream(msg, &std::cerr, newline);
 
+            // sometimes we may not want to actually send the ansi codes out so check for them adn suppress them in certian cases
+            // we do multiple checks to reduce strstr calls as much as possible
+            
+            bool send = true;
+
             if (settings.destinations & LogDestination::File)
-                LogOutToStream(msg, &settings.logStream, newline);
+            {
+                send = true;
+
+                if (!settings.sendAnsiCodesToFile
+                && (strstr(msg, STRING_ANSI_PREFIX)))
+                    send = false;
+                    
+                if (send)
+                    LogOutToStream(msg, &settings.logStream, newline);
+            }
             
             if (settings.postLogFunc)
             {
-                settings.postLogFunc(msg);
+                send = true; 
+
+                if (settings.postLogMessageIgnoresAnsiCodes
+                && (strstr(msg, STRING_ANSI_PREFIX)))
+                    send = false;
+
+                if (send)
+                    settings.postLogFunc(msg);
 
                 // coherent
                 if (newline)

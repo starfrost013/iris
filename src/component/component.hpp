@@ -17,6 +17,9 @@ namespace Iris
         /// @brief Allows an artificial delay to be implemented for less precise timing.
         uint64_t delayNs;
 
+        /// @brief Allows the component to be debuggable. ?test?
+        bool debuggable; 
+
         virtual void Start() { };
         virtual void Tick() { };        // ticks at clock speed
         virtual void Shutdown() { };

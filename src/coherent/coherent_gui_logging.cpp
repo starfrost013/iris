@@ -65,6 +65,8 @@ namespace Iris
         logWindowBuf[copySize] = '\0';
         ImGui::Text(logWindowBuf);
 
+        ImGui::SetScrollHereY(1.0f);
+        
         end:
             ImGui::End();
 
