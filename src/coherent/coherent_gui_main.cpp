@@ -47,8 +47,8 @@ namespace Iris
                 goto end;
             }
             else 
-                ImGui::Text("System Debugger");
-
+                ImGui::Text("Debug Controls: ");
+            ImGui::SameLine();
             ImGui::Button("Start CPU");
             ImGui::SameLine();
             ImGui::Button("Stop CPU");
@@ -67,7 +67,7 @@ namespace Iris
                 ImGui::SameLine();
 
                 auto value = aRegister.second->Read();
-                
+
                 // evil
                 if (value.type() == typeid(uint8_t)
                 || value.type() == typeid(int8_t))
@@ -88,7 +88,7 @@ namespace Iris
                     ImGui::Text(": %08x", formattedValue);
                 }
 
-                if ((i % 4) != 0)
+                if ((i % 4) != 3)
                     ImGui::SameLine();
                 
                 i++;

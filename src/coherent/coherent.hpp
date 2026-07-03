@@ -71,7 +71,10 @@ namespace Iris
             /// @brief This DEREFERENCES the value of the register
             /// @return the register value
             std::any Read() override { return *value; };
-            void Write(std::any& value) override { this->value = std::any_cast<T*>(value); };
+
+            /// @brief Write the register
+            /// @param value The register value to write - *MUST* Be a pointer. It gets converted to a pointer automatically so make sure it isn't automatically destroyed
+            void Write(std::any& value) override { this->value = std::any_cast<T>(&value); };
                        
             void TextifyDecimal(T value, char* buf);
             void TextifyHex(T value, char* buf);            
