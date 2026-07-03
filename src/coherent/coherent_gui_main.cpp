@@ -22,8 +22,10 @@ namespace Iris
         (Emulation::GetRenderer()->GetWindowSizeY() / 2) - 600), ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowSize(ImVec2(800, 600));
 
+        int i = 0;
+
         if (!ImGui::Begin(COHERENT_VERSION, &Coherent::active, ImGuiWindowFlags_MenuBar))
-            ImGui::End();
+            goto end;
         else 
         {
             if (ImGui::BeginMenuBar())
@@ -37,13 +39,62 @@ namespace Iris
             }
 
 
+
             // main window text
-            ImGui::Text("System Debugger");
+            if (Coherent::currentSystem == nullptr)
+            {
+                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 0.0f), "***** Error - No System Active *****");
+                goto end;
+            }
+            else 
+                ImGui::Text("System Debugger");
 
             ImGui::Button("Start CPU");
+            ImGui::SameLine();
             ImGui::Button("Stop CPU");
+            ImGui::SameLine();
             ImGui::Button("Single Step");
+            ImGui::SameLine();
             ImGui::Button("Clock Speed");
+            ImGui::SameLine();
+
+            ImGui::NewLine();
+
+            for (auto aRegister : Coherent::currentSystem->registers)
+            {
+
+                ImGui::Text(aRegister.first);
+                ImGui::SameLine();
+
+                auto value = aRegister.second->Read();
+                
+                // evil
+                if (value.type() == typeid(uint8_t)
+                || value.type() == typeid(int8_t))
+                {
+                    uint8_t formattedValue = std::any_cast<uint8_t>(value);
+                    ImGui::Text(": %02x", formattedValue);
+                }
+                else if (value.type() == typeid(uint16_t)
+                || value.type() == typeid(int16_t))
+                {
+                    uint16_t formattedValue = std::any_cast<uint16_t>(value);
+                    ImGui::Text(": %04x", formattedValue);
+                }
+                else if (value.type() == typeid(uint32_t)
+                || value.type() == typeid(int32_t))
+                {
+                    uint32_t formattedValue = std::any_cast<uint32_t>(value);
+                    ImGui::Text(": %08x", formattedValue);
+                }
+
+                if ((i % 4) != 0)
+                    ImGui::SameLine();
+                
+                i++;
+            }
+
+        end:
             ImGui::End();
         }
     }

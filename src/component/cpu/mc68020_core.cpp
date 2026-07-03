@@ -37,6 +37,7 @@ namespace Iris
         system->AddRegister(new CoherentSystem::Register<uint32_t>(&this->caar), "caar");
         system->AddRegister(new CoherentSystem::Register<uint32_t>(&this->cahr), "cahr");
 
+        Coherent::SetSystem(system);
         // convert to nanoseconds
         pc = 0x30000000; // temp
         

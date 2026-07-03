@@ -10,6 +10,7 @@
 #pragma once
 
 // Standard includes
+#include <any>
 #include <cctype>
 #include <chrono>
 #include <concepts>

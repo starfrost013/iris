@@ -55,22 +55,29 @@ namespace Iris
         class RegisterBase
         {
         public:
-            virtual ~RegisterBase() = default;
+            virtual std::any Read() = 0; 
+            virtual void Write(std::any& value) = 0;
         };
 
         template <typename T>
         class Register : public RegisterBase
         {
         public:
-            T* value; 
-
             Register(T* value)
             {
                 this->value = value;
             }
             
+            /// @brief This DEREFERENCES the value of the register
+            /// @return the register value
+            std::any Read() override { return *value; };
+            void Write(std::any& value) override { this->value = std::any_cast<T*>(value); };
+                       
             void TextifyDecimal(T value, char* buf);
             void TextifyHex(T value, char* buf);            
+        private: 
+            T* value; 
+
         };
 
         /// @brief Disassemble the next instruction. . It's up to you to figure out the buffer size.
@@ -106,9 +113,10 @@ namespace Iris
             registers.clear();
         }
 
-    private: 
-        // might be slow.
+        /// @brief might be slow. this really needs to have a custom access only iterators.
         std::unordered_map<const char*, RegisterBase*> registers;
+    private: 
+
     };
 
     class Coherent
