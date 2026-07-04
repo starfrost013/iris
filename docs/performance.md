@@ -16,8 +16,8 @@ IRIS 3120 (juniper, not sure if 8 or 10mhz generation):
 
 (?20,000 wireframes per second?)
 
-5,000 flat shaded, non-z-buffered polygons per second (unknown size)
-16,000 flat shaded, non-z-buffered polygons per second (400 pixel)
+NASA research: 5,000 flat shaded, non-z-buffered polygons per second (unknown size)
+SGI claim: 16,000 flat shaded, non-z-buffered polygons per second (400 pixel)
 1,000 gouraud shaded, z-buffered polygons per second
 
 the zbuffer is implemented on the GAs, and i think gouraud is being done on the 2903 FBCs, this means that one of those is a 5-cycle thing, OUCH!

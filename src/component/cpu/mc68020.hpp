@@ -1,11 +1,12 @@
 #pragma once
 #include <Iris.hpp>
 #include <component/component.hpp>
+#include <component/cpu/cpu.hpp>
 #include <base/emulation.hpp>
 
 namespace Iris
 {
-    class CPU_MC68020 : public Component
+    class CPU_MC68020 : public ComponentCPU
     {
         #define MC68020_CACHE_SIZE      256
         #define MC68020_NUM_OPCODES     256
@@ -114,7 +115,7 @@ namespace Iris
         // METHODS
         // 
 
-        int clockSpeed = 16777000;  // 16.7MHz (MC68020-BC16)
+        uint32_t GetClockSpeed() override { return 16777000; }; 
 
         void Start() override;
         void Tick() override;

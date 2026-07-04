@@ -40,15 +40,16 @@ namespace Iris
         } 
 
         template <std::derived_from<Component> T>
-        T FindComponentByType()
+        T* FindComponentByType()
         {
             for (Component* component : components)
             {
-                if (typeid(component) == typeid(T))
-                    return (T)component;
+                T* derived = dynamic_cast<T*>(component);
+                if (derived)
+                    return derived;
             }
 
-            return nullptr; 
+            return nullptr;
         }
 
         void Start()

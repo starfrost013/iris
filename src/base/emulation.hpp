@@ -32,7 +32,7 @@ namespace Iris
         static void SetRunning(bool value) { running = value; };
 
         /// @brief get the name of this component. immutable const char*.
-        virtual const char* GetName() { return "Motorola MC68020 CPU"; };
+        virtual const char* GetName() { return "***** Name this component *****"; };
 
         static Renderer* GetRenderer() { return renderer; }; 
         

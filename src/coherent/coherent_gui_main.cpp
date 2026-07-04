@@ -12,6 +12,7 @@
 #include <imgui.h>
 #include <base/emulation.hpp>
 #include <coherent/coherent.hpp>
+#include <component/cpu/cpu.hpp>
 
 namespace Iris
 {
@@ -48,6 +49,7 @@ namespace Iris
             }
             else 
                 ImGui::Text("Debug Controls: ");
+
             ImGui::SameLine();
             ImGui::Button("Start CPU");
             ImGui::SameLine();
@@ -55,7 +57,7 @@ namespace Iris
             ImGui::SameLine();
             ImGui::Button("Single Step");
             ImGui::SameLine();
-            ImGui::Button("Clock Speed");
+            ImGui::Text("Clock Speed : %.2f MHz", ((float)Emulation::GetMachine().FindComponentByType<ComponentCPU>()->GetClockSpeed()) / 1000000.0);
             ImGui::SameLine();
 
             ImGui::NewLine();
