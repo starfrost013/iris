@@ -25,7 +25,7 @@ namespace Iris
 
         int i = 0;
 
-        if (!ImGui::Begin(COHERENT_VERSION, &Coherent::active, ImGuiWindowFlags_MenuBar))
+        if (!ImGui::Begin(COHERENT_VERSION, &active, ImGuiWindowFlags_MenuBar))
             goto end;
         else 
         {
@@ -38,8 +38,6 @@ namespace Iris
 
                 ImGui::EndMenuBar();
             }
-
-
 
             // main window text
             if (Coherent::currentSystem == nullptr)
@@ -62,9 +60,8 @@ namespace Iris
 
             ImGui::NewLine();
 
-            for (auto aRegister : Coherent::currentSystem->registers)
+            for (auto aRegister : currentSystem->registers)
             {
-
                 ImGui::Text(aRegister.first);
                 ImGui::SameLine();
 

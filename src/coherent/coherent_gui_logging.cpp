@@ -20,16 +20,16 @@ namespace Iris
         size_t copySize = LOGBUF_PURGE_SIZE;
         bool newlineFound = true;
         
-        if (!Coherent::active)
+        if (!active)
             goto postend; // don't even bother
 
         // don't bother doing anything if there is no buffer
-        if (strlen(Coherent::logBuffer) == 0)
+        if (strlen(logBuffer) == 0)
             goto postend;
 
         ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
 
-        if (!ImGui::Begin("Emulator Log", &Coherent::active))
+        if (!ImGui::Begin("Emulator Log", &active))
             goto end;
 
         // this code is a test

@@ -46,5 +46,7 @@ namespace Iris
 
         /// @brief TEMP
         inline static Renderer* renderer;
+
+        inline static std::thread* emuThread;
     };
 }

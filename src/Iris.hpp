@@ -22,6 +22,7 @@
 #include <fstream>
 #include <vector>
 #include <unordered_map>
+#include <thread>
 
 // should be included everywhere as it's standalone
 #include <platform/logging/logging.hpp>

@@ -38,7 +38,8 @@ namespace Iris
             Emulation::Frame();
 
             // Each component ticks at its own speed. So we implement the tickrate in the Emulation class.
-            Emulation::Tick();
+            // Emulation::Tick runs in its own thread. The renderer runs in a separate thread
+            //Emulation::Tick();
                 
         }   
 

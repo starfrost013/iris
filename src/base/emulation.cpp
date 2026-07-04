@@ -24,7 +24,11 @@ namespace Iris
         // enter the coherent debugger
         Coherent::Enter();
 
+        Logger::Log("Starting emulation: Starting emulation thread...", LogChannels::Debug);
         running = true; 
+
+        // start the thread
+        emuThread = new std::thread(Emulation::Tick);
     }   
     
     void Emulation::Frame()
@@ -39,18 +43,19 @@ namespace Iris
     
     void Emulation::Tick()
     {
-        machine.Tick();
-        
-        if (!running)
-            Shutdown();
+        while (running)
+            machine.Tick();
+
     }
 
     void Emulation::Shutdown()
     {
+        if (emuThread->joinable())
+            emuThread->join();
+
         renderer->Shutdown();
         Coherent::Shutdown();
         machine.Shutdown();
 
-        running = false; 
     }
 }
