@@ -190,7 +190,7 @@ namespace LOGGER_NAMESPACE
     private: 
 
         /// @brief Maps console colours to ANSI escape codes for foreground colours
-        static const std::unordered_map<ConsoleColor, const char*> colorToAnsiTableFg =
+        inline static std::unordered_map<ConsoleColor, const char*> colorToAnsiTableFg =
         {
             { Black,    STRING_ANSI_PREFIX "30m" },
             { Red,      STRING_ANSI_PREFIX "31m" },
