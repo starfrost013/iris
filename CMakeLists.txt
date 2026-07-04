@@ -1,16 +1,16 @@
-# IRIS - A 68000 SGI Emulator!
+# Motion - An SGI Emulator!
 # Copyright (C) 2026 starfrost
 
 cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/${CMAKE_BUILD_TYPE})
 
 # mingw-w64 doesn't support static linking against the UCRT
 
 # Install path
 set(ROM_SRC_DIR "${CMAKE_SOURCE_DIR}/roms")
-set(ROM_DST_DIR "${CMAKE_BINARY_DIR}/output/roms")
+set(ROM_DST_DIR "${CMAKE_BINARY_DIR}/output/${CMAKE_BUILD_TYPE}/roms")
 
 project(motion)
 
