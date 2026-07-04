@@ -10,7 +10,6 @@ include_directories(${CMAKE_SOURCE_DIR}/external/imgui)
 add_executable(motion
 
     # Dear Imgui
-    ../external/imgui/imgui_demo.cpp
     ../external/imgui/imgui_draw.cpp
     ../external/imgui/imgui_tables.cpp
     ../external/imgui/imgui_widgets.cpp
