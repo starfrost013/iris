@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Iris.hpp>
+#include <coherent/coherent.hpp>
 #include <component/addrspace.hpp>
 #include <component/component.hpp>
 
@@ -69,7 +70,6 @@ namespace Iris
                 {
                     // maybe microseconds would be better ???
                     auto ns = Chrono_GetTicksNS(Chrono_GetTime());
-                    
                     bool run = false; 
 
                     if (component->delayNs != 0)
@@ -89,14 +89,28 @@ namespace Iris
                     if (run)
                     {
                         component->lastTickNs = ns;
-                        component->Tick();
+                        goto run;
                     }
                     
                 }
-                else // just run
-                    component->Tick();
-
+                else
+                    goto run;
+                    
+            run:
+                component->Tick();
             }
+
+        }
+
+        void Reset()
+        {
+            Logger::Log("Debugger-initiated reset not implemented yet sorry :/");
+        }
+
+        void SingleStep()
+        {
+            // run tick once
+            Tick();
         }
 
         void Shutdown()

@@ -41,11 +41,24 @@ namespace Iris
         renderer->FramePostRender();
     }
     
+    void Emulation::Reset()
+    {
+        machine.Reset();
+    }
+
+    void Emulation::SingleStep()
+    {
+        if (paused)
+            machine.SingleStep();
+    }
+
     void Emulation::Tick()
     {
         while (running)
-            machine.Tick();
-
+        {
+            if (!paused)
+                machine.Tick();
+        }
     }
 
     void Emulation::Shutdown()

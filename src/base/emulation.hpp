@@ -23,6 +23,8 @@ namespace Iris
         static void Start();
         static void Frame();
         static void Tick();             // run at the tick for things that need to be regularly updated
+        static void Reset();
+        static void SingleStep();
         static void Shutdown();
 
         // Called by components to e.g. get the address space
@@ -34,10 +36,19 @@ namespace Iris
         /// @brief get the name of this component. immutable const char*.
         virtual const char* GetName() { return "***** Name this component *****"; };
 
+        // getters for private    
         static Renderer* GetRenderer() { return renderer; }; 
-        
+        static bool GetPaused() { return paused; };
+
+        // setters for private fields
+        static void SetPaused(bool paused) { Emulation::paused = paused; };
+
     private: 
+        /// @brief determines if the emulator is running
         inline static bool running = false;
+
+        /// @brief determines if the emulator is paused
+        inline static bool paused = false; 
         
         inline static FileStream config; 
 

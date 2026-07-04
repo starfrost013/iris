@@ -8,12 +8,13 @@
 
 #pragma once
 #include <Iris.hpp>
+#include <base/emulation.hpp>
 #include <component/component.hpp>
 
 namespace Iris
 {
     #define COHERENT_LOG_PREFIX     "Debugger"
-    #define COHERENT_VERSION        "Coherent Debugger - Version 0.1, July 2, 2026"
+    #define COHERENT_VERSION        "Coherent Debugging Engine v0.2 (July 2026)"
     #define LOGBUF_MAX_SIZE         16384
     #define LOGBUF_PURGE_SIZE       2048
 
@@ -92,14 +93,17 @@ namespace Iris
         /// @return note: If you provide an unaligned instruction, it will just stop before the end. It's up to you to figure out the buffer size.
         virtual char* DisasmRange(size_t start, size_t end) { return nullptr; };
 
-        /// @brief the run state of the system
+        /// @brief enumerates the run states of the system
         enum RunState
         {
             Running = 0,
             Paused = 1,
-            Stopped = 2,
-            Reset = 3,
+            Reset = 2,
+            SingleStep = 3,
         };
+
+        /// @brief the run state of the system
+        inline static RunState runState;
 
         template <typename T>
         void AddRegister(Register<T>* reg, const char* name)
@@ -151,7 +155,8 @@ namespace Iris
         static void RegisterExtension(CoherentExtension* extension);
 
         // Getters for private members
-        bool GetInitialised() { return initialised; };
+        static bool GetInitialised() { return initialised; };
+        static CoherentSystem* GetSystem() { return currentSystem; };
 
         // Setters for private members
         static void SetSystem(CoherentSystem* system) { currentSystem = system; }; 

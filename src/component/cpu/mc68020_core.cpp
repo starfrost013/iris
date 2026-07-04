@@ -3,7 +3,6 @@
 
 namespace Iris
 {
-    #define STRING_REGNAME_SIZE     8
     void CPU_MC68020::Start()
     {
         Logger::Log("*yawn* I'm a Motorola 68020!");
@@ -49,8 +48,6 @@ namespace Iris
 
         uint16_t next = PCRead16();
         auto iter = instructions.find(next);
-
-        //Logger::Log(std::format("This opcode at 0x{:x} is 0x{:x}", pc, next).c_str(), LogChannels::Debug);
 
         if (iter != instructions.end())
         {

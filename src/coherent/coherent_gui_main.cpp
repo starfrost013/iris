@@ -49,16 +49,32 @@ namespace Iris
                 ImGui::Text("Debug Controls: ");
 
             ImGui::SameLine();
-            ImGui::Button("Start CPU");
-            ImGui::SameLine();
-            ImGui::Button("Stop CPU");
-            ImGui::SameLine();
-            ImGui::Button("Single Step");
-            ImGui::SameLine();
-            ImGui::Text("Clock Speed : %.2f MHz", ((float)Emulation::GetMachine().FindComponentByType<ComponentCPU>()->GetClockSpeed()) / 1000000.0);
-            ImGui::SameLine();
 
-            ImGui::NewLine();
+            if (currentSystem->runState == CoherentSystem::RunState::Running)
+            {
+                if (ImGui::Button("Pause CPU"))
+                    currentSystem->runState = CoherentSystem::RunState::Paused;
+            }
+            else
+            {
+                if (ImGui::Button("Start CPU"))
+                    currentSystem->runState = CoherentSystem::RunState::Running; 
+            }
+
+            ImGui::SameLine();
+            if (ImGui::Button("Reset"))
+                currentSystem->runState = CoherentSystem::RunState::Reset;
+
+            if (currentSystem->runState == CoherentSystem::RunState::Paused)
+            {
+                ImGui::SameLine();
+                
+                if (ImGui::Button("Step"))
+                    currentSystem->runState = CoherentSystem::RunState::SingleStep;
+            }
+
+            
+            ImGui::Text("Clock Speed : %.2f MHz", ((float)Emulation::GetMachine().FindComponentByType<ComponentCPU>()->GetClockSpeed()) / 1000000.0);
 
             for (auto aRegister : currentSystem->registers)
             {
@@ -100,8 +116,33 @@ namespace Iris
     
     void Coherent::Frame()
     {
+        // basic state machine
+        // move to execstart?
+        if (currentSystem)
+        {
+            switch (currentSystem->runState)
+            {
+                case CoherentSystem::RunState::Reset:
+                    Emulation::Reset();
+                    currentSystem->runState = CoherentSystem::RunState::Running;
+                    break;
+                case CoherentSystem::RunState::SingleStep:
+                    Emulation::SingleStep();
+                    currentSystem->runState = CoherentSystem::RunState::Paused;
+                    break;
+                case CoherentSystem::RunState::Paused:
+                    if (!Emulation::GetPaused())
+                        Emulation::SetPaused(true);
+
+                    break;
+                case CoherentSystem::RunState::Running:
+                    if (Emulation::GetPaused())
+                        Emulation::SetPaused(false);
+            }
+        }
+
+
         DrawMainWindow();
         DrawLogWindow();
     }
-
 }

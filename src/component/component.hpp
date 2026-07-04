@@ -31,6 +31,11 @@ namespace Iris
         virtual void OnWrite16(size_t addr, uint16_t value) { };
         virtual void OnWrite32(size_t addr, uint32_t value) { };
 
+        /// @brief True if this component is a CPU.
+        /// @return A boolean indicating if this is a CPU. Note: Type equality checks could work for this but I think this is faster than RTTI, since it runs every 
+        /// tick
+        virtual bool IsCPU() { return false; };
+
         /// @brief get the name of this component. immutable const char*.
         virtual const char* GetName() { return "Name this component by overriding Component::GetName!"; };
     };
