@@ -183,6 +183,5 @@ namespace Iris
         static void DrawLogWindow();
 
         inline static char logBuffer[LOGBUF_MAX_SIZE] = {0};
-        inline static bool logWindowTextIsStale = false; // don't bother recopying if it's not stale!
     };
 }

@@ -83,7 +83,6 @@ namespace Iris
         // chop off a certain amount at a time. to reduce the n umber of times we do this copy.
         if ((LOGBUF_MAX_SIZE - bufLength) < strLength)
         {
-            logWindowTextIsStale = true;
             strncpy(logBuffer, (logBuffer + (sizeof(char) * LOGBUF_PURGE_SIZE)), (bufLength - LOGBUF_PURGE_SIZE));
             bufLength -= LOGBUF_PURGE_SIZE; 
             logBuffer[bufLength] = '\0';

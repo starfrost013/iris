@@ -13,7 +13,7 @@ namespace Iris
 
         #define MC68020_NUM_LINES       16
         #define MC68020_NUM_DATA_REGS   8
-        #define MC68020_NUM_ADDR_REGS   7   // 8 is the sp
+        #define MC68020_NUM_ADDR_REGS   8   // A7 is the sp
 
         // Defines the source of an instruction while executing it
         enum InstructionSource
@@ -128,6 +128,8 @@ namespace Iris
 
         uint32_t cache[MC68020_CACHE_SIZE >> 2];
 
+        uint32_t DecodeEAIndexed(uint16_t seaow);
+        uint32_t DecodeEA(uint16_t seaow);
         void Op_Test() { };
 
         inline static const std::unordered_map<uint16_t, Instruction> instructions =
