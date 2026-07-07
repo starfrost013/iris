@@ -43,20 +43,10 @@ namespace Iris
         
     }
 
+    //mode-110
     uint32_t CPU_MC68020::DecodeEAIndexed(uint16_t seaow)
     {
-        uint16_t extension = AddrSpace::ReadU16(pc + 2);
-
-        // on = MC68020 format
-        // off = MC68000/68008/68010 format ("brief")
-        if (extension & 0x100)
-        {
-            //old format
-        }
-        else
-        {
-            
-        }
+        
     }
 
     /// @brief Decodes the addressing format for most instructins. 68k is very orthogonal.
@@ -64,47 +54,7 @@ namespace Iris
     /// source: https://dn721603.ca.archive.org/0/items/bitsavers_motorola68oprocessorUsersManual1984_21835306/MC68020_32-Bit_Microprocessor_Users_Manual_1984.pdf
     uint32_t CPU_MC68020::DecodeEA(uint16_t seaow)
     {
-        auto reg = seaow        & 0b00000111; // 0x07
-        auto mode = seaow       & 0b00011100; // 0x38
-        auto size = seaow       & 0b11000000; // 0xB0
 
-        auto realSize = (size) << 1;
-        
-        if (realSize == 0) // byte
-            realSize = 1;
-
-        uint32_t val;
-
-        switch (reg)
-        {
-            // These ones are trivial
-            case 0b000:
-                val = dataRegs[reg];
-                break; 
-            case 0b001: 
-                val = addrRegs[reg];
-                break; 
-            case 0b010:
-                val = AddrSpace::ReadU32(addrRegs[reg]);
-                break; 
-            case 0b011:
-                val = AddrSpace::ReadU32(addrRegs[reg]);
-                addrRegs[reg] += realSize;
-                break; 
-            case 0b100:
-                addrRegs[reg] -= realSize;
-                val = AddrSpace::ReadU32(addrRegs[reg]);
-                break; 
-            case 0b101:
-                val = AddrSpace::ReadU32((addrRegs[reg] + PCRead16()));
-                break; 
-            // These ones aren't
-            case 0b110:
-                val = DecodeEAIndexed(seaow);
-                break;
-
-        }
-        
     }
 
     void CPU_MC68020::Tick()
