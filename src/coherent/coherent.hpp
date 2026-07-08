@@ -85,14 +85,15 @@ namespace Iris
 
         };
 
-        /// @brief Disassemble the next instruction. . It's up to you to figure out the buffer size.
-        virtual char* DisasmNext() { return nullptr; };
-        
         /// @brief Disassemble a range of instructions.
         /// @param start The instrruction to disassemble.
         /// @param end The instruction to stop disassembling at.
         /// @return note: If you provide an unaligned instruction, it will just stop before the end. It's up to you to figure out the buffer size.
-        virtual char* DisasmRange(size_t start, size_t end) { return nullptr; };
+        virtual char* DisasmInstruction(size_t start) { return nullptr; };
+
+        /// @brief Get the Program counter
+        /// @return The program counter of the current system.
+        virtual size_t GetPC() { return 0; };
 
         /// @brief enumerates the run states of the system
         enum RunState
@@ -104,7 +105,10 @@ namespace Iris
         };
 
 
-
+        /// @brief Add a register to this system
+        /// @tparam T The type of the register to add.
+        /// @param reg The Register<T> object to ad.
+        /// @param name The friendly name of the register.
         template <typename T>
         void AddRegister(Register<T>* reg, const char* name)
         {
@@ -123,12 +127,21 @@ namespace Iris
         /// @brief might be slow. this really needs to have a custom access only iterators.
         std::unordered_map<const char*, RegisterBase*> registers;
 
+        /// getters for private fields
+        size_t GetNextInstructionSize() { return nextInstructionSize; };
+        /// @brief get the run state of the system
         CoherentSystem::RunState GetRunState();
+
+        /// setters for private fields
+
+        /// @brief set the run state of the system
         void SetRunState(CoherentSystem::RunState runState);
 
-    private: 
+    protected: 
         /// @brief the run state of the system
         inline static RunState runState;
+
+        inline static size_t nextInstructionSize;
     };
 
     class Coherent

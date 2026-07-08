@@ -23,6 +23,7 @@ namespace Iris
         ImGui::SetNextWindowSize(ImVec2(800, 600));
 
         int i = 0;
+        int pcOffset = 0;
 
         if (!ImGui::Begin(COHERENT_VERSION, &active, ImGuiWindowFlags_MenuBar))
             goto end;
@@ -102,12 +103,29 @@ namespace Iris
                     ImGui::Text(": %08x", formattedValue);
                 }
 
-                if ((i % 4) != 3)
+                if ((i % 5) != 4)
                     ImGui::SameLine();
                 
                 i++;
             }
 
+            ImGui::NewLine();
+
+            // todo: MUST put in a buffer...
+            for (i = 0; i < 30; i++)
+            {
+                if (i == 0)
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.3f, 1.0f, 1.0f));
+
+                auto addr = currentSystem->GetPC() + pcOffset;
+
+                ImGui::Text("0x%x:    %s", addr, currentSystem->DisasmInstruction(addr));
+
+                if (i == 0)
+                    ImGui::PopStyleColor();
+
+                pcOffset += currentSystem->GetNextInstructionSize();
+            }
         end:
             ImGui::End();
         }

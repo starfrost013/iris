@@ -3,13 +3,13 @@
 
 namespace Iris
 {
-    void CPU_MC68020::Start()
+    void MC68020::Start()
     {
         Logger::Log("*yawn* I'm a Motorola 68020!");
 
         moiraCpu.setModel(Iris::Lisburn::Model::M68020);
 
-        system = new CoherentSystem();
+        system = new MC68020DebuggerSystem(&moiraCpu);
         system->AddRegister(new CoherentSystem::Register<uint32_t>(&this->moiraCpu.reg.d[0]), "d0");
         system->AddRegister(new CoherentSystem::Register<uint32_t>(&this->moiraCpu.reg.d[1]), "d1");
         system->AddRegister(new CoherentSystem::Register<uint32_t>(&this->moiraCpu.reg.d[2]), "d2");
@@ -47,12 +47,12 @@ namespace Iris
         moiraCpu.reset();
     }
 
-    void CPU_MC68020::Tick()
+    void MC68020::Tick()
     {
         moiraCpu.execute();
     }
 
-    void CPU_MC68020::Shutdown()
+    void MC68020::Shutdown()
     {
         delete system;
         Coherent::SetSystem(nullptr);

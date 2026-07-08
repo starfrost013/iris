@@ -20,7 +20,8 @@ namespace Iris
 
         // big endian (temp)
         ram[0] = 0x33; // initial sp
-        ram[4] = 0x30; // initial pc
+        ram[4] = 0x30; // initial pc=0x30000400 (otherwise you start executing the vector base)
+        ram[6] = 0x04;
     }
 
     uint8_t Memory::OnRead8(size_t addr)

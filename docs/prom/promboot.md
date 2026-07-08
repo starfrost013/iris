@@ -55,10 +55,17 @@ Init phase 0 ("initdone"):
 14. Clear "private" part of 2 KB "Boot RAM" (as it's static RAM)
 15. Increment initialisation level
 16. Remove previous init call from the stack (what?)
-16. Call confidence tests
+17. Set Debug LEDs to 1.
+18. Call confidence tests
 
-Init phase 1 ("confid"):
+Init phase 1 ("confid"): - not quite sure how these ever get called. but pre
 
 17. Test getting the values of the SR, VBR, CACR, CAAR, SFC, DFC registers. Test setting the values of VBR, CACR, CAAR, SFC, DFC registers (otherwise we'd leave SR mode!). 
 18. Test memory word alignment.
 19. Zero memory.
+20. Test interrupt levels on 68020.
+
+Init phase 2 (after config)
+21. Turn on Cache (CACR->1)
+22. Allocate PROM BSS segment.
+23. Turn on RAM parity.

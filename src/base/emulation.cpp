@@ -18,7 +18,7 @@ namespace Iris
         Logger::Log("Starting emulation...");
            
         machine.AddComponent<Memory>();
-        machine.AddComponent<CPU_MC68020>();
+        machine.AddComponent<MC68020>();
         machine.AddComponent<PROM>();
         machine.AddComponent<PROM_SRAM>();
         machine.Start();

@@ -8,7 +8,27 @@
 
 namespace Iris
 {
-    class CPU_MC68020 : public ComponentCPU
+    #define MOIRA_DISASM_BUF_SIZE    512
+
+    class MC68020DebuggerSystem : public CoherentSystem
+    {
+
+    public:
+        char* DisasmInstruction(size_t start) override;
+        size_t GetPC() override;
+
+        /// Initialise an MC68020 DEbugger System
+        MC68020DebuggerSystem(MC68020MoiraBridge* bridge)
+        {
+            this->moiraCpu = bridge;
+        }
+
+    private: 
+        char disasmBuf[MOIRA_DISASM_BUF_SIZE] = {0};
+        MC68020MoiraBridge* moiraCpu;
+    };
+
+    class MC68020 : public ComponentCPU
     {
         #define MC68020_CACHE_SIZE      256
         #define MC68020_NUM_OPCODES     256
@@ -36,7 +56,7 @@ namespace Iris
         /// @brief get the name of this component. immutable const char*.
         const char* GetName() { return "Motorola MC68020 CPU (Moira/Lisburn)"; };
     private:
-        CoherentSystem* system; 
+        MC68020DebuggerSystem* system; 
 
     };
 }
