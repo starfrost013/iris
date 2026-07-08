@@ -37,7 +37,9 @@ else()
     target_link_options(motion PRIVATE -static-libstdc++ -static-libgcc)             # static stdc++
 endif()
 
-target_link_libraries(motion PRIVATE SDL3::SDL3-static) # static sdl3
+target_link_libraries(motion PRIVATE 
+SDL3::SDL3-static                   # static sdl3
+moira)                              # 68k
 
 
 # install

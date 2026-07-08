@@ -11,7 +11,7 @@
 #include "MoiraTypes.h"
 #include "MoiraDebugger.h"
 
-namespace moira {
+namespace Iris::Lisburn {
 
 class Moira {
     

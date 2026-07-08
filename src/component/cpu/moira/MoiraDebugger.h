@@ -11,7 +11,7 @@
 #include "StrWriter.h"
 #include <map>
 
-namespace moira {
+namespace Iris::Lisburn {
 
 //
 // A single breakpoint, watchpoint, or catchpoint

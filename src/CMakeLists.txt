@@ -7,6 +7,8 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/external/sdl3/include)
 include_directories(${CMAKE_SOURCE_DIR}/external/imgui)
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/component/cpu/moira)
+
 add_executable(motion
 
     # Dear Imgui

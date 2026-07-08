@@ -73,16 +73,6 @@
  */
 #define MOIRA_BUILD_INSTR_INFO_TABLE true
 
-/* Enables Musashi compatibility mode.
- *
- * When set to true, Moira runs in a special mode designed for compatibility
- * with the Musashi emulator. This mode is primarily used by the test runner
- * application to compare Moira's behavior against Musashi.
- *
- * Set to false for improved accuracy.
- */
-#define MOIRA_MIMIC_MUSASHI true
-
 /* The following macro appears at the beginning of each instruction handler.
  * Moira will call 'willExecute(...)' for all listed instructions.
  */

@@ -7,7 +7,7 @@
 
 #pragma once
 
-namespace moira {
+namespace Iris::Lisburn {
 
 //
 // Wrapper structures controlling the output format

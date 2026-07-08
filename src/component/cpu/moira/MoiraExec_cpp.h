@@ -623,13 +623,13 @@ Moira::execAddxEa(u16 opcode)
 
     u32 result = addsub<C, I, S>(data1, data2);
 
-    if constexpr (S == Long && C == Core::C68000 && !MOIRA_MIMIC_MUSASHI) {
+    if constexpr (S == Long && C == Core::C68000) {
 
         writeM<C, M, Word, POLL>(ea2 + 2, result & 0xFFFF);
         looping<I>() ? noPrefetch<C>() : prefetch<C>();
         writeM<C, M, Word>(ea2, result >> 16);
 
-    } else if constexpr (S == Long && C == Core::C68010 && !MOIRA_MIMIC_MUSASHI) {
+    } else if constexpr (S == Long && C == Core::C68010) {
 
         writeM<C, M, S>(ea2, result);
         looping<I>() ? noPrefetch<C>(S == Long ? 0 : 2) : prefetch<C, POLL>();
@@ -706,11 +706,8 @@ Moira::execAndRgEa(u16 opcode)
 
     if constexpr (S == Long && isRegMode(M)) { SYNC_68000(4); SYNC_68010(2); }
 
-    if constexpr (MOIRA_MIMIC_MUSASHI) {
-        writeOp<C, M, S>(dst, ea, result);
-    } else {
-        writeOp<C, M, S, REVERSE>(dst, ea, result);
-    }
+    writeOp<C, M, S, REVERSE>(dst, ea, result);
+
 
     //           00  10  20        00  10  20        00  10  20
     //           .b  .b  .b        .w  .w  .w        .l  .l  .l
@@ -762,11 +759,7 @@ Moira::execAndiEa(u16 opcode)
     result = logic<C, I, S>(src, data);
     prefetch<C, POLL>();
 
-    if constexpr (MOIRA_MIMIC_MUSASHI) {
-        writeOp<C, M, S>(dst, ea, result);
-    } else {
-        writeOp<C, M, S, REVERSE>(dst, ea, result);
-    }
+    writeOp<C, M, S, REVERSE>(dst, ea, result);
 
     //           00  10  20        00  10  20        00  10  20
     //           .b  .b  .b        .w  .w  .w        .l  .l  .l
@@ -1322,15 +1315,8 @@ Moira::execBkpt(u16 opcode)
 {
     AVAILABILITY(Core::C68010)
 
-    if (MOIRA_MIMIC_MUSASHI) {
-
-        execException<C>(M68kException::ILLEGAL);
-
-    } else {
-
-        execException<C>(M68kException::BKPT);
-    }
-
+    execException<C>(M68kException::BKPT);
+    
     //           00  10  20        00  10  20        00  10  20
     //           .b  .b  .b        .w  .w  .w        .l  .l  .l
     CYCLES_IP   ( 0,  0,  0,        0,  0,  0,        0, 38, 20 );
@@ -1525,24 +1511,8 @@ Moira::execCas2(u16 opcode)
         }
     }
 
-    if (MOIRA_MIMIC_MUSASHI) {
-
-        if (rn1 & 0x8) {
-            writeD(dc1, SEXT<S>(data1));
-        } else {
-            writeD<S>(dc1, data1);
-        }
-        if (rn2 & 0x8) {
-            writeD(dc2, SEXT<S>(data2));
-        } else {
-            writeD<S>(dc2, data2);
-        }
-
-    } else {
-
-        writeD<S>(dc1, data1);
-        writeD<S>(dc2, data2);
-    }
+    writeD<S>(dc1, data1);
+    writeD<S>(dc2, data2);
 
     prefetch<C, POLL>();
 
@@ -1593,17 +1563,9 @@ Moira::execChk(u16 opcode)
 
     SYNC_68000(6);
 
-    if (MOIRA_MIMIC_MUSASHI) {
+    reg.sr.n = 0;
+    setUndefinedCHK<C, S>(SEXT<S>(data), SEXT<S>(dy));
 
-        reg.sr.z = ZERO<S>(dy);
-        reg.sr.v = 0;
-        reg.sr.c = 0;
-
-    } else {
-
-        reg.sr.n = 0;
-        setUndefinedCHK<C, S>(SEXT<S>(data), SEXT<S>(dy));
-    }
 
     if (SEXT<S>(dy) > SEXT<S>(data)) {
 
@@ -1611,8 +1573,7 @@ Moira::execChk(u16 opcode)
 
             case Core::C68000:
             case Core::C68020:
-
-                SYNC(MOIRA_MIMIC_MUSASHI ? 10 - (int)(clock - c) : 2);
+                SYNC(2);
                 break;
 
             case Core::C68010:
@@ -1623,7 +1584,6 @@ Moira::execChk(u16 opcode)
         }
         reg.sr.n = NBIT<S>(dy);
         execException<C>(M68kException::CHK);
-
 
         CYCLES_68000(40)
         CYCLES_68010(44)
@@ -1637,8 +1597,7 @@ Moira::execChk(u16 opcode)
 
             case Core::C68000:
             case Core::C68020:
-
-                SYNC(MOIRA_MIMIC_MUSASHI ? 10 - (int)(clock - c) : 4);
+                SYNC(4);
                 break;
 
             case Core::C68010:
@@ -1646,7 +1605,7 @@ Moira::execChk(u16 opcode)
                 prefetch<C, POLL>();
                 SYNC_68010(6);
         }
-        reg.sr.n = MOIRA_MIMIC_MUSASHI ? NBIT<S>(dy) : 1;
+        reg.sr.n = 1;
         execException<C>(M68kException::CHK);
 
         CYCLES_68000(40)
@@ -1690,34 +1649,17 @@ Moira::execChkCmp2(u16 opcode)
     readOp<C, M, S>(src, &ea, &data1);
     data2 = readM<C, M, S>(ea + S);
 
-    if (MOIRA_MIMIC_MUSASHI) {
+    i32 bound1 = SEXT<S>(data1);
+    i32 bound2 = SEXT<S>(data2);
+    i32 compare = dst < 8 ? SEXT<S>(readR(dst)) : readR(dst);
 
-        auto bound1 = ((M == Mode(9) || M == Mode(10)) && S == Byte) ? (i32)data1 : SEXT<S>(data1);
-        auto bound2 = ((M == Mode(9) || M == Mode(10)) && S == Byte) ? (i32)data2 : SEXT<S>(data2);
-        i32 compare = readR<S>(dst);
-        if (dst < 8) compare = SEXT<S>(compare);
-
-        if (bound1 < bound2) {
-            reg.sr.c = compare < bound1 || compare > bound2;
-        } else {
-            reg.sr.c = compare > bound2 || compare < bound1;
-        }
-        reg.sr.z = compare == bound1 || compare == bound2;
-
+    if (bound1 <= bound2) {
+        reg.sr.c = compare < bound1 || compare > bound2;
     } else {
-
-        i32 bound1 = SEXT<S>(data1);
-        i32 bound2 = SEXT<S>(data2);
-        i32 compare = dst < 8 ? SEXT<S>(readR(dst)) : readR(dst);
-
-        if (bound1 <= bound2) {
-            reg.sr.c = compare < bound1 || compare > bound2;
-        } else {
-            reg.sr.c = compare < bound1 && compare > bound2;
-        }
-        reg.sr.z = compare == bound1 || compare == bound2;
-        setUndefinedCHK2<C, S>(bound1, bound2, compare);
+        reg.sr.c = compare < bound1 && compare > bound2;
     }
+    reg.sr.z = compare == bound1 || compare == bound2;
+    setUndefinedCHK2<C, S>(bound1, bound2, compare);
 
     if ((ext & 0x800) && reg.sr.c) {
 
@@ -1758,12 +1700,8 @@ Moira::execClr(u16 opcode)
 
         if constexpr (S == Long && isRegMode(M)) SYNC(2);
 
-        if constexpr (MOIRA_MIMIC_MUSASHI) {
-            writeOp<C, M, S>(dst, ea, 0);
-        } else {
-            writeOp<C, M, S, REVERSE>(dst, ea, 0);
-        }
-
+        writeOp<C, M, S, REVERSE>(dst, ea, 0);
+            
         reg.sr.n = 0;
         reg.sr.z = 1;
         reg.sr.v = 0;
@@ -2222,14 +2160,13 @@ Moira::execDbcc(u16 opcode)
                     queue.irc = opcode;
                 }
 
-                if (MOIRA_MIMIC_MUSASHI) SYNC(2);
                 CYCLES_68010(12);
                 return;
 
             } else {
 
                 (void)read<C, AddrSpace::PROG, Word>(reg.pc + 2);
-                SYNC(MOIRA_MIMIC_MUSASHI ? 4 : 2);
+                SYNC(2);
                 CYCLES_68010(8);
 
                 reg.pc += 2;
@@ -2606,8 +2543,8 @@ Moira::execLink(u16 opcode)
 
     POLL_IPL;
 
-    // Write to stack
-    push <C, Long>(readA(ax) - ((MOIRA_MIMIC_MUSASHI && ax == 7) ? 4 : 0));
+    // Write to stack (musashi removed)
+    push <C, Long>(readA(ax));
 
     // Modify address register and stack pointer
     writeA(ax, sp);
@@ -3382,11 +3319,11 @@ Moira::execMovemRgEa(u16 opcode)
 
             // Write register contents into memory
             ea -= S;
-            if constexpr (C == Core::C68020 && !MOIRA_MIMIC_MUSASHI) writeA(dst, ea);
-            writeM<C, M, S, MOIRA_MIMIC_MUSASHI ? REVERSE : 0>(ea, reg.r[i]);
+            if constexpr (C == Core::C68020) writeA(dst, ea);
+            writeM<C, M, S, 0>(ea, reg.r[i]);
             cnt++;
         }
-        if constexpr (C != Core::C68020 || MOIRA_MIMIC_MUSASHI) writeA(dst, ea);
+        if constexpr (C != Core::C68020) writeA(dst, ea);
 
     } else {
 
@@ -3910,11 +3847,7 @@ Moira::execMuls(u16 opcode)
 {
     AVAILABILITY(Core::C68000)
 
-    if constexpr (MOIRA_MIMIC_MUSASHI) {
-        execMulsMusashi<C, I, M, S>(opcode);
-    } else {
-        execMulsMoira<C, I, M, S>(opcode);
-    }
+    execMulsMoira<C, I, M, S>(opcode);
 
     //           00  10  20        00  10  20        00  10  20
     //           .b  .b  .b        .w  .w  .w        .l  .l  .l
@@ -3962,34 +3895,11 @@ Moira::execMulsMoira(u16 opcode)
 }
 
 template <Core C, Instr I, Mode M, Size S> void
-Moira::execMulsMusashi(u16 opcode)
-{
-    u32 ea, data, result;
-
-    int src = _____________xxx(opcode);
-    int dst = ____xxx_________(opcode);
-
-    readOp<C, M, Word>(src, &ea, &data);
-
-    prefetch<C, POLL>();
-    result = muls<C>(data, readD<Word>(dst));
-
-    if constexpr (I == Instr::MULU) { SYNC_68000(50); SYNC_68010(26); }
-    if constexpr (I == Instr::MULS) { SYNC_68000(50); SYNC_68010(28); }
-
-    writeD(dst, result);
-}
-
-template <Core C, Instr I, Mode M, Size S> void
 Moira::execMulu(u16 opcode)
 {
     AVAILABILITY(Core::C68000)
 
-    if constexpr (MOIRA_MIMIC_MUSASHI) {
-        execMuluMusashi<C, I, M, S>(opcode);
-    } else {
-        execMuluMoira<C, I, M, S>(opcode);
-    }
+    execMuluMoira<C, I, M, S>(opcode);
 
     //           00  10  20        00  10  20        00  10  20
     //           .b  .b  .b        .w  .w  .w        .l  .l  .l
@@ -4036,35 +3946,14 @@ Moira::execMuluMoira(u16 opcode)
     writeD(dst, result);
 }
 
-template <Core C, Instr I, Mode M, Size S> void
-Moira::execMuluMusashi(u16 opcode)
-{
-    u32 ea, data, result;
-
-    int src = _____________xxx(opcode);
-    int dst = ____xxx_________(opcode);
-
-    readOp<C, M, Word>(src, &ea, &data);
-
-    prefetch<C, POLL>();
-    result = mulu<C>(data, readD<Word>(dst));
-
-    if constexpr (I == Instr::MULU) { SYNC_68000(50); SYNC_68010(26); }
-    if constexpr (I == Instr::MULS) { SYNC_68000(50); SYNC_68010(28); }
-
-    writeD(dst, result);
-}
 
 template <Core C, Instr I, Mode M, Size S> void
 Moira::execMull(u16 opcode)
 {
     AVAILABILITY(Core::C68020)
 
-    if constexpr (MOIRA_MIMIC_MUSASHI) {
-        execMullMusashi<C, I, M, S>(opcode);
-    } else {
-        execMullMoira<C, I, M, S>(opcode);
-    }
+
+    execMullMoira<C, I, M, S>(opcode);
 
     //           00  10  20        00  10  20        00  10  20
     //           .b  .b  .b        .w  .w  .w        .l  .l  .l
@@ -4134,62 +4023,13 @@ Moira::execMullMoira(u16 opcode)
 }
 
 template <Core C, Instr I, Mode M, Size S> void
-Moira::execMullMusashi(u16 opcode)
-{
-    u64 result;
-    u32 ea, data;
-    u16 ext = (u16)readI<C, Word>();
-
-    int src = _____________xxx(opcode);
-    int dh  = _____________xxx(ext);
-    int dl  = _xxx____________(ext);
-
-    readOp<C, M, S>(src, &ea, &data);
-
-    prefetch<C, POLL>();
-
-    switch (____xx__________(ext)) {
-
-        case 0b00:
-
-            result = mullu<C, Word>(data, readD(dl));
-            writeD(dl, u32(result));
-            break;
-
-        case 0b01:
-
-            result = mullu<C, Long>(data, readD(dl));
-            writeD(dh, u32(result >> 32));
-            writeD(dl, u32(result));
-            break;
-
-        case 0b10:
-
-            result = mulls<C, Word>(data, readD(dl));
-            writeD(dl, u32(result));
-            break;
-
-        case 0b11:
-
-            result = mulls<C, Long>(data, readD(dl));
-            writeD(dh, u32(result >> 32));
-            writeD(dl, u32(result));
-            break;
-    }
-}
-
-template <Core C, Instr I, Mode M, Size S> void
 Moira::execDivs(u16 opcode)
 {
     AVAILABILITY(Core::C68000)
 
     bool divByZero = false;
 
-    if constexpr (MOIRA_MIMIC_MUSASHI) {
-        execDivsMusashi<C, I, M, S>(opcode, &divByZero);
-    } else {
-        execDivsMoira<C, I, M, S>(opcode, &divByZero);
-    }
+    execDivsMoira<C, I, M, S>(opcode, &divByZero);
 
     if (divByZero) {
 
@@ -4273,50 +4113,13 @@ Moira::execDivsMoira(u16 opcode, bool *divByZero)
 }
 
 template <Core C, Instr I, Mode M, Size S> void
-Moira::execDivsMusashi(u16 opcode, bool *divByZero)
-{
-    int src = _____________xxx(opcode);
-    int dst = ____xxx_________(opcode);
-
-    [[maybe_unused]] i64 c = clock;
-
-    u32 ea, divisor, result;
-    readOp<C, M, Word>(src, &ea, &divisor);
-
-    if (divisor == 0) {
-
-        if constexpr (C == Core::C68000) {
-            SYNC(8 - (int)(clock - c));
-        } else {
-            SYNC(10 - (int)(clock - c));
-        }
-        execException<C>(M68kException::DIVIDE_BY_ZERO);
-        *divByZero = true;
-        return;
-    }
-
-    u32 dividend = readD(dst);
-    result = divsMusashi<C>(dividend, divisor);
-
-    SYNC_68000(154);
-    SYNC_68010(118);
-
-    writeD(dst, result);
-    prefetch<C, POLL>();
-}
-
-template <Core C, Instr I, Mode M, Size S> void
 Moira::execDivu(u16 opcode)
 {
     AVAILABILITY(Core::C68000)
 
     bool divByZero = false;
 
-    if constexpr (MOIRA_MIMIC_MUSASHI) {
-        execDivuMusashi<C, I, M, S>(opcode, &divByZero);
-    } else {
-        execDivuMoira<C, I, M, S>(opcode, &divByZero);
-    }
+    execDivuMoira<C, I, M, S>(opcode, &divByZero);
 
     if (divByZero) {
 
@@ -4401,38 +4204,6 @@ Moira::execDivuMoira(u16 opcode, bool *divByZero)
 }
 
 template <Core C, Instr I, Mode M, Size S> void
-Moira::execDivuMusashi(u16 opcode, bool *divByZero)
-{
-    int src = _____________xxx(opcode);
-    int dst = ____xxx_________(opcode);
-
-    [[maybe_unused]] i64 c = clock;
-    u32 ea, divisor, result;
-    readOp<C, M, Word>(src, &ea, &divisor);
-
-    // Check for division by zero
-    if (divisor == 0) {
-        if constexpr (C == Core::C68000) {
-            SYNC(8 - (int)(clock - c));
-        } else {
-            SYNC(10 - (int)(clock - c));
-        }
-        execException<C>(M68kException::DIVIDE_BY_ZERO);
-        *divByZero = true;
-        return;
-    }
-
-    u32 dividend = readD(dst);
-    result = divuMusashi<C>(dividend, divisor);
-
-    SYNC_68000(136);
-    SYNC_68010(104);
-
-    writeD(dst, result);
-    prefetch<C, POLL>();
-}
-
-template <Core C, Instr I, Mode M, Size S> void
 Moira::execDivl(u16 opcode)
 {
     AVAILABILITY(Core::C68020)
@@ -4440,11 +4211,7 @@ Moira::execDivl(u16 opcode)
     bool success;
     bool divByZero = false;
 
-    if constexpr (MOIRA_MIMIC_MUSASHI) {
-        success = execDivlMusashi<C, I, M, S>(opcode, &divByZero);
-    } else {
-        success = execDivlMoira<C, I, M, S>(opcode, &divByZero);
-    }
+    success = execDivlMoira<C, I, M, S>(opcode, &divByZero);
 
     if (success) {
 
@@ -4565,79 +4332,6 @@ Moira::execDivlMoira(u16 opcode, bool *divByZero)
     return true;
 }
 
-template <Core C, Instr I, Mode M, Size S> bool
-Moira::execDivlMusashi(u16 opcode, bool *divByZero)
-{
-    u64 dividend;
-    u32 ea, divisor;
-    u16 ext = (u16)readI<C, Word>();
-
-    int src = _____________xxx(opcode);
-    int dh  = _____________xxx(ext);
-    int dl  = _xxx____________(ext);
-
-    try {
-        readOp<C, M, S>(src, &ea, &divisor);
-    } catch(...) {
-        // TODO: Change return type from bool to void
-        return false;
-    }
-
-    if (divisor == 0) {
-
-        execException<C>(M68kException::DIVIDE_BY_ZERO);
-        *divByZero = true;
-        return false;
-    }
-
-    prefetch<C, POLL>();
-
-    switch (____xx__________(ext)) {
-
-        case 0b00:
-        {
-            dividend = readD(dl);
-
-            auto result = divluMusashi<Word>(dividend, divisor);
-            writeD(dh, result.second);
-            writeD(dl, result.first);
-            break;
-        }
-        case 0b01:
-        {
-            dividend = (u64)readD(dh) << 32 | readD(dl);
-            auto result = divluMusashi<Long>(dividend, divisor);
-            if(!reg.sr.v) {
-
-                writeD(dh, result.second);
-                writeD(dl, result.first);
-            }
-            break;
-        }
-        case 0b10:
-        {
-            dividend = readD(dl);
-            auto result = divlsMusashi<Word>(dividend, divisor);
-            writeD(dh, result.second);
-            writeD(dl, result.first);
-            break;
-        }
-        case 0b11:
-        {
-            dividend = (u64)readD(dh) << 32 | readD(dl);
-            auto result = divlsMusashi<Long>(dividend, divisor);
-
-            if(!reg.sr.v) {
-
-                writeD(dh, result.second);
-                writeD(dl, result.first);
-            }
-            break;
-        }
-    }
-
-    return true;
-}
 
 template <Core C, Instr I, Mode M, Size S> void
 Moira::execNbcdRg(u16 opcode)
@@ -4726,11 +4420,7 @@ Moira::execNegEa(u16 opcode)
     data = logic<C, I, S>(data);
     looping<I>() ? noPrefetch<C>(2) : prefetch<C, POLL>();
 
-    if constexpr (MOIRA_MIMIC_MUSASHI) {
-        writeOp<C, M, S>(dst, ea, data);
-    } else {
-        writeOp<C, M, S, REVERSE>(dst, ea, data);
-    }
+    writeOp<C, M, S, REVERSE>(dst, ea, data);
 
     //           00  10  20        00  10  20        00  10  20
     //           .b  .b  .b        .w  .w  .w        .l  .l  .l
@@ -4789,35 +4479,18 @@ Moira::execPackPd(u16 opcode)
     int ax  = _____________xxx(opcode);
     int ay  = ____xxx_________(opcode);
 
-    if (MOIRA_MIMIC_MUSASHI) {
+    reg.a[ax]--;
+    auto data1 = read<C, AddrSpace::DATA, Byte>(readA(ax));
 
-        u32 ea1, data1;
-        readOp<C, M, Byte>(ax, &ea1, &data1);
+    u16 adj = (u16)readI<C, Word>();
 
-        u16 adj = (u16)readI<C, Word>();
+    reg.a[ax]--;
+    auto data2 = read<C, AddrSpace::DATA, Byte>(readA(ax));
 
-        u32 ea2, data2;
-        readOp<C, M, Byte>(ax, &ea2, &data2);
+    u32 src = (data2 << 8 | data1) + adj;
+    u32 dst = (src >> 4 & 0xF0) | (src & 0x0F);
 
-        u32 src = (data1 << 8 | data2) + adj;
-
-        writeOp<C, M, Byte>(ay, (src >> 4 & 0xF0) | (src & 0x0F));
-
-    } else {
-
-        reg.a[ax]--;
-        auto data1 = read<C, AddrSpace::DATA, Byte>(readA(ax));
-
-        u16 adj = (u16)readI<C, Word>();
-
-        reg.a[ax]--;
-        auto data2 = read<C, AddrSpace::DATA, Byte>(readA(ax));
-
-        u32 src = (data2 << 8 | data1) + adj;
-        u32 dst = (src >> 4 & 0xF0) | (src & 0x0F);
-
-        writeOp<C, M, Byte>(ay, dst);
-    }
+    writeOp<C, M, Byte>(ay, dst);
 
     prefetch<C>();
 
@@ -5046,12 +4719,9 @@ Moira::execRte(u16 opcode)
                 }
                 default: // Format error
 
-                    if (!MOIRA_MIMIC_MUSASHI) {
-
-                        reg.sr.n = (format >> 12) & 0b1000;
-                        reg.sr.z = 0;
-                        reg.sr.v = 0;
-                    }
+                    reg.sr.n = (format >> 12) & 0b1000;
+                    reg.sr.z = 0;
+                    reg.sr.v = 0;
 
                     SYNC(4);
                     (void)read<C, AddrSpace::DATA, Long>(reg.sp + 2);
@@ -5648,19 +5318,11 @@ Moira::execUnpkPd(u16 opcode)
     u16 adj = (u16)readI<C, Word>();
     u32 dst = ((data << 4 & 0x0F00) | (data & 0x000F)) + adj;
 
-    if (MOIRA_MIMIC_MUSASHI) {
+    reg.a[ay]--;
+    write<C, AddrSpace::DATA, Byte>(readA(ay), dst & 0xFF);
 
-        writeOp<C, M, Byte>(ay, dst >> 8 & 0xFF);
-        writeOp<C, M, Byte>(ay, dst & 0xFF);
-
-    } else {
-
-        reg.a[ay]--;
-        write<C, AddrSpace::DATA, Byte>(readA(ay), dst & 0xFF);
-
-        reg.a[ay]--;
-        write<C, AddrSpace::DATA, Byte>(readA(ay), dst >> 8 & 0xFF);
-    }
+    reg.a[ay]--;
+    write<C, AddrSpace::DATA, Byte>(readA(ay), dst >> 8 & 0xFF);
 
     prefetch<C>();
 

@@ -31,37 +31,22 @@ Moira::writeStackFrame0000(u16 sr, u32 pc, u16 nr)
 
         case Core::C68000:
 
-            if constexpr (MOIRA_MIMIC_MUSASHI) {
+            U32_DEC(reg.sp, 6);
+            write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 4) & ~1, pc & 0xFFFF);
+            write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 0) & ~1, sr);
+            write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 2) & ~1, pc >> 16);
 
-                push<C, Long>(pc);
-                push<C, Word>(sr);
-
-            } else {
-
-                U32_DEC(reg.sp, 6);
-                write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 4) & ~1, pc & 0xFFFF);
-                write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 0) & ~1, sr);
-                write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 2) & ~1, pc >> 16);
-            }
             break;
 
         case Core::C68010:
         case Core::C68020:
 
-            if constexpr (MOIRA_MIMIC_MUSASHI) {
+            U32_DEC(reg.sp, 8);
+            write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 6) & ~1, 4 * nr);
+            write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 4) & ~1, pc & 0xFFFF);
+            write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 0) & ~1, sr);
+            write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 2) & ~1, pc >> 16);
 
-                push<C, Word>(nr << 2);
-                push<C, Long>(pc);
-                push<C, Word>(sr);
-
-            } else {
-
-                U32_DEC(reg.sp, 8);
-                write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 6) & ~1, 4 * nr);
-                write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 4) & ~1, pc & 0xFFFF);
-                write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 0) & ~1, sr);
-                write<C, AddrSpace::DATA, Word>(U32_ADD(reg.sp, 2) & ~1, pc >> 16);
-            }
             break;
     }
 }
@@ -459,11 +444,7 @@ Moira::execException(M68kException exc, int nr)
             flags &= ~State::TRACE_EXC;
 
             // Write stack frame
-            if (MOIRA_MIMIC_MUSASHI) {
-                writeStackFrame0000<C>(status, reg.pc, vector);
-            } else {
-                writeStackFrame0000<C>(status, reg.pc - 2, vector);
-            }
+            writeStackFrame0000<C>(status, reg.pc - 2, vector);
 
             // Branch to exception handler
             jumpToVector<C, AE_SET_CB3>(vector);

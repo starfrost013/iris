@@ -1,3 +1,12 @@
+/*
+    "Lisburn" 68020 core (just down the road from Moira)
+    Moira with amiga stuff cleaned up
+    Copyright (c) 2019-2025 Dirk W. Hoffmann. www.dirkwhoffmann.de
+    Copyright (c) 2026 Connor Hyde (starfrost). www.starfrost.net
+
+    Published under the terms of the MIT license
+*/
+
 // -----------------------------------------------------------------------------
 // This file is part of Moira - A Motorola 68k emulator
 //
@@ -16,7 +25,7 @@
 #include <vector>
 #include <stdexcept>
 
-namespace moira {
+namespace Iris::Lisburn {
 
 using namespace Flag;
 
@@ -311,7 +320,7 @@ Moira::execute()
             }
 
             POLL_IPL;
-            sync(MOIRA_MIMIC_MUSASHI ? 1 : 2);
+            sync(2);
             return;
         }
 

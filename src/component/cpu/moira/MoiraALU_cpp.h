@@ -395,6 +395,7 @@ Moira::logic(u32 op)
         default:
             fatalError;
     }
+
     return result;
 }
 
@@ -704,9 +705,7 @@ Moira::divsMoira(u32 op1, u32 op2)
     reg.sr.v = overflow;
 
     if (overflow) {
-
         setUndefinedDIVS<C, Word>(i32(op1), i16(op2));
-
     } else {
 
         reg.sr.c = 0;
@@ -742,68 +741,6 @@ Moira::divuMoira(u32 op1, u32 op2)
     }
 
     return overflow ? op1 : result;
-}
-
-template <Core C> u32
-Moira::divsMusashi(u32 op1, u32 op2)
-{
-    u32 result;
-
-    if (op1 == 0x80000000 && (i32)op2 == -1) {
-
-        reg.sr.z = 0;
-        reg.sr.n = 0;
-        reg.sr.v = 0;
-        reg.sr.c = 0;
-        result = 0;
-
-    } else {
-
-        i64 quotient  = (i64)(i32)op1 / (i16)op2;
-        i16 remainder = (i64)(i32)op1 % (i16)op2;
-
-        if (quotient == (i16)quotient) {
-
-            result = (quotient & 0xffff) | (u16)remainder << 16;
-
-            reg.sr.z = quotient;
-            reg.sr.n = NBIT<Word>(quotient);
-            reg.sr.v = 0;
-            reg.sr.c = 0;
-
-        } else {
-
-            result = op1;
-            reg.sr.v = 1;
-        }
-    }
-
-    return result;
-}
-
-template <Core C> u32
-Moira::divuMusashi(u32 op1, u32 op2)
-{
-    u32 result;
-    i64 quotient  = op1 / op2;
-    u16 remainder = (u16)(op1 % op2);
-
-    if(quotient < 0x10000) {
-
-        result = (quotient & 0xffff) | remainder << 16;
-
-        reg.sr.z = quotient;
-        reg.sr.n = NBIT<Word>(quotient);
-        reg.sr.v = 0;
-        reg.sr.c = 0;
-
-    } else {
-
-        result = op1;
-        reg.sr.v = 1;
-    }
-
-    return result;
 }
 
 template <Size S> std::pair<u32,u32>
@@ -870,89 +807,15 @@ Moira::divluMoira(u64 a, u32 src)
     }
 }
 
-template <Size S> std::pair<u32,u32>
-Moira::divlsMusashi(u64 op1, u32 op2)
-{
-    u64 quotient, remainder;
-
-    if constexpr (S == Word) {
-
-        quotient  = (u64)((i64)((i32)op1) / (i64)((i32)op2));
-        remainder = (u64)((i64)((i32)op1) % (i64)((i32)op2));
-
-        reg.sr.n = NBIT<Long>(quotient);
-        reg.sr.z = ZERO<Long>(quotient);
-        reg.sr.v = 0;
-        reg.sr.c = 0;
-    }
-
-    if constexpr (S == Long) {
-
-        quotient  = u64(i64(op1) / i64(i32(op2)));
-        remainder = u64(i64(op1) % i64(i32(op2)));
-
-        if (i64(quotient) == i64(i32(quotient))) {
-
-            reg.sr.n = NBIT<Long>(quotient);
-            reg.sr.z = ZERO<Long>(quotient);
-            reg.sr.v = 0;
-            reg.sr.c = 0;
-
-        } else {
-
-            reg.sr.v = 1;
-        }
-    }
-
-    return { u32(quotient), u32(remainder) };
-}
-
-template <Size S> std::pair<u32,u32>
-Moira::divluMusashi(u64 op1, u32 op2)
-{
-    u64 quotient, remainder;
-
-    if (S == Word) {
-
-        quotient  = op1 / op2;
-        remainder = op1 % op2;
-
-        reg.sr.n = NBIT<Long>(quotient);
-        reg.sr.z = ZERO<Long>(quotient);
-        reg.sr.v = 0;
-        reg.sr.c = 0;
-    }
-
-    if constexpr (S == Long) {
-
-        quotient  = op1 / op2;
-        remainder = op1 % op2;
-
-        if (quotient <= 0xffffffff) {
-
-            reg.sr.n = NBIT<Long>(quotient);
-            reg.sr.z = ZERO<Long>(quotient);
-            reg.sr.v = 0;
-            reg.sr.c = 0;
-
-        } else {
-
-            reg.sr.v = 1;
-        }
-    }
-
-    return { u32(quotient), u32(remainder) };
-}
-
 template <Core C, Instr I> int
 Moira::cyclesBit(u8 bit) const
 {
     switch (I)
     {
         case Instr::BTST: return 2;
-        case Instr::BCLR: return MOIRA_MIMIC_MUSASHI ? 6 : (bit > 15 ? 6 : 4);
+        case Instr::BCLR: return (bit > 15 ? 6 : 4);
         case Instr::BSET:
-        case Instr::BCHG: return MOIRA_MIMIC_MUSASHI ? 4 : (bit > 15 ? 4 : 2);
+        case Instr::BCHG: return (bit > 15 ? 4 : 2);
 
         default:
             fatalError;

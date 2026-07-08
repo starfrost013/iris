@@ -367,7 +367,7 @@ Moira::dasmAddqDn(StrWriter &str, u32 &addr, u16 op) const
     switch (str.style.syntax) {
 
         case  Syntax::MUSASHI:
-
+        
             str << Ins<I>{} << Sz<S>{} << str.tab << Imd{src} << Sep{} << Dn{dst};
             break;
 

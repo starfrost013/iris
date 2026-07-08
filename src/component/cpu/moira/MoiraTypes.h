@@ -11,7 +11,7 @@
 #include <string>
 #include <optional>
 
-namespace moira {
+namespace Iris::Lisburn {
 
 //
 // Basic data types

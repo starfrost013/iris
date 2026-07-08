@@ -1,3 +1,5 @@
+# "Moiris-4.0"
+
 add_library(moira STATIC
 
 Moira.cpp

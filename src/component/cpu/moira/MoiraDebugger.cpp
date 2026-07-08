@@ -12,8 +12,7 @@
 #include <cstring>
 #include <cstdio>
 
-namespace moira {
-
+namespace Iris::Lisburn {
 
 //
 // Guard
