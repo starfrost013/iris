@@ -35,5 +35,8 @@ add_executable(motion
     component/ip2/prom.cpp
     coherent/coherent_gui_logging.cpp
     component/cpu/mc68020_debug.cpp
+    component/ip2/ip2_mmu.cpp
+    component/ip2/ip2_duart.cpp
+    component/ip2/ip2_rtc.cpp
 )
 

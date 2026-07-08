@@ -1,3 +1,12 @@
+/* 
+    m  o  t  i  o  n
+    The SGI Emulator
+
+    Copyright (c)2026 starfrost
+
+    memory.cpp: RAM 
+*/
+
 #include <base/emulation.hpp>
 #include <component/memory.hpp>
 
@@ -18,8 +27,9 @@ namespace Iris
 
         AddrSpace::AddMapping(mapping);
 
-        // big endian (temp)
-        ram[0] = 0x33; // initial sp
+        // Temporary code 
+        ram[0] = 0x33; // initial sp=0x33000800
+        ram[2] = 0x08;
         ram[4] = 0x30; // initial pc=0x30000400 (otherwise you start executing the vector base)
         ram[6] = 0x04;
     }

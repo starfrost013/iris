@@ -1,5 +1,5 @@
 /*
-IRIS - A 68000 SGI Emulator!
+Motion - The SGI Emulator!
 Copyright (C) 2026 starfrost
 */
 
@@ -10,7 +10,7 @@ Copyright (C) 2026 starfrost
 namespace Iris
 {
     /// @brief Fatal error function
-    /// @return Emulator shuts down
+    /// @return Emulator shuts down after this runs
     void fatal()
     {
         Emulation::SetRunning(false);

@@ -4,6 +4,9 @@
 #include <component/cpu/mc68020.hpp>
 #include <component/ip2/prom.hpp>
 #include <component/ip2/prom_sram.hpp>
+#include <component/ip2/ip2_mmu.hpp>
+#include <component/ip2/ip2_rtc.hpp>
+#include <component/ip2/ip2_duart.hpp>
 
 namespace Iris
 {
@@ -26,6 +29,7 @@ namespace Iris
         machine.AddComponent<MC68020>();
         machine.AddComponent<PROM>();
         machine.AddComponent<PROM_SRAM>();
+        machine.AddComponent<MMU_IP2>();
         machine.Start();
 
         // enter the coherent debugger
@@ -72,6 +76,7 @@ namespace Iris
     void Emulation::Stop()
     {
         Logger::Log("Resetting emulation...");
+
         // make sure the machine is joinable
         SetRunning(false);
         SetPaused(false);
@@ -79,6 +84,7 @@ namespace Iris
         if (emuThread->joinable())
             emuThread->join();
 
+        
         Coherent::Leave();
         machine.Shutdown();
     }

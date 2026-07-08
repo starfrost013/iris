@@ -40,6 +40,7 @@ namespace Iris
             commands.push_back(command);
         }
 
+        /// @brief Add the UI for a Coherent extension. Currently it gets added to the Peripherals menu.
         virtual void AddUI() { };
     private:
         std::vector<CoherentCommand*> commands;

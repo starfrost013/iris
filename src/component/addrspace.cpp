@@ -41,7 +41,7 @@ namespace Iris
             auto value = mapping->component->OnRead16(addr);
             // IRIS is a big-endian system
             value = (value >> 8) | (value << 8); 
-            
+
             return value;
         }
         else
@@ -100,7 +100,7 @@ namespace Iris
             return;
         }
     
-        Logger::Log(LOGGING_PREFIX_ADDRSPACE, std::format("Added address mapping from 0x{:x} to 0x{:x} (size {})",
+        Logger::Log(LOGGING_PREFIX_ADDRSPACE, std::format("Added address mapping from 0x{:x} to 0x{:x} (size 0x{:x})",
             mapping.startAddr, mapping.endAddr, (mapping.endAddr - mapping.startAddr)).c_str(), LogChannels::Debug);
         
         mappings[mapping.startAddr] = mapping;

@@ -41,8 +41,21 @@
 // Log prefixes
 #define LOG_PREFIX_CORE     "Core"
 #define LOG_PREFIX_PROM     "Emulation - PROM"
+#define LOG_PREFIX_IP2MMU   "Emulation - IP2 MMU"
 
 // Some string lengths
 #define STRING_MAX_SHORT    48
 #define STRING_MAX_LONG     256
 #define STRING_MAX_PATH     260
+
+// Some useful macros for converting between different io sizes
+#define READ_32TO8(x, addr) (uint8_t)(x >> ((addr & 3) << 3) & 0xFF)
+#define READ_32TO16(x, addr)(uint16_t)(x >> ((addr & 3) << 3) & 0xFFFF)
+
+#define WRITE_32TO8(x, old, addr)   x &= (~0xFF << (addr & 3) << 3); \
+                                    x |= (old << ((addr & 3) << 3))
+                            
+
+#define WRITE_32TO16(x, old, addr)  x &= (~0xFFFF << (addr & 3) << 3); \
+                                    x |= (old << ((addr & 3) << 3))     
+                               
