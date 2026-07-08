@@ -245,15 +245,9 @@ template <Instr I> StrWriter&
 StrWriter::operator<<(Ins<I> i)
 {
     if constexpr (I == Instr::DBF) {
-
-        if (style.syntax == Syntax::GNU || style.syntax == Syntax::GNU_MIT) {
-            *this << "dbf";
-        } else {
-            *this << "dbra";
-        }
+        *this << "dbra";
 
     } else {
-
         *this << mnemonics[(int)I];
     }
 
@@ -263,45 +257,15 @@ StrWriter::operator<<(Ins<I> i)
 template <Size S> StrWriter&
 StrWriter::operator<<(Sz<S>)
 {
-    switch (style.syntax) {
-
-        case Syntax::MOIRA_MIT:
-       case Syntax::GNU:
-        case Syntax::GNU_MIT:
-
-            *this << ((S == Byte) ? "b" : (S == Word) ? "w" : "l");
-            break;
-
-        default:
-
-            *this << ((S == Byte) ? ".b" : (S == Word) ? ".w" : ".l");
-    }
-
+    *this << ((S == Byte) ? ".b" : (S == Word) ? ".w" : ".l");
+    
     return *this;
 }
 
 template <Size S> StrWriter&
 StrWriter::operator<<(Szb<S>)
 {
-    switch (style.syntax) {
-
-        case Syntax::MOIRA:
-
-            *ptr++ = '.';
-            [[fallthrough]];
-
-        case Syntax::MOIRA_MIT:
-       case Syntax::GNU:
-        case Syntax::GNU_MIT:
-
-            if constexpr (S == Byte) *ptr++ = 's';
-            if constexpr (S == Word) *ptr++ = 'w';
-            if constexpr (S == Long) *ptr++ = 'l';
-            break;
-
-        default:
-            break;
-    }
+    *ptr++ = '.';
 
     return *this;
 }
@@ -447,48 +411,14 @@ StrWriter::operator<<(Pcc pcc)
 StrWriter&
 StrWriter::operator<<(Dn dn)
 {
-    switch (style.syntax) {
-
-        case Syntax::GNU_MIT:      *ptr++ = '%'; [[fallthrough]];
-       case Syntax::GNU:          *ptr++ = 'd'; *ptr++ = '0' + (char)dn.raw; break;
-        case Syntax::MOIRA_MIT:    *ptr++ = '%'; [[fallthrough]];
-        
-        default:
-            *ptr++ = 'D'; *ptr++ = '0' + (char)dn.raw; break;
-    }
-
+    *ptr++ = 'D'; *ptr++ = '0' + (char)dn.raw;
     return *this;
 }
 
 StrWriter&
 StrWriter::operator<<(An an)
 {
-    switch (style.syntax) {
-
-        case Syntax::GNU_MIT:      *ptr++ = '%'; [[fallthrough]];
-       case Syntax::GNU:          *ptr++ = 'a'; *ptr++ = '0' + (char)an.raw; break;
-        case Syntax::MOIRA_MIT:    *ptr++ = '%'; [[fallthrough]];
-        
-        default:
-            *ptr++ = 'A'; *ptr++ = '0' + (char)an.raw; break;
-    }
-
-    switch (style.syntax) {
-
-        case Syntax::GNU_MIT:
-
-            if (an.raw == 6) { ptr[-2] = 'f'; ptr[-1] = 'p'; }
-            [[fallthrough]];
-
-       case Syntax::GNU:
-
-            if (an.raw == 7) { ptr[-2] = 's'; ptr[-1] = 'p'; }
-            break;
-
-        default:
-            break;
-    }
-
+    *ptr++ = 'A'; *ptr++ = '0' + (char)an.raw;
     return *this;
 }
 
@@ -502,15 +432,7 @@ StrWriter::operator<<(Rn rn)
 StrWriter&
 StrWriter::operator<<(Ccr _)
 {
-    switch (style.syntax) {
-
-        case Syntax::GNU_MIT:      *ptr++ = '%'; [[fallthrough]];
-       case Syntax::GNU:          *ptr++ = 'c'; *ptr++ = 'c'; *ptr++ = 'r'; break;
-        case Syntax::MOIRA_MIT:    *ptr++ = '%'; [[fallthrough]];
-       
-        default:
-            *ptr++ = 'C'; *ptr++ = 'C'; *ptr++ = 'R'; break;
-    }
+    *ptr++ = 'C'; *ptr++ = 'C'; *ptr++ = 'R';
 
     return *this;
 }
@@ -518,64 +440,28 @@ StrWriter::operator<<(Ccr _)
 StrWriter&
 StrWriter::operator<<(Pc _)
 {
-    switch (style.syntax) {
-
-        case Syntax::GNU_MIT:      *ptr++ = '%'; [[fallthrough]];
-       case Syntax::GNU:          *ptr++ = 'p'; *ptr++ = 'c'; break;
-        case Syntax::MOIRA_MIT:    *ptr++ = '%'; [[fallthrough]];
-        
-        default:
-            *ptr++ = 'P'; *ptr++ = 'C'; break;
-    }
-
+    *ptr++ = 'P'; *ptr++ = 'C';
     return *this;
 }
 
 StrWriter&
 StrWriter::operator<<(Zpc _)
 {
-    switch (style.syntax) {
-
-        case Syntax::GNU_MIT:      *ptr++ = '%'; [[fallthrough]];
-       case Syntax::GNU:          *ptr++ = 'z'; *ptr++ = 'p'; *ptr++ = 'c'; break;
-        case Syntax::MOIRA_MIT:    *ptr++ = '%'; [[fallthrough]];
-        
-        default:
-            *ptr++ = 'Z'; *ptr++ = 'P'; *ptr++ = 'C'; break;
-    }
-
+    *ptr++ = 'Z'; *ptr++ = 'P'; *ptr++ = 'C';
     return *this;
 }
 
 StrWriter&
 StrWriter::operator<<(Sr _)
 {
-    switch (style.syntax) {
-
-        case Syntax::GNU_MIT:      *ptr++ = '%'; [[fallthrough]];
-       case Syntax::GNU:          *ptr++ = 's'; *ptr++ = 'r'; break;
-        case Syntax::MOIRA_MIT:    *ptr++ = '%'; [[fallthrough]];
-        
-        default:
-            *ptr++ = 'S'; *ptr++ = 'R'; break;
-    }
-
+    *ptr++ = 'S'; *ptr++ = 'R';
     return *this;
 }
 
 StrWriter&
 StrWriter::operator<<(Usp _)
 {
-    switch (style.syntax) {
-
-        case Syntax::GNU_MIT:      *ptr++ = '%'; [[fallthrough]];
-       case Syntax::GNU:          *ptr++ = 'u'; *ptr++ = 's'; *ptr++ = 'p'; break;
-        case Syntax::MOIRA_MIT:    *ptr++ = '%'; [[fallthrough]];
-        
-        default:
-            *ptr++ = 'U'; *ptr++ = 'S'; *ptr++ = 'P'; break;
-    }
-
+    *ptr++ = 'U'; *ptr++ = 'S'; *ptr++ = 'P';
     return *this;
 }
 
@@ -583,43 +469,33 @@ StrWriter&
 StrWriter::operator<<(Cn cn)
 {
     bool valid = cn.raw <= 0x007 || (cn.raw >= 0x800 && cn.raw <= 0x807);
-    bool upper = style.syntax != Syntax::GNU && style.syntax != Syntax::GNU_MIT;
+    bool upper = true;
 
     if (valid) {
-
-        if (style.syntax == Syntax::GNU_MIT || style.syntax == Syntax::MOIRA_MIT) {
-            *ptr++ = '%';
-        }
-
         switch (cn.raw) {
 
-            case 0x000: *this << (upper ? "SFC"   : "sfc");   break;
-            case 0x001: *this << (upper ? "DFC"   : "dfc");   break;
-            case 0x002: *this << (upper ? "CACR"  : "cacr");  break;
-            case 0x003: *this << (upper ? "TC"    : "tc");    break;
-            case 0x004: *this << (upper ? "ITT0"  : "itt0");  break;
-            case 0x005: *this << (upper ? "ITT1"  : "itt1");  break;
-            case 0x006: *this << (upper ? "DTT0"  : "dtt0");  break;
-            case 0x007: *this << (upper ? "DTT1"  : "dtt1");  break;
-            case 0x008: *this << (upper ? "BUSCR" : "buscr"); break;
-            case 0x800: *this << (upper ? "USP"   : "usp");   break;
-            case 0x801: *this << (upper ? "VBR"   : "vbr");   break;
-            case 0x802: *this << (upper ? "CAAR"  : "caar");  break;
-            case 0x803: *this << (upper ? "MSP"   : "msp");   break;
-            case 0x804: *this << (upper ? "ISP"   : "isp");   break;
-            case 0x805: *this << (upper ? "MMUSR" : "mmusr"); break;
-            case 0x806: *this << (upper ? "URP"   : "urp");   break;
-            case 0x807: *this << (upper ? "SRP"   : "srp");   break;
-            case 0x808: *this << (upper ? "PCR"   : "pcr");   break;
+            case 0x000: *this << ("SFC");   break;
+            case 0x001: *this << ("DFC");   break;
+            case 0x002: *this << ("CACR");  break;
+            case 0x003: *this << ("TC");    break;
+            case 0x004: *this << ("ITT0");  break;
+            case 0x005: *this << ("ITT1");  break;
+            case 0x006: *this << ("DTT0");  break;
+            case 0x007: *this << ("DTT1");  break;
+            case 0x008: *this << ("BUSCR"); break;
+            case 0x800: *this << ("USP");   break;
+            case 0x801: *this << ("VBR");   break;
+            case 0x802: *this << ("CAAR");  break;
+            case 0x803: *this << ("MSP");   break;
+            case 0x804: *this << ("ISP");   break;
+            case 0x805: *this << ("MMUSR"); break;
+            case 0x806: *this << ("URP");   break;
+            case 0x807: *this << ("SRP");   break;
+            case 0x808: *this << ("PCR");   break;
         }
 
     } else {
-
-        if (style.syntax == Syntax::MUSASHI || style.syntax == Syntax::GNU || style.syntax == Syntax::GNU_MIT) {
-            *this << UInt(cn.raw);
-        } else {
-            *this << "INVALID";
-        }
+        *this << "INVALID";
     }
 
     return *this;
@@ -661,23 +537,12 @@ StrWriter::operator<<(RegList l)
 StrWriter&
 StrWriter::operator<<(RegRegList l)
 {
-    switch (style.syntax) {
+    u16 regsD = l.raw & 0x00FF;
+    u16 regsA = l.raw & 0xFF00;
 
-       case Syntax::GNU:
-        case Syntax::GNU_MIT:
-
-            l.raw ? *this << RegList{l.raw} : *this << "#0";
-            break;
-
-        default:
-
-            u16 regsD = l.raw & 0x00FF;
-            u16 regsA = l.raw & 0xFF00;
-
-            *this << RegList { regsD };
-            if (regsD && regsA) *this << "/";
-            *this << RegList { regsA };
-    }
+    *this << RegList { regsD };
+    if (regsD && regsA) *this << "/";
+    *this << RegList { regsA };
 
     return *this;
 }
@@ -743,22 +608,7 @@ template <Mode M, Size S> StrWriter&
 StrWriter::operator<<(Ai<M, S> wrapper)
 {
     auto &ea = wrapper.ea;
-
-    switch (style.syntax) {
-
-        case Syntax::MOIRA:
-        case Syntax::MUSASHI:
-       case Syntax::GNU:
-
-            *this << "(" << An{ea.reg} << ")";
-            break;
-
-        case Syntax::GNU_MIT:
-        case Syntax::MOIRA_MIT:
-
-            *this << An{ea.reg} << "@";
-            break;
-    }
+    *this << "(" << An{ea.reg} << ")";
 
     return *this;
 }
@@ -767,23 +617,7 @@ template <Mode M, Size S> StrWriter&
 StrWriter::operator<<(Pi<M, S> wrapper)
 {
     auto &ea = wrapper.ea;
-
-    switch (style.syntax) {
-
-        case Syntax::MOIRA:
-        case Syntax::MUSASHI:
-       case Syntax::GNU:
-
-            *this << "(" << An{ea.reg} << ")+";
-            break;
-
-        case Syntax::GNU_MIT:
-        case Syntax::MOIRA_MIT:
-
-            *this << An{ea.reg} << "@+";
-            break;
-    }
-
+    *this << "(" << An{ea.reg} << ")+";
     return *this;
 }
 
@@ -791,23 +625,7 @@ template <Mode M, Size S> StrWriter&
 StrWriter::operator<<(Pd<M, S> wrapper)
 {
     auto &ea = wrapper.ea;
-
-    switch (style.syntax) {
-
-        case Syntax::MOIRA:
-        case Syntax::MUSASHI:
-       case Syntax::GNU:
-
-            *this << "-(" << An{ea.reg} << ")";
-            break;
-
-        case Syntax::GNU_MIT:
-        case Syntax::MOIRA_MIT:
-
-            *this << An{ea.reg} << "@-";
-            break;
-    }
-
+    *this << "-(" << An{ea.reg} << ")";
     return *this;
 }
 
@@ -815,50 +633,14 @@ template <Mode M, Size S> StrWriter&
 StrWriter::operator<<(Di<M, S> wrapper)
 {
     auto &ea = wrapper.ea;
-
-    switch (style.syntax) {
-
-        case Syntax::MOIRA:
-        case Syntax::MUSASHI:
-
-            *this << "(" << Int{(i16)ea.ext1} << "," << An{ea.reg} << ")";
-            return *this;
-
-       case Syntax::GNU:
-
-            *this << Int{(i16)ea.ext1} << "(" << An{ea.reg} << ")";
-            break;
-
-        case Syntax::GNU_MIT:
-        case Syntax::MOIRA_MIT:
-
-            *this << An{ea.reg} << "@(" << Int{(i16)ea.ext1} << ")";
-            break;
-    }
-
+    *this << "(" << Int{(i16)ea.ext1} << "," << An{ea.reg} << ")";
     return *this;
 }
 
 template <Mode M, Size S> StrWriter&
 StrWriter::operator<<(Ix<M, S> wrapper)
 {
-    switch (style.syntax) {
-
-        case Syntax::MUSASHI:
-
-            *this << IxMus<M, S>{wrapper.ea};
-            break;
-
-        case Syntax::GNU_MIT:
-        case Syntax::MOIRA_MIT:
-
-            *this << IxMit<M, S>{wrapper.ea};
-            break;
-
-        default:
-
-            *this << IxMot<M, S>{wrapper.ea};
-    }
+    *this << IxMot<M, S>{wrapper.ea};
 
     return *this;
 }
@@ -1151,22 +933,7 @@ template <Mode M, Size S> StrWriter&
 StrWriter::operator<<(Aw<M, S> wrapper)
 {
     auto &ea = wrapper.ea;
-
-    switch (style.syntax) {
-
-        case Syntax::MOIRA:
-        case Syntax::MOIRA_MIT:
-        case Syntax::MUSASHI:
-
-            *this << UInt(ea.ext1) << Sz<Word>{};
-            break;
-
-       case Syntax::GNU:
-        case Syntax::GNU_MIT:
-
-            *this << UInt(ea.ext1);
-            break;
-    }
+    *this << UInt(ea.ext1) << Sz<Word>{};
 
     return *this;
 }
@@ -1175,23 +942,7 @@ template <Mode M, Size S> StrWriter&
 StrWriter::operator<<(Al<M, S> wrapper)
 {
     auto &ea = wrapper.ea;
-
-    switch (style.syntax) {
-
-        case Syntax::MOIRA:
-        case Syntax::MOIRA_MIT:
-        case Syntax::MUSASHI:
-
-            *this << UInt(ea.ext1) << Sz<Long>{};
-            break;
-
-       case Syntax::GNU:
-        case Syntax::GNU_MIT:
-
-            *this << UInt(ea.ext1);
-            break;
-    }
-
+    *this << UInt(ea.ext1) << Sz<Long>{};
     return *this;
 }
 
@@ -1201,29 +952,9 @@ StrWriter::operator<<(DiPc<M, S> wrapper)
     auto &ea = wrapper.ea;
     u32 resolved;
 
-    switch (style.syntax) {
-
-        case Syntax::MOIRA:
-        case Syntax::MUSASHI:
-
-            *this << "(" << Int{(i16)ea.ext1} << ",PC)";
-            resolved = U32_ADD(U32_ADD(ea.pc, (i16)ea.ext1), 2);
-            StrWriter(comment, style) << "; (" << UInt(resolved) << ")" << Finish{};
-            break;
-
-       case Syntax::GNU:
-
-            resolved = U32_ADD(U32_ADD(ea.pc, (i16)ea.ext1), 2);
-            *this << UInt(resolved) << "(" << Pc{} << ")";
-            break;
-
-        case Syntax::MOIRA_MIT:
-        case Syntax::GNU_MIT:
-
-            resolved = U32_ADD(U32_ADD(ea.pc, (i16)ea.ext1), 2);
-            *this << Pc{} << "@(" << UInt(resolved) << ")";
-            break;
-    }
+    *this << "(" << Int{(i16)ea.ext1} << ",PC)";
+    resolved = U32_ADD(U32_ADD(ea.pc, (i16)ea.ext1), 2);
+    StrWriter(comment, style) << "; (" << UInt(resolved) << ")" << Finish{};
 
     return *this;
 }
@@ -1233,19 +964,7 @@ StrWriter::operator<<(Im<M, S> wrapper)
 {
     auto &ea = wrapper.ea;
 
-    switch (style.syntax) {
-
-       case Syntax::GNU:
-        case Syntax::GNU_MIT:
-
-            *this << Ims<S>(ea.ext1);
-            break;
-
-        default:
-
-            *this << Imu<S>(ea.ext1);
-            break;
-    }
+    *this << Imu<S>(ea.ext1);
 
     return *this;
 }
@@ -1254,23 +973,7 @@ template <Mode M, Size S> StrWriter&
 StrWriter::operator<<(Ip<M, S> wrapper)
 {
     auto &ea = wrapper.ea;
-
-    switch (style.syntax) {
-
-        case Syntax::MOIRA:
-        case Syntax::MUSASHI:
-       case Syntax::GNU:
-
-            *this << "-(" << An{ea.reg} << ")";
-            break;
-
-        case Syntax::GNU_MIT:
-        case Syntax::MOIRA_MIT:
-
-            *this << An{ea.reg} << "@-";
-            break;
-    }
-
+    *this << "-(" << An{ea.reg} << ")";
     return *this;
 }
 
@@ -1279,23 +982,8 @@ StrWriter::operator<<(Scale s)
 {
     if (!s.raw) return *this;
 
-    switch (style.syntax) {
-
-        case Syntax::MOIRA:
-        case Syntax::MUSASHI:
-       case Syntax::GNU:
-
-            *ptr++ = '*';
-            *ptr++ = '0' + (char)(1 << s.raw);
-            break;
-
-        case Syntax::GNU_MIT:
-        case Syntax::MOIRA_MIT:
-
-            *ptr++ = ':';
-            *ptr++ = '0' + (char)(1 << s.raw);
-            break;
-    }
+    *ptr++ = '*';
+    *ptr++ = '0' + (char)(1 << s.raw);
 
     return *this;
 }
@@ -1328,15 +1016,7 @@ StrWriter::operator<<(Fc fc)
 StrWriter&
 StrWriter::operator<<(Sfc _)
 {
-    switch (style.syntax) {
-
-        case Syntax::GNU_MIT:      *ptr++ = '%'; [[fallthrough]];
-       case Syntax::GNU:          *ptr++ = 's'; *ptr++ = 'f'; *ptr++ = 'c'; break;
-        case Syntax::MOIRA_MIT:    *ptr++ = '%'; [[fallthrough]];
-        
-        default:
-            *ptr++ = 'S'; *ptr++ = 'F'; *ptr++ = 'C'; break;
-    }
+    *ptr++ = 'S'; *ptr++ = 'F'; *ptr++ = 'C';
 
     return *this;
 }
@@ -1344,15 +1024,7 @@ StrWriter::operator<<(Sfc _)
 StrWriter&
 StrWriter::operator<<(Dfc _)
 {
-    switch (style.syntax) {
-
-        case Syntax::GNU_MIT:      *ptr++ = '%'; [[fallthrough]];
-       case Syntax::GNU:          *ptr++ = 'd'; *ptr++ = 'f'; *ptr++ = 'c'; break;
-        case Syntax::MOIRA_MIT:    *ptr++ = '%'; [[fallthrough]];
-        
-        default:
-            *ptr++ = 'D'; *ptr++ = 'F'; *ptr++ = 'C'; break;
-    }
+    *ptr++ = 'D'; *ptr++ = 'F'; *ptr++ = 'C';
 
     return *this;
 }
@@ -1360,23 +1032,14 @@ StrWriter::operator<<(Dfc _)
 StrWriter&
 StrWriter::operator<<(Fp fp)
 {
-    switch (style.syntax) {
-
-        case Syntax::GNU_MIT:      *ptr++ = '%'; [[fallthrough]];
-       case Syntax::GNU:          *ptr++ = 'f'; *ptr++ = 'p'; *ptr++ = '0' + (char)fp.raw; break;
-        case Syntax::MOIRA_MIT:    *ptr++ = '%'; [[fallthrough]];
-        
-        default:
-            *ptr++ = 'F'; *ptr++ = 'P'; *ptr++ = '0' + (char)fp.raw; break;
-    }
-
+    *ptr++ = 'F'; *ptr++ = 'P'; *ptr++ = '0' + (char)fp.raw;
     return *this;
 }
 
 StrWriter&
 StrWriter::operator<<(Ffmt ffmt)
 {
-    if (style.syntax != Syntax::GNU && style.syntax != Syntax::GNU_MIT) *ptr++ = '.';
+    *ptr++ = '.';
 
     switch (ffmt.raw) {
 
@@ -1398,10 +1061,10 @@ StrWriter::operator<<(Ffmt ffmt)
 StrWriter&
 StrWriter::operator<<(Fctrl fctrl)
 {
-    const char *prefix = style.syntax == Syntax::GNU_MIT || style.syntax == Syntax::MOIRA_MIT ? "%" : "";
+    const char *prefix = "";
     const char *delim = "";
 
-    if (fctrl.raw == 0 && style.syntax != Syntax::GNU) { *this << "{}"; }
+    if (fctrl.raw == 0) { *this << "{}"; }
     if (fctrl.raw & 1) { *this << delim << prefix << "fpiar"; delim = "/"; }
     if (fctrl.raw & 2) { *this << delim << prefix << "fpsr";  delim = "/"; }
     if (fctrl.raw & 4) { *this << delim << prefix << "fpcr";  delim = "/"; }
@@ -1412,27 +1075,13 @@ StrWriter::operator<<(Fctrl fctrl)
 StrWriter&
 StrWriter::operator<<(Tab tab)
 {
-    switch (style.syntax) {
-
-       case Syntax::GNU:
-        case Syntax::GNU_MIT:
-
-            *ptr++ = ' ';
-            break;
-
-        default:
-
-            do { *ptr++ = ' '; } while (ptr < base + tab.raw);
-    }
-
+    do { *ptr++ = ' '; } while (ptr < base + tab.raw);
     return *this;
 }
 
 template <Instr I, Mode M, Size S> StrWriter&
 StrWriter::operator<<(const Av<I, M, S> &av)
 {
-    if (style.syntax == Syntax::GNU || style.syntax == Syntax::GNU_MIT) { return *this; }
-
     switch (I) {
 
         case Instr::BKPT:
@@ -1567,22 +1216,6 @@ StrWriter&
 StrWriter::operator<<(Sep)
 {
     *ptr++ = ',';
-
-    switch (style.syntax) {
-
-        case Syntax::MOIRA:
-        case Syntax::MOIRA_MIT:
-        case Syntax::MUSASHI:
-
-            *ptr++ = ' ';
-            break;
-
-       case Syntax::GNU:
-        case Syntax::GNU_MIT:
-
-            break;
-    }
-
     return *this;
 }
 

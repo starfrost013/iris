@@ -37,16 +37,6 @@ Moira::dasmFDbcc(StrWriter &str, u32 &addr, u16 op) const
     auto src = _____________xxx (op);
     auto cnd = ___________xxxxx (ext);
 
-    // Catch illegal extension words
-    if (str.style.syntax == Syntax::GNU || str.style.syntax == Syntax::GNU_MIT) {
-
-        if (!isValidExtFPU(I, M, op, ext)) {
-
-            addr = old;
-            dasmIllegal<I, M, S>(str, addr, op);
-            return;
-        }
-    }
 
     auto dst = addr + 2;
     U32_INC(dst, SEXT<S>(dasmIncRead<S>(addr)));
@@ -182,7 +172,6 @@ template <Instr I, Mode M, Size S> void
 Moira::dasmFNop(StrWriter &str, u32 &addr, u16 op) const
 {
     str << Ins<I>{};
-    if (str.style.syntax == Syntax::GNU || str.style.syntax == Syntax::GNU_MIT) str << " ";
 }
 
 template <Instr I, Mode M, Size S> void
@@ -209,17 +198,6 @@ Moira::dasmFScc(StrWriter &str, u32 &addr, u16 op) const
     auto reg = _____________xxx (op);
     auto cnd = __________xxxxxx (ext);
 
-    // Catch illegal extension words
-    if (str.style.syntax == Syntax::GNU || str.style.syntax == Syntax::GNU_MIT) {
-
-        if (!isValidExtFPU(I, M, op, ext)) {
-
-            addr = old;
-            dasmIllegal<I, M, S>(str, addr, op);
-            return;
-        }
-    }
-
     str << Ins<I>{} << Fcc{cnd} << str.tab << Op<M, S>(reg, addr);
 }
 
@@ -229,17 +207,6 @@ Moira::dasmFTrapcc(StrWriter &str, u32 &addr, u16 op) const
     auto old = addr;
     auto ext = dasmIncRead(addr);
     auto cnd = __________xxxxxx (ext);
-
-    // Catch illegal extension words
-    if (str.style.syntax == Syntax::GNU || str.style.syntax == Syntax::GNU_MIT) {
-
-        if (!isValidExtFPU(I, M, op, ext)) {
-
-            addr = old;
-            dasmIllegal<I, M, S>(str, addr, op);
-            return;
-        }
-    }
 
     switch (S) {
 
@@ -458,17 +425,6 @@ Moira::dasmFMove(StrWriter &str, u32 &addr, u16 op) const
     auto dst = ______xxx_______ (ext);
     auto fac = _________xxxxxxx (ext);
 
-    // Catch illegal extension words
-    if (str.style.syntax == Syntax::GNU || str.style.syntax == Syntax::GNU_MIT) {
-
-        if (!isValidExtFPU(I, M, op, ext)) {
-
-            addr = old;
-            dasmIllegal<I, M, S>(str, addr, op);
-            return;
-        }
-    }
-
     switch (cod) {
 
         case 0b000:
@@ -565,17 +521,6 @@ Moira::dasmFMovecr(StrWriter &str, u32 &addr, u16 op) const
     auto dst = ______xxx_______ (ext);
     auto ofs = _________xxxxxxx (ext);
 
-    // Catch illegal extension words
-    if (str.style.syntax == Syntax::GNU || str.style.syntax == Syntax::GNU_MIT) {
-
-        if (!isValidExtFPU(I, M, op, ext)) {
-
-            addr = old;
-            dasmIllegal<I, M, S>(str, addr, op);
-            return;
-        }
-    }
-
     str << Ins<I>{} << Ffmt{2} << str.tab << Imu{ofs} << Sep{} << Fp{dst};
 }
 
@@ -590,29 +535,10 @@ Moira::dasmFMovem(StrWriter &str, u32 &addr, u16 op) const
     auto rrr = _________xxx____ (ext);
     auto lll = ___xxx__________ (ext);
 
-    // Catch illegal extension words
-    if (str.style.syntax == Syntax::GNU || str.style.syntax == Syntax::GNU_MIT) {
-
-        if (!isValidExtFPU(I, M, op, ext)) {
-
-            addr = old;
-            dasmIllegal<I, M, S>(str, addr, op);
-            return;
-        }
-    }
 
     switch (cod) {
 
         case 0b100: // Ea to Cntrl
-
-            if ((ext & 0x1C00) == 0) {
-
-                if (str.style.syntax == Syntax::GNU || str.style.syntax == Syntax::GNU_MIT) {
-
-                    str << "fmovel" << str.tab << Op<M, Long>(reg, addr) << Sep{};
-                    return;
-                }
-            }
             if (lll == 0 || lll == 1 || lll == 2 || lll == 4) {
                 str << Ins<Instr::FMOVE>{} << Ffmt{0} << str.tab;
             } else {
@@ -622,15 +548,6 @@ Moira::dasmFMovem(StrWriter &str, u32 &addr, u16 op) const
             break;
 
         case 0b101: // Cntrl to Ea
-
-            if ((ext & 0x1C00) == 0) {
-
-                if (str.style.syntax == Syntax::GNU || str.style.syntax == Syntax::GNU_MIT) {
-
-                    str << Ins<Instr::FMOVE>{} << Ffmt{0} << str.tab << Sep{} << Op<M, Long>(reg, addr);
-                    return;
-                }
-            }
             if (lll == 0 || lll == 1 || lll == 2 || lll == 4) {
                 str << Ins<Instr::FMOVE>{} << Ffmt{0} << str.tab;
             } else {

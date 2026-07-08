@@ -70,10 +70,7 @@ enum class Core
 enum class Syntax
 {
     MOIRA,                  // My personal favorite
-    MOIRA_MIT,
-    GNU,                    // Legacy styles (for testing)
-    GNU_MIT,                // Legacy styles (for testing)
-    MUSASHI                 // Musashi compatibility
+    SGI,                    // SGI GL2 cc
 };
 
 // Letter case preferences for disassembly output
