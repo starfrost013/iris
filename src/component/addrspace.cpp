@@ -88,7 +88,7 @@ namespace Iris
     {
         if (mapping.startAddr > mapping.endAddr)
         {
-            Logger::Log(LOGGING_PREFIX_ADDRSPACE, "AddrSpace::AddMapping - mapping.StartAddr > mapping.endAddr");
+            Logger::Log(LOG_PREFIX_MAPPING, "AddrSpace::AddMapping - mapping.StartAddr > mapping.endAddr", LogChannels::Error);
             return;
         }
 
@@ -96,12 +96,18 @@ namespace Iris
 
         if (mappingCount > 1)
         {
-            Logger::Log(LOGGING_PREFIX_ADDRSPACE, "AddrSpace::AddMapping - mapping already exists");
+            Logger::Log(LOG_PREFIX_MAPPING, "AddrSpace::AddMapping - mapping already exists", LogChannels::Error);
             return;
         }
+
+        if (!mapping.component)
+        {
+            Logger::Log(LOG_PREFIX_MAPPING, "AddrSpace::AddMapping - mapping doesn't have an attached component!", LogChannels::Error);
+            return; 
+        }
     
-        Logger::Log(LOGGING_PREFIX_ADDRSPACE, std::format("Added address mapping from 0x{:x} to 0x{:x} (size 0x{:x})",
-            mapping.startAddr, mapping.endAddr, (mapping.endAddr - mapping.startAddr)).c_str(), LogChannels::Debug);
+        Logger::Log(LOG_PREFIX_MAPPING, std::format("Added address mapping from 0x{:x} to 0x{:x} (size 0x{:x}) for component {}",
+            mapping.startAddr, mapping.endAddr, (mapping.endAddr - mapping.startAddr), mapping.component->GetName()).c_str(), LogChannels::Debug);
         
         mappings[mapping.startAddr] = mapping;
     }

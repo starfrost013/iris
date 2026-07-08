@@ -3,9 +3,6 @@
 #include <Iris.hpp>
 #include <component/component.hpp>
 
-
-#define LOGGING_PREFIX_ADDRSPACE        "EmuCore - Memory Mapping"
-
 namespace Iris
 {
     // This class implements an address space mapping.

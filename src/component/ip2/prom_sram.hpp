@@ -19,8 +19,6 @@ namespace Iris
         void Start()
         {
             // map the private ram
-            Logger::Log(LOG_PREFIX_PROM, "Mapping PROM Private SRAM [2KB]");
-
             AddrSpaceMapping mapping = AddrSpaceMapping();
 
             mapping.startAddr = SRAM_START;

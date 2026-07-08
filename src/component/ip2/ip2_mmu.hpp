@@ -49,8 +49,6 @@ namespace Iris
         void Start()
         {
             // map the private ram
-            Logger::Log(LOG_PREFIX_PROM, "Initialising & mapping IP2 TTL MMU");
-
             AddrSpaceMapping mapping = AddrSpaceMapping();
 
             mapping.startAddr = MMU_START;

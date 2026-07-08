@@ -40,6 +40,7 @@
 
 // Log prefixes
 #define LOG_PREFIX_CORE     "Core"
+#define LOG_PREFIX_MAPPING  "Emulation - Memory Mapping"
 #define LOG_PREFIX_PROM     "Emulation - PROM"
 #define LOG_PREFIX_IP2MMU   "Emulation - IP2 MMU"
 
