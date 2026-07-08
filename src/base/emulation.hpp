@@ -19,21 +19,20 @@ namespace Iris
     class Emulation
     {
     public: 
-        static void Start();
-        static void Frame();
-        static void Tick();             // run at the tick for things that need to be regularly updated
-        static void Reset();
-        static void SingleStep();
-        static void Shutdown();
+        static void Init();             // initialise the emulation system
+        static void Start();            // Start emulation
+        static void Frame();            // render a frame
+        static void Tick();             // run one tick of the system
+        static void Reset();            // reset the emulation
+        static void SingleStep();       // run one emulation tick
+        static void Stop();      // shut down
+        static void Shutdown();     
 
         // Called by components to e.g. get the address space
         static Machine& GetMachine() { return machine; }
         
         static bool IsRunning() { return running; }    
         static void SetRunning(bool value) { running = value; };
-
-        /// @brief get the name of this component. immutable const char*.
-        virtual const char* GetName() { return "***** Name this component *****"; };
 
         // getters for private    
         static Renderer* GetRenderer() { return renderer; }; 

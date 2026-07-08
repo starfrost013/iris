@@ -20,7 +20,6 @@ namespace Iris
         {
             case CoherentSystem::RunState::Reset:
                 Emulation::Reset();
-                SetRunState(Running);
                 break;
             case CoherentSystem::RunState::SingleStep:
                 Emulation::SingleStep();

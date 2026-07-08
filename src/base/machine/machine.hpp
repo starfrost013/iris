@@ -102,10 +102,6 @@ namespace Iris
 
         }
 
-        void Reset()
-        {
-            Logger::Log("Debugger-initiated reset not implemented yet sorry :/");
-        }
 
         void SingleStep()
         {
@@ -116,7 +112,11 @@ namespace Iris
         void Shutdown()
         {
             for (Component* component : components)
+            {
                 component->Shutdown();
+                components.pop_back();
+                delete component;
+            }
         }
 
         // not sure if this is a good idea?

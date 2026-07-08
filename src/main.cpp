@@ -28,7 +28,7 @@ namespace Iris
         Logger::Log(APP_NAME " " APP_VERSION);
         Logger::Log(APP_SIGNON, LogChannels::Message);
 
-        Emulation::Start();
+        Emulation::Init();
         
         // run the emulation
         // todo: needs to run on its own thread

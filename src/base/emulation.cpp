@@ -7,7 +7,7 @@
 
 namespace Iris
 {
-    void Emulation::Start()
+    void Emulation::Init()
     {
         // TEMP
         renderer = new RendererSDL3();
@@ -15,6 +15,11 @@ namespace Iris
 
         Coherent::Init();
 
+        Start();
+    }   
+
+    void Emulation::Start()
+    {
         Logger::Log("Starting emulation...");
            
         machine.AddComponent<Memory>();
@@ -31,7 +36,7 @@ namespace Iris
 
         // start the thread
         emuThread = new std::thread(Emulation::Tick);
-    }   
+    }
     
     void Emulation::Frame()
     {
@@ -45,7 +50,8 @@ namespace Iris
     
     void Emulation::Reset()
     {
-        machine.Reset();
+        Stop();
+        Start();
     }
 
     void Emulation::SingleStep()
@@ -63,14 +69,24 @@ namespace Iris
         }
     }
 
-    void Emulation::Shutdown()
+    void Emulation::Stop()
     {
+        Logger::Log("Resetting emulation...");
+        // make sure the machine is joinable
+        SetRunning(false);
+        SetPaused(false);
+
         if (emuThread->joinable())
             emuThread->join();
 
-        renderer->Shutdown();
-        Coherent::Shutdown();
+        Coherent::Leave();
         machine.Shutdown();
+    }
 
+    void Emulation::Shutdown()
+    {
+        Coherent::Shutdown();
+        Stop();
+        renderer->Shutdown();
     }
 }

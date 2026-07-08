@@ -182,7 +182,7 @@ namespace Iris
             currentSystem = system; 
         
             // start pausd if we configured to do so (for debugging)
-            if (system != nullptr && startPaused->GetValue())
+            if (currentSystem != nullptr && startPaused->GetValue())
             {
                 currentSystem->SetRunState(CoherentSystem::RunState::Paused);
             }

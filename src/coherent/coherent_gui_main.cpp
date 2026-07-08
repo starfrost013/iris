@@ -119,7 +119,7 @@ namespace Iris
 
                 auto addr = currentSystem->GetPC() + pcOffset;
 
-                ImGui::Text("0x%x:    %s", addr, currentSystem->DisasmInstruction(addr));
+                ImGui::Text("0x%lx:    %s", addr, currentSystem->DisasmInstruction(addr));
 
                 if (i == 0)
                     ImGui::PopStyleColor();
