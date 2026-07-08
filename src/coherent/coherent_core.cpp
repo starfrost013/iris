@@ -3,6 +3,43 @@
 namespace Iris
 {
     //
+    // Cvars
+    //
+    Cvar* startPaused;
+
+        /// getters for private fields
+    CoherentSystem::RunState CoherentSystem::GetRunState() { return runState; };
+
+    /// setters for private fields
+
+    void CoherentSystem::SetRunState(CoherentSystem::RunState runState)
+    {
+        this->runState = runState;
+
+        switch (runState)
+        {
+            case CoherentSystem::RunState::Reset:
+                Emulation::Reset();
+                SetRunState(Running);
+                break;
+            case CoherentSystem::RunState::SingleStep:
+                Emulation::SingleStep();
+                SetRunState(Paused);
+                break;
+            case CoherentSystem::RunState::Paused:
+                if (!Emulation::GetPaused())
+                    Emulation::SetPaused(true);
+
+                break;
+            case CoherentSystem::RunState::Running:
+                if (Emulation::GetPaused())
+                    Emulation::SetPaused(false);
+        }
+
+    }
+
+
+    //
     // FUll-specialistaion templates for certain things
     //
 
@@ -40,6 +77,8 @@ namespace Iris
 
     void Coherent::Init()
     {
+        startPaused = Cvar::Set("startPaused", "1");
+
         Logger::Log(COHERENT_LOG_PREFIX, COHERENT_VERSION " initialised");
         Logger::settings.SetPostLogFunction(Coherent_CTrampolineForLog);
 

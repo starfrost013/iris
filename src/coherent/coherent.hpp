@@ -18,10 +18,11 @@ namespace Iris
     #define LOGBUF_MAX_SIZE         16384
     #define LOGBUF_PURGE_SIZE       2048
 
+    extern Cvar* startPaused;
+
     class CoherentCommand
     {
         char name[STRING_MAX_SHORT];
-
     };
 
     /// @brief defines a command extension object. all types that implement this must inherit from this class.
@@ -102,8 +103,7 @@ namespace Iris
             SingleStep = 3,
         };
 
-        /// @brief the run state of the system
-        inline static RunState runState;
+
 
         template <typename T>
         void AddRegister(Register<T>* reg, const char* name)
@@ -122,8 +122,13 @@ namespace Iris
 
         /// @brief might be slow. this really needs to have a custom access only iterators.
         std::unordered_map<const char*, RegisterBase*> registers;
-    private: 
 
+        CoherentSystem::RunState GetRunState();
+        void SetRunState(CoherentSystem::RunState runState);
+
+    private: 
+        /// @brief the run state of the system
+        inline static RunState runState;
     };
 
     class Coherent
@@ -159,7 +164,16 @@ namespace Iris
         static CoherentSystem* GetSystem() { return currentSystem; };
 
         // Setters for private members
-        static void SetSystem(CoherentSystem* system) { currentSystem = system; }; 
+        static void SetSystem(CoherentSystem* system) 
+        { 
+            currentSystem = system; 
+        
+            // start pausd if we configured to do so (for debugging)
+            if (system != nullptr && startPaused->GetValue())
+            {
+                currentSystem->SetRunState(CoherentSystem::RunState::Paused);
+            }
+        }; 
         
         /// @brief If this is true, the coherent system is currently active. (needs to be public because of imgui)
         inline static bool active; 

@@ -10,7 +10,6 @@
 // not sure where else to put this. I didn't want it to be accessible from outside of UI parts, but i don't feel like a UI backend is a good use of time rn
 
 #include <imgui.h>
-#include <base/emulation.hpp>
 #include <coherent/coherent.hpp>
 #include <component/cpu/cpu.hpp>
 
@@ -50,27 +49,27 @@ namespace Iris
 
             ImGui::SameLine();
 
-            if (currentSystem->runState == CoherentSystem::RunState::Running)
+            if (currentSystem->GetRunState() == CoherentSystem::RunState::Running)
             {
                 if (ImGui::Button("Pause CPU"))
-                    currentSystem->runState = CoherentSystem::RunState::Paused;
+                    currentSystem->SetRunState(CoherentSystem::RunState::Paused);
             }
             else
             {
                 if (ImGui::Button("Start CPU"))
-                    currentSystem->runState = CoherentSystem::RunState::Running; 
+                    currentSystem->SetRunState(CoherentSystem::RunState::Running); 
             }
 
             ImGui::SameLine();
             if (ImGui::Button("Reset"))
-                currentSystem->runState = CoherentSystem::RunState::Reset;
+                currentSystem->SetRunState(CoherentSystem::RunState::Reset);
 
-            if (currentSystem->runState == CoherentSystem::RunState::Paused)
+            if (currentSystem->GetRunState() == CoherentSystem::RunState::Paused)
             {
                 ImGui::SameLine();
                 
                 if (ImGui::Button("Step"))
-                    currentSystem->runState = CoherentSystem::RunState::SingleStep;
+                    currentSystem->SetRunState(CoherentSystem::RunState::SingleStep);
             }
 
             
@@ -116,32 +115,6 @@ namespace Iris
     
     void Coherent::Frame()
     {
-        // basic state machine
-        // move to execstart?
-        if (currentSystem)
-        {
-            switch (currentSystem->runState)
-            {
-                case CoherentSystem::RunState::Reset:
-                    Emulation::Reset();
-                    currentSystem->runState = CoherentSystem::RunState::Running;
-                    break;
-                case CoherentSystem::RunState::SingleStep:
-                    Emulation::SingleStep();
-                    currentSystem->runState = CoherentSystem::RunState::Paused;
-                    break;
-                case CoherentSystem::RunState::Paused:
-                    if (!Emulation::GetPaused())
-                        Emulation::SetPaused(true);
-
-                    break;
-                case CoherentSystem::RunState::Running:
-                    if (Emulation::GetPaused())
-                        Emulation::SetPaused(false);
-            }
-        }
-
-
         DrawMainWindow();
         DrawLogWindow();
     }

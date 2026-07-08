@@ -5,7 +5,7 @@ namespace Iris
     // yes, this checks exactly for one. becaue we don't want duplicatges and check for them 
     AddrSpaceMapping* AddrSpace::GetMapping(size_t addr) 
     { 
-        // we are oging to have to optimise this
+        // we are oging to have to optimise this    ``
         for (auto it : mappings)
         {
             if (addr >= it.second.startAddr
@@ -38,7 +38,11 @@ namespace Iris
 
         if (mapping)
         {
-            return mapping->component->OnRead16(addr);
+            auto value = mapping->component->OnRead16(addr);
+            // IRIS is a big-endian system
+            value = (value >> 8) | (value << 8); 
+            
+            return value;
         }
         else
             return 0;
@@ -50,7 +54,16 @@ namespace Iris
 
         if (mapping)
         {
-            return mapping->component->OnRead32(addr);
+            // IRIS is a big-endian system
+            auto value = mapping->component->OnRead32(addr);
+
+            // IRIS is a big-endian system.
+            value = ((((value) & 0xff000000) >> 24)|
+                (((value) & 0x00ff0000) >>  8) |
+                (((value) & 0x0000ff00) <<  8) |
+                (((value) & 0x000000ff) << 24));
+
+            return value;
         }
         else
             return 0;
@@ -109,6 +122,8 @@ namespace Iris
 
         if (mapping)
         {
+            // IRIS is a big-endian system
+            value = (value >> 8) | (value << 8);
             return mapping->component->OnWrite16(addr, value);
         }
     }
@@ -119,6 +134,12 @@ namespace Iris
 
         if (mapping)
         {
+            // IRIS is a big-endian system.
+            value = ((((value) & 0xff000000) >> 24)|
+                (((value) & 0x00ff0000) >>  8) |
+                (((value) & 0x0000ff00) <<  8) |
+                (((value) & 0x000000ff) << 24));
+
             return mapping->component->OnWrite32(addr, value);
         }
     }

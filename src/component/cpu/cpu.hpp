@@ -1,3 +1,5 @@
+#pragma once 
+
 #include <Iris.hpp>
 #include <component/component.hpp>
 

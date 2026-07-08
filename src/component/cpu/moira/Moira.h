@@ -53,14 +53,20 @@ public:
     //
     // Internals
     //
-    
+
+    // PUBLIC FOR COHERENT
+
+    // The CPU's register set
+    Registers reg {};
+
+    // Current value on the IPL (Interrupt Priority Level) pins
+    u8 ipl {};
 protected:
     
     // Number of elapsed cycles since power-up
     i64 clock {};
     
-    // The CPU's register set
-    Registers reg {};
+
     
     // Prefetch queue for fetching instructions
     PrefetchQueue queue {};
@@ -68,8 +74,7 @@ protected:
     // Interrupt mode
     IrqMode irqMode {IrqMode::AUTO};
     
-    // Current value on the IPL (Interrupt Priority Level) pins
-    u8 ipl {};
+
     
     // Value on the lower two function code pins (FC1|FC0)
     u8 fcl {2};
@@ -280,8 +285,6 @@ public:
     
 protected:
     
-#if MOIRA_VIRTUAL_API == true
-    
     // Advances the internal clock by the specified number of cycles
     virtual void sync(int cycles) { clock += cycles; }
     
@@ -371,100 +374,6 @@ protected:
     
     // Called when a software trap is hit
     virtual void didReachSoftwareTrap(u32 addr) { }
-    
-#else
-    
-    // Advances the internal clock by the specified number of cycles
-    void sync(int cycles);
-    
-    // Reads a value from memory
-    u8 read8(u32 addr) const;
-    u16 read16(u32 addr) const;
-    
-    // Reads a 16-bit value from memory during the reset routine
-    u16 read16OnReset(u32 addr) const;
-    
-    // Reads a 16-bit value from memory for disassembly purposes
-    u16 read16Dasm(u32 addr) const;
-    
-    // Writes a value into memory
-    void write8(u32 addr, u8 val) const;
-    void write16(u32 addr, u16 val) const;
-    
-    // Provides the interrupt vector for a given interrupt level in USER mode
-    u16 readIrqUserVector(u8 level) const;
-
-    
-    //
-    // State delegates
-    //
-    
-    // Called when the CPU is reset
-    void cpuDidReset();
-    
-    // Called when the CPU enters the HALT state
-    void cpuDidHalt();
-    
-    
-    //
-    // Instruction delegates
-    //
-    
-    // Called before an instruction is executed
-    void willExecute(const char *func, Instr I, Mode M, Size S, u16 opcode);
-    
-    // Called after an instruction has been executed
-    void didExecute(const char *func, Instr I, Mode M, Size S, u16 opcode);
-    
-    
-    //
-    // Exception delegates
-    //
-    
-    // Called before an exception is executed
-    void willExecute(M68kException exc, u16 vector);
-    
-    // Called after an exception has been executed
-    void didExecute(M68kException exc, u16 vector);
-    
-    // Called when an interrupt is about to be processed
-    void willInterrupt(u8 level);
-    
-    // Called when the CPU jumps to an exception vector
-    void didJumpToVector(int nr, u32 addr);
-    
-    
-    //
-    // Cache register delegates
-    //
-    
-    // Called when the CACR register is modified
-    void didChangeCACR(u32 value);
-    
-    // Called when the CAAR register is modified
-    void didChangeCAAR(u32 value);
-    
-    
-    //
-    // Debugger delegates
-    //
-    
-    // Called when a soft stop is reached
-    void didReachSoftstop(u32 addr);
-    
-    // Called when a breakpoint is hit
-    void didReachBreakpoint(u32 addr);
-    
-    // Called when a watchpoint is hit
-    void didReachWatchpoint(u32 addr);
-    
-    // Called when a catchpoint is hit
-    void didReachCatchpoint(u8 vector);
-    
-    // Called when a software trap is hit
-    void didReachSoftwareTrap(u32 addr);
-    
-#endif
     
     //
     // Accessing the clock

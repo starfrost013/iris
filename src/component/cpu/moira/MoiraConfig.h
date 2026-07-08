@@ -21,19 +21,6 @@
  */
 #define MOIRA_PRECISE_TIMING false
 
-/* Set to true to implement the CPU interface as virtual functions.
- *
- * To interact with the environment (e.g., for reading data from memory),
- * the CPU calls an appropriate function that must be implemented by the client.
- * When this option is enabled, all API functions are declared virtual, following
- * the standard object-oriented programming (OOP) paradigm. However, virtual
- * functions introduce a performance penalty. Setting this option to false allows
- * the client API to be statically linked, improving performance.
- *
- * Enable to adhere to the standard OOP paradigm, disable to gain speed.
- */
-#define MOIRA_VIRTUAL_API true
-
 /* Set to true to enable address error checking.
  *
  * The 68000 and 68010 trigger an address error violation if a word or longword

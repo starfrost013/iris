@@ -40,6 +40,7 @@
 
 // Log prefixes
 #define LOG_PREFIX_CORE     "Core"
+#define LOG_PREFIX_PROM     "Emulation - PROM"
 
 // Some string lengths
 #define STRING_MAX_SHORT    48

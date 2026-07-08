@@ -8,7 +8,19 @@ namespace Iris
         auto capacity = Emulation::GetMachine().ramCapacity;
         ram = new uint8_t[capacity];
         Logger::Log(LOG_PREFIX_EMU_MACHINE, std::format("System RAM is {} bytes", capacity).c_str(), LogChannels::Debug);
+        
+        AddrSpaceMapping mapping = AddrSpaceMapping();
 
+        mapping.startAddr = 0x0;
+        mapping.endAddr = mapping.startAddr + capacity;
+
+        mapping.component = this;
+
+        AddrSpace::AddMapping(mapping);
+
+        // big endian (temp)
+        ram[0] = 0x33; // initial sp
+        ram[4] = 0x30; // initial pc
     }
 
     uint8_t Memory::OnRead8(size_t addr)

@@ -2,7 +2,8 @@
 #include <component/component.hpp>
 #include <component/memory.hpp>
 #include <component/cpu/mc68020.hpp>
-#include <component/rom/prom.hpp>
+#include <component/ip2/prom.hpp>
+#include <component/ip2/prom_sram.hpp>
 
 namespace Iris
 {
@@ -19,6 +20,7 @@ namespace Iris
         machine.AddComponent<Memory>();
         machine.AddComponent<CPU_MC68020>();
         machine.AddComponent<PROM>();
+        machine.AddComponent<PROM_SRAM>();
         machine.Start();
 
         // enter the coherent debugger

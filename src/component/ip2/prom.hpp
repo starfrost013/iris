@@ -8,7 +8,7 @@ namespace Iris
     extern Cvar* promSize;
 
     #define PROM_START_ADDRESS      0x30000000
-    #define PROM_LOG_PREFIX         "EmuCore - ROM"
+    #define PROM_SRAM_START_ADDRESS 0x33000000
 
     // FOR COMPONENTS, WE DON'T NEED TO BOUNDS CHECK BECAUSE WE ALREADY MAPPED IT!
 
@@ -42,25 +42,21 @@ namespace Iris
 
         void OnWrite8(size_t addr, uint8_t value) 
         { 
-            addr %= (size_t)promSize->GetValue();
-            rom[addr] = value; 
+            Logger::Log(LOG_PREFIX_PROM, std::format("Tried to write 8bit {} to PROM mapped {}", addr, value).c_str(), LogChannels::Warning);
         };
 
         void OnWrite16(size_t addr, uint16_t value) 
         { 
-            addr %= (size_t)promSize->GetValue();
-            uint16_t* rom16 = (uint16_t*)rom; 
-            rom16[addr >> 1] = value; 
+            Logger::Log(LOG_PREFIX_PROM, std::format("Tried to write 16bit {} to PROM mapped {}", addr, value).c_str(), LogChannels::Warning);
         };
 
         void OnWrite32(size_t addr, uint32_t value)
         { 
-            addr %= (size_t)promSize->GetValue();
-            uint32_t* rom32 = (uint32_t*)rom; 
-            rom32[addr >> 2] = value; 
+            Logger::Log(LOG_PREFIX_PROM, std::format("Tried to write 32bit {} to PROM mapped {}", addr, value).c_str(), LogChannels::Warning);
         };
 
     private: 
         uint8_t* rom;
+
     };
 }
