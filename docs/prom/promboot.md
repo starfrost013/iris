@@ -58,9 +58,9 @@ Init phase 0 ("initdone"):
 17. Set Debug LEDs to 1.
 18. Call confidence tests
 
-Init phase 1 ("confid"): - not quite sure how these ever get called. but pre
+Init phase 1 ("confid"):
+    -> immediately RTS. Dummied out?
 
-17. Test getting the values of the SR, VBR, CACR, CAAR, SFC, DFC registers. Test setting the values of VBR, CACR, CAAR, SFC, DFC registers (otherwise we'd leave SR mode!). 
 18. Test memory word alignment.
 19. Zero memory.
 20. Test interrupt levels on 68020.

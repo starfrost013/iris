@@ -34,7 +34,6 @@ namespace Iris
                 if (Emulation::GetPaused())
                     Emulation::SetPaused(false);
         }
-
     }
 
 

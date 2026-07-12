@@ -14,7 +14,7 @@
 namespace Iris
 {
     #define COHERENT_LOG_PREFIX     "Debugger"
-    #define COHERENT_VERSION        "Coherent Debugging Engine v0.2 (July 2026)"
+    #define COHERENT_VERSION        "Coherent Debugging Engine v0.3 (July 2026)"
     #define LOGBUF_MAX_SIZE         16384
     #define LOGBUF_PURGE_SIZE       2048
 
@@ -28,7 +28,14 @@ namespace Iris
     /// @brief defines a command extension object. all types that implement this must inherit from this class.
     class CoherentExtension
     {
-    public: 
+    public:
+        Component* component; 
+
+        CoherentExtension(Component* component)
+        {
+            this->component = component;
+        }
+
         void AddCommand(CoherentCommand* command)
         {
             if (!command)

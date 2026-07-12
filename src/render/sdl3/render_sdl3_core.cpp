@@ -15,20 +15,20 @@ namespace Iris
     /// @brief Initialises the SDL renderer. A failure is reported as a FATAL_ERROR Log.
     void RendererSDL3::Init()
     {
-        Logger::Log(RENDER_SDL3_LOG_PREFIX, "Initialising SDL3 renderer...");
+        Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising SDL3 renderer...");
 
         // maybe we should rebase against release/3.4.x
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS)) //noreturn (SDL_INIT_AUDIO currently broken! )
-            Logger::Log(RENDER_SDL3_LOG_PREFIX, std::format("Failed to initialise SDL3: {}!", SDL_GetError()).c_str(), LogChannels::FatalError);
+            Logger::Log(LOG_PREFIX_RENDER_SDL3, std::format("Failed to initialise SDL3: {}!", SDL_GetError()).c_str(), LogChannels::FatalError);
 
-        Logger::Log(RENDER_SDL3_LOG_PREFIX, "Initialising SDL window...", LogChannels::Debug);
+        Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising SDL window...", LogChannels::Debug);
 
         window = SDL_CreateWindow(WINDOW_TITLE_DEFAULT, windowSizeX, windowSizeY, 0);
 
         if (!window) // noreturn
-            Logger::Log(RENDER_SDL3_LOG_PREFIX, std::format("Failed to initialise SDL Window!", SDL_GetError()).c_str(), LogChannels::FatalError);
+            Logger::Log(LOG_PREFIX_RENDER_SDL3, std::format("Failed to initialise SDL Window!", SDL_GetError()).c_str(), LogChannels::FatalError);
 
-        Logger::Log(RENDER_SDL3_LOG_PREFIX, "Initialising SDL GPU device...", LogChannels::Debug);
+        Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising SDL GPU device...", LogChannels::Debug);
 
         gpuDevice = SDL_CreateGPUDevice(
             SDL_GPU_SHADERFORMAT_SPIRV 
@@ -44,27 +44,27 @@ namespace Iris
         );
 
         if (!gpuDevice) // noreturn
-            Logger::Log(RENDER_SDL3_LOG_PREFIX, std::format("Failed to initialise SDL GPU Device!", SDL_GetError()).c_str(), LogChannels::FatalError);
+            Logger::Log(LOG_PREFIX_RENDER_SDL3, std::format("Failed to initialise SDL GPU Device!", SDL_GetError()).c_str(), LogChannels::FatalError);
 
-        Logger::Log(RENDER_SDL3_LOG_PREFIX, "Initialising SDL GPU renderer...", LogChannels::Debug);
+        Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising SDL GPU renderer...", LogChannels::Debug);
 
         renderer = SDL_CreateGPURenderer(gpuDevice, window);
 
         if (!renderer) // noreturn
-            Logger::Log(RENDER_SDL3_LOG_PREFIX, std::format("Failed to initialise SDL GPU Renderer!", SDL_GetError()).c_str(), LogChannels::FatalError);
+            Logger::Log(LOG_PREFIX_RENDER_SDL3, std::format("Failed to initialise SDL GPU Renderer!", SDL_GetError()).c_str(), LogChannels::FatalError);
 
-        Logger::Log(RENDER_SDL3_LOG_PREFIX, "Claiming window for GPU device...", LogChannels::Debug);
+        Logger::Log(LOG_PREFIX_RENDER_SDL3, "Claiming window for GPU device...", LogChannels::Debug);
 
         // Claim the window for the gpu device
         if (!SDL_ClaimWindowForGPUDevice(gpuDevice, window)) // noreturn
-            Logger::Log(RENDER_SDL3_LOG_PREFIX, std::format("Failed to claim SDL window for GPU device!", SDL_GetError()).c_str(), LogChannels::FatalError);
+            Logger::Log(LOG_PREFIX_RENDER_SDL3, std::format("Failed to claim SDL window for GPU device!", SDL_GetError()).c_str(), LogChannels::FatalError);
  
-        Logger::Log(RENDER_SDL3_LOG_PREFIX, "Setting swapchain parameters...", LogChannels::Debug);
+        Logger::Log(LOG_PREFIX_RENDER_SDL3, "Setting swapchain parameters...", LogChannels::Debug);
 
         // Set SDR
         SDL_SetGPUSwapchainParameters(gpuDevice, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC);
 
-        Logger::Log(RENDER_SDL3_LOG_PREFIX, "Initialising IMGUI core...", LogChannels::Debug);
+        Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising IMGUI core...", LogChannels::Debug);
 
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -76,7 +76,7 @@ namespace Iris
         // setup style
         ImGui::StyleColorsDark();
 
-        Logger::Log(RENDER_SDL3_LOG_PREFIX, "Initialising IMGUI backend...", LogChannels::Debug);
+        Logger::Log(LOG_PREFIX_RENDER_SDL3, "Initialising IMGUI backend...", LogChannels::Debug);
 
         ImGui_ImplSDL3_InitForSDLGPU(window);
 

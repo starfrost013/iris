@@ -8,6 +8,7 @@
 */
 
 #pragma once 
+#include <imgui.h> // temp
 #include <Iris.hpp>
 #include <base/filesystem/filesystem.hpp>
 #include <component/addrspace.hpp>
@@ -15,9 +16,6 @@
 
 namespace Iris
 {
-    extern Cvar* promPath;
-    extern Cvar* promSize;
-
     // not sure hwy sgi decided that addresses must be so sparse that bit fucking 24 needed to be the register selector.
 
     //
@@ -81,6 +79,6 @@ namespace Iris
 
     class CoherentExtensionIP2MMU : public CoherentExtension
     {
-        // TODO
+        if 
     };
 }

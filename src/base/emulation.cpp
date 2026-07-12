@@ -30,6 +30,7 @@ namespace Iris
         machine.AddComponent<PROM>();
         machine.AddComponent<PROM_SRAM>();
         machine.AddComponent<MMU_IP2>();
+        machine.AddComponent<DUART68681>();
         machine.Start();
 
         // enter the coherent debugger

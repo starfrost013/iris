@@ -18,7 +18,7 @@
 
 namespace Iris
 {
-    #define RENDER_SDL3_LOG_PREFIX      "Render - SDL3"
+    #define LOG_PREFIX_RENDER_SDL3      "Render - SDL3"
 
     /// @brief Base renderer class. Other renderers inherit from this
     class RendererSDL3 : public Renderer
