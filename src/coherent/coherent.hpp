@@ -26,16 +26,20 @@ namespace Iris
     };
 
     /// @brief defines a command extension object. all types that implement this must inherit from this class.
+    /// the objects are automatically added to the menu
     class CoherentExtension
     {
     public:
         Component* component; 
+        bool enabled = false; 
 
         CoherentExtension(Component* component)
         {
             this->component = component;
         }
 
+        /// @brief Adds a command to a Coherent extension.
+        /// @param command A pointer to teh command object to add.
         void AddCommand(CoherentCommand* command)
         {
             if (!command)
@@ -49,6 +53,7 @@ namespace Iris
 
         /// @brief Add the UI for a Coherent extension. Currently it gets added to the Peripherals menu.
         virtual void AddUI() { };
+
     private:
         std::vector<CoherentCommand*> commands;
     };
@@ -84,10 +89,7 @@ namespace Iris
 
             /// @brief Write the register
             /// @param value The register value to write - *MUST* Be a pointer. It gets converted to a pointer automatically so make sure it isn't automatically destroyed
-            void Write(std::any& value) override { this->value = std::any_cast<T>(&value); };
-                       
-            void TextifyDecimal(T value, char* buf);
-            void TextifyHex(T value, char* buf);            
+            void Write(std::any& value) override { this->value = std::any_cast<T>(&value); }; 
         private: 
             T* value; 
 
@@ -217,6 +219,7 @@ namespace Iris
         static void DrawMainWindow();
         static void DrawLogWindow();
 
+        /// @brief internal thing used to store the emulator log. need a cache
         inline static char logBuffer[LOGBUF_MAX_SIZE] = {0};
     };
 }

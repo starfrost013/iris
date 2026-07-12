@@ -25,6 +25,12 @@ namespace Iris
         int i = 0;
         int pcOffset = 0;
 
+        for (CoherentExtension* extension : extensions)
+        {
+            if (extension->enabled)
+                extension->AddUI(); 
+        }
+
         if (!ImGui::Begin(COHERENT_VERSION, &active, ImGuiWindowFlags_MenuBar))
             goto end;
         else 
@@ -33,6 +39,14 @@ namespace Iris
             {
                 if (ImGui::BeginMenu("Peripherals"))
                 {
+                    // see which extensions are enabled 
+
+                    for (CoherentExtension* extension : extensions)
+                    {
+                        if (ImGui::MenuItem(extension->component->GetName()))
+                            extension->enabled = true; 
+                    }
+
                     ImGui::EndMenu();
                 }
 

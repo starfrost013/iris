@@ -8,7 +8,6 @@
 */
 
 #pragma once 
-#include <imgui.h> // temp
 #include <Iris.hpp>
 #include <base/filesystem/filesystem.hpp>
 #include <component/addrspace.hpp>
@@ -16,8 +15,6 @@
 
 namespace Iris
 {
-    // not sure hwy sgi decided that addresses must be so sparse that bit fucking 24 needed to be the register selector.
-
     //
     // Registers
     //
@@ -37,6 +34,18 @@ namespace Iris
     #define REG_TEXTDATA_LIMIT      0x3D000000
     #define REG_STACK_BASE          0x3E000000
     #define REG_STACK_LIMIT         0x3F000000
+
+    /// The coherent extnension
+    class CoherentExtensionIP2MMU : public CoherentExtension
+    {
+    public:
+        CoherentExtensionIP2MMU(Component* owner) : CoherentExtension(owner) {}
+
+        void AddUI() override;
+    };
+
+    // not sure hwy sgi decided that addresses must be so sparse that bit fucking 24 needed to be the register selector.
+
 
 
     // FOR COMPONENTS, WE DON'T NEED TO BOUNDS CHECK BECAUSE WE ALREADY MAPPED IT!
@@ -75,10 +84,16 @@ namespace Iris
         uint32_t stackBase;
         uint32_t stackLimit;
 
+        MMU_IP2()
+        {
+            mmuExtension = new CoherentExtensionIP2MMU(this);
+            Coherent::RegisterExtension(mmuExtension);
+        }
+
+    private: 
+        CoherentExtensionIP2MMU* mmuExtension; 
+
     };
 
-    class CoherentExtensionIP2MMU : public CoherentExtension
-    {
-        if 
-    };
+
 }
