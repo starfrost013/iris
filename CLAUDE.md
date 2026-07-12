@@ -1,4 +1,4 @@
-# Do not submit actually AI generated code to this repository under any circumstances. That being said, if your code was generated using the help of an AI model for e.g. submitting bugs, it's fine to submit here, since I can't figure out what was suggested to you and what was not.
+# Do not submit AI generated code to this repository under any circumstances. That being said, if your code was generated using the help of an AI model for e.g. submitting bugs, it's fine to submit here, since I can't figure out what was suggested to you and what was not.
 
 **Note for anyone reading this**:
 
