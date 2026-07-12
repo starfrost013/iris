@@ -18,9 +18,9 @@ namespace Iris
         ImGui::Text("Parity [0x%x]:           0x%x", REG_PARITY, mmu->parity);
         ImGui::Text("Multibus Protect [0x%x]: 0x%x", REG_MULTIBUS_PROTECT, mmu->multibusProtect);
         ImGui::Text("Text/Data Base [0x%x]:   0x%x", REG_TEXTDATA_BASE, mmu->textdataBase);
-        ImGui::Text("Text/Data Limit [0x%x]   0x%x", REG_TEXTDATA_BASE, mmu->textdataLimit);
-        ImGui::Text("Stack Base [0x%x]:       0x%x", REG_PARITY, mmu->stackBase);
-        ImGui::Text("Stack Limit [0x%x]:      0x%x", REG_PARITY, mmu->stackLimit);
+        ImGui::Text("Text/Data Limit [0x%x]   0x%x", REG_TEXTDATA_LIMIT, mmu->textdataLimit);
+        ImGui::Text("Stack Base [0x%x]:       0x%x", REG_STACK_BASE, mmu->stackBase);
+        ImGui::Text("Stack Limit [0x%x]:      0x%x", REG_STACK_LIMIT, mmu->stackLimit);
 
         ImGui::Button("View Pagetable");
         
