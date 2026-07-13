@@ -8,8 +8,8 @@
     coherent_gui_logging.cpp: Pipes logging to a coherent window
 */
 
-#include <imgui.h>
 #include <coherent/coherent.hpp>
+#include <coherent/coherent_gui_imgui.hpp>
 
 namespace Iris
 {

@@ -9,8 +9,8 @@
 
 // not sure where else to put this. I didn't want it to be accessible from outside of UI parts, but i don't feel like a UI backend is a good use of time rn
 
-#include <imgui.h>
 #include <coherent/coherent.hpp>
+#include <coherent/coherent_gui_imgui.hpp>
 #include <component/cpu/cpu.hpp>
 
 namespace Iris

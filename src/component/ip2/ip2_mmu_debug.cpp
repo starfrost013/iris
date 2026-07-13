@@ -1,5 +1,5 @@
 
-#include <imgui.h>
+#include <coherent/coherent_gui_imgui.hpp>
 #include <component/ip2/ip2_mmu.hpp>
 
 namespace Iris
@@ -8,7 +8,7 @@ namespace Iris
     {
         MMU_IP2* mmu = (MMU_IP2*)component;
 
-        ImGui::SetNextWindowSize(ImVec2(700, 200));
+        ImGui::SetNextWindowSize(ImVec2(400, 200));
 
         if (!ImGui::Begin("MMU State", &enabled))
             goto end;
