@@ -14,7 +14,7 @@
 namespace Iris
 {
     #define COHERENT_LOG_PREFIX     "Debugger"
-    #define COHERENT_VERSION        "Coherent Debugging Engine v0.3 (July 2026)"
+    #define COHERENT_VERSION        "Coherent Debugging Engine v0.4 (July 2026)"
     #define LOGBUF_MAX_SIZE         16384
     #define LOGBUF_PURGE_SIZE       2048
 
@@ -147,6 +147,7 @@ namespace Iris
         /// @brief set the run state of the system
         void SetRunState(CoherentSystem::RunState runState);
 
+     
     protected: 
         /// @brief the run state of the system
         inline static RunState runState;
@@ -157,22 +158,60 @@ namespace Iris
     class Coherent
     {
     public: 
+    
         /// @brief Initialise the coherent system
         static void Init();
 
         /// @brief Enters the Coherent system on command.
         static void Enter();
 
-        /// @brief On the start of a tick for a certain component, call this method if enabled.
-        static void ExecStart(Component* component);
-
-        /// @brief On the end of an instruction, call this method.
-        static void ExecEnd(Component* component);
-
         /// @brief Render a frame of the debugger (see coherent_gui.cpp)
         static void Frame();
+        
+        /// @brief Called when the coherent system entered a breakpoint.
+        static void OnBreakpointHit() 
+        {
+            // breakpoint is hit pause the system
+            currentSystem->SetRunState(CoherentSystem::RunState::Paused);
+        }
 
-        /// @brief Exit the coherent system.
+        class Guard
+        {
+        public: 
+            size_t addr; 
+            bool enabled;
+        };
+
+        /// defines a breakpoint
+        class Breakpoint : public Guard
+        {
+        };
+
+        class Watchpoint : public Guard
+        {
+        }; 
+
+        class Catchpoint : public Guard
+        {
+        public: 
+            size_t exceptionId;
+        };
+
+        /// @brief Called when the coherent system was requested to remove a breakpoint.
+        static void AddBreakpoint(Breakpoint bp);
+        static void AddWatchpoint(Watchpoint wp);
+        static void AddCatchpoint(Catchpoint cp);
+
+        /// @brief Called when the coherent system was requested to remove a breakpoint.
+        static void RemoveBreakpoint(Breakpoint bp);
+        static void RemoveWatchpoint(Watchpoint wp);
+        static void RemoveCatchpoint(Catchpoint cp);
+
+        static Breakpoint GetBreakpointByAddr(size_t addr);
+        static Watchpoint GetWatchpointByAddr(size_t addr);
+        static Catchpoint GetCatchpointByAddr(size_t addr);
+
+        // @brief Exit the coherent system.
         static void Leave();
 
         /// @brief SHut down the coherent system.
@@ -199,7 +238,7 @@ namespace Iris
         }; 
         
         /// @brief If this is true, the coherent system is currently active. (needs to be public because of imgui)
-        inline static bool active; 
+        inline static bool active;
 
         // SHOULD NOT BE PUBLIC, but because of some things with the design of SSLS 5, it is.
         static void AddTextToLogWindowBuffer(const char* str);
@@ -221,5 +260,10 @@ namespace Iris
 
         /// @brief internal thing used to store the emulator log. need a cache
         inline static char logBuffer[LOGBUF_MAX_SIZE] = {0};
+
+        // key is the size_t
+        inline static std::unordered_map<size_t, Breakpoint> breakpoints;
+        inline static std::unordered_map<size_t, Watchpoint> watchpoints;
+        inline static std::unordered_map<size_t, Catchpoint> catchpoints;
     };
 }

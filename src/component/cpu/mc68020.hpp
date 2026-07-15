@@ -23,6 +23,16 @@ namespace Iris
             this->moiraCpu = bridge;
         }
 
+        void AddBreakpoint(size_t addr) override
+        {
+            moiraCpu->AddBreakpoint(addr);
+        }
+
+        void RemoveBreakpoint(size_t addr) override
+        {
+            moiraCpu->RemoveBreakpoint(addr);
+        }
+
     private: 
         char disasmBuf[MOIRA_DISASM_BUF_SIZE] = {0};
         MC68020MoiraBridge* moiraCpu;

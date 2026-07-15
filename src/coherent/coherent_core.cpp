@@ -58,27 +58,16 @@ namespace Iris
         initialised = true; 
     }
 
-    void Coherent::ExecStart(Component* component)
-    {
-
-    }
-
-    void Coherent::ExecEnd(Component* component)
-    {
-
-    }
-
     void Coherent::Enter()
     {
         active = true;
     }
 
-
     void Coherent::Leave()
     {   
         active = false; 
     }
-    
+
     void Coherent::Shutdown()
     {
         currentSystem->Shutdown();
@@ -105,6 +94,60 @@ namespace Iris
 
         extensions.push_back(extension);
         Logger::Log(COHERENT_LOG_PREFIX, std::format("Coherent registered an extension for the component {}", extension->component->GetName()).c_str(), LogChannels::Message);
+    }
+
+    //
+    // Debug system
+    //
+
+    /// @brief Called when the coherent system was requested to remove a breakpoint.
+    void Coherent::AddBreakpoint(Breakpoint bp)
+    {
+
+    }
+
+    void Coherent::AddWatchpoint(Watchpoint wp)
+    {
+
+    }
+
+    void Coherent::AddCatchpoint(Catchpoint cp)
+    {
+
+    }
+
+    /// @brief Called when the coherent system was requested to remove a breakpoint.
+    void Coherent::RemoveBreakpoint(Breakpoint bp)
+    {
+        if (breakpoints.count(bp.addr) > 0)
+            breakpoints.erase(bp.addr);
+    }
+
+    void Coherent::RemoveWatchpoint(Watchpoint wp)
+    {
+        if (watchpoints.count(wp.addr) > 0)
+            watchpoints.erase(wp.addr);
+    }
+
+    void Coherent::RemoveCatchpoint(Catchpoint cp)
+    {
+        if (catchpoints.count(cp.addr) > 0)
+            catchpoints.erase(cp.addr);
+    }
+
+    Coherent::Breakpoint Coherent::GetBreakpointByAddr(size_t addr)
+    {
+        return breakpoints[addr];
+    }
+
+    Coherent::Watchpoint Coherent::GetWatchpointByAddr(size_t addr)
+    {
+        return watchpoints[addr];
+    }
+
+    Coherent::Catchpoint Coherent::GetCatchpointByAddr(size_t addr)
+    {
+        return catchpoints[addr];
     }
 
 }
