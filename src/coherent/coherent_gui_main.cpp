@@ -140,6 +140,40 @@ namespace Iris
 
                 pcOffset += currentSystem->GetNextInstructionSize();
             }
+
+            // start drawing the child windows 
+
+            ImGuiUtils::RightAlign(ImVec2(200.0, 200.0));
+
+            //
+            // Breakpoints
+            //
+
+            if (!ImGui::BeginChild("Breakpoints"))
+                goto endChild;
+
+            ImGui::EndChild();
+
+            //
+            // Watchpoints
+            //
+            if (!ImGui::BeginChild("Watchpoints"))
+                goto endChild;
+            
+            ImGui::EndChild();
+
+            //
+            // Catchpoints
+            //
+
+            if (!ImGui::BeginChild("Catchpoints"))
+                goto endChild;
+          
+            // deliberate fallthrough, otherwise we pop too many and asset
+            
+        endChild:
+            ImGui::EndChild();
+
         end:
             ImGui::End();
         }

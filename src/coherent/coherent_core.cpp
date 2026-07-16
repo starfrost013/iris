@@ -103,17 +103,35 @@ namespace Iris
     /// @brief Called when the coherent system was requested to remove a breakpoint.
     void Coherent::AddBreakpoint(Breakpoint bp)
     {
+        if (breakpoints.count(bp.addr) > 0)
+        {
+            Logger::Log("Coherent::AddBreakpoint - the breakpoint already exists!");
+            return; 
+        }
 
+        breakpoints[bp.addr] = bp;
     }
 
     void Coherent::AddWatchpoint(Watchpoint wp)
     {
-
+        if (watchpoints.count(wp.addr) > 0)
+        {
+            Logger::Log("Coherent::AddWatchpoint - the watchpoint already exists!");
+            return; 
+        }
+        
+        watchpoints[wp.addr] = wp;
     }
 
     void Coherent::AddCatchpoint(Catchpoint cp)
     {
+        if (catchpoints.count(cp.addr) > 0)
+        {
+            Logger::Log("Coherent::AddCatchpoint - the catchpoint already exists!");
+            return; 
+        }
 
+        catchpoints[cp.addr] = cp;
     }
 
     /// @brief Called when the coherent system was requested to remove a breakpoint.
@@ -121,18 +139,24 @@ namespace Iris
     {
         if (breakpoints.count(bp.addr) > 0)
             breakpoints.erase(bp.addr);
+        else
+            Logger::Log("Coherent::RemoveBreakpoint - the breakpoint doesn't exist!");
     }
 
     void Coherent::RemoveWatchpoint(Watchpoint wp)
     {
         if (watchpoints.count(wp.addr) > 0)
             watchpoints.erase(wp.addr);
+        else
+            Logger::Log("Coherent::RemoveWatchpoint - the watchpoint doesn't exist!");
     }
 
     void Coherent::RemoveCatchpoint(Catchpoint cp)
     {
         if (catchpoints.count(cp.addr) > 0)
             catchpoints.erase(cp.addr);
+        else
+            Logger::Log("Coherent::RemoveCatchpoint - the catchpoint doesn't exist!");
     }
 
     Coherent::Breakpoint Coherent::GetBreakpointByAddr(size_t addr)

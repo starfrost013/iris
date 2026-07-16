@@ -17,10 +17,5 @@ namespace Iris
         void write8(uint32_t addr, uint8_t value) const override { return AddrSpace::WriteU8(addr, value); };  
         void write16(uint32_t addr, uint16_t value) const override { return AddrSpace::WriteU16(addr, value); }; 
         
-        // Debugger stuff 
-        void didReachBreakpoint(uint32_t addr) override { return Coherent::GetSystem()->OnBreakpointHit(); };
-
-        void AddBreakpoint(uint32_t addr) {  };
-        void RemoveBreakpoint(uint32_t addr) {   };
     };
 }

@@ -39,5 +39,6 @@ add_executable(motion
     component/ip2/ip2_duart.cpp
     component/ip2/ip2_rtc.cpp
     component/ip2/ip2_mmu_debug.cpp
+    coherent/coherent_gui_imgui.cpp
 )
 
