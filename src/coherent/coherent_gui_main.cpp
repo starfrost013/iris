@@ -146,8 +146,6 @@ namespace Iris
             ImGui::SetCursorPosY(0.0f);
             ImGuiUtils::RightAlign(childWindowSize);
 
-            Logger::Log(std::format("The cursor is {} {}", ImGui::GetCursorPosX(), ImGui::GetCursorPosY()).c_str(), LogChannels::Debug);
-
             //
             // Breakpoints
             //
