@@ -143,7 +143,6 @@ namespace Iris
             }
 
             // start drawing the child windows 
-            ImGui::SetCursorPosX(0.0f);
             ImGui::SetCursorPosY(0.0f);
             ImGuiUtils::RightAlign(childWindowSize);
 

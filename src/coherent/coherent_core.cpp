@@ -105,7 +105,7 @@ namespace Iris
     {
         if (breakpoints.count(bp.addr) > 0)
         {
-            Logger::Log("Coherent::AddBreakpoint - the breakpoint already exists!");
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent::AddBreakpoint - the breakpoint already exists!", LogChannels::Warning);
             return; 
         }
 
@@ -116,7 +116,7 @@ namespace Iris
     {
         if (watchpoints.count(wp.addr) > 0)
         {
-            Logger::Log("Coherent::AddWatchpoint - the watchpoint already exists!");
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent::AddWatchpoint - the watchpoint already exists!", LogChannels::Warning);
             return; 
         }
         
@@ -127,7 +127,7 @@ namespace Iris
     {
         if (catchpoints.count(cp.addr) > 0)
         {
-            Logger::Log("Coherent::AddCatchpoint - the catchpoint already exists!");
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent::AddCatchpoint - the catchpoint already exists!", LogChannels::Warning);
             return; 
         }
 
@@ -140,7 +140,7 @@ namespace Iris
         if (breakpoints.count(bp.addr) > 0)
             breakpoints.erase(bp.addr);
         else
-            Logger::Log("Coherent::RemoveBreakpoint - the breakpoint doesn't exist!");
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent::RemoveBreakpoint - the breakpoint doesn't exist!", LogChannels::Warning);
     }
 
     void Coherent::RemoveWatchpoint(Watchpoint wp)
@@ -148,7 +148,7 @@ namespace Iris
         if (watchpoints.count(wp.addr) > 0)
             watchpoints.erase(wp.addr);
         else
-            Logger::Log("Coherent::RemoveWatchpoint - the watchpoint doesn't exist!");
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent::RemoveWatchpoint - the watchpoint doesn't exist!", LogChannels::Warning);
     }
 
     void Coherent::RemoveCatchpoint(Catchpoint cp)
@@ -156,7 +156,7 @@ namespace Iris
         if (catchpoints.count(cp.addr) > 0)
             catchpoints.erase(cp.addr);
         else
-            Logger::Log("Coherent::RemoveCatchpoint - the catchpoint doesn't exist!");
+            Logger::Log(COHERENT_LOG_PREFIX, "Coherent::RemoveCatchpoint - the catchpoint doesn't exist!", LogChannels::Warning);
     }
 
     Coherent::Breakpoint Coherent::GetBreakpointByAddr(size_t addr)
