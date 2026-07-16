@@ -32,9 +32,7 @@ namespace Iris
                 extension->AddUI(); 
         }
 
-        if (!ImGui::Begin(COHERENT_VERSION, &active, ImGuiWindowFlags_MenuBar))
-            goto end;
-        else 
+        if (ImGui::Begin(COHERENT_VERSION, &active, ImGuiWindowFlags_MenuBar))
         {
             if (ImGui::BeginMenuBar())
             {
@@ -54,137 +52,141 @@ namespace Iris
                 ImGui::EndMenuBar();
             }
 
-            // main window text
-            if (Coherent::currentSystem == nullptr)
+            if (ImGui::BeginChild("DebugViewPane", ImVec2(550, 0)))
             {
-                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 0.0f), "***** Error - No System Active *****");
-                goto end;
-            }
-            else 
-                ImGui::Text("Debug Controls: ");
-
-            ImGui::SameLine();
-
-            if (currentSystem->GetRunState() == CoherentSystem::RunState::Running)
-            {
-                if (ImGui::Button("Pause CPU"))
-                    currentSystem->SetRunState(CoherentSystem::RunState::Paused);
-            }
-            else
-            {
-                if (ImGui::Button("Start CPU"))
-                    currentSystem->SetRunState(CoherentSystem::RunState::Running); 
-            }
-
-            ImGui::SameLine();
-            if (ImGui::Button("Reset"))
-                currentSystem->SetRunState(CoherentSystem::RunState::Reset);
-
-            if (currentSystem->GetRunState() == CoherentSystem::RunState::Paused)
-            {
-                ImGui::SameLine();
-                
-                if (ImGui::Button("Step"))
-                    currentSystem->SetRunState(CoherentSystem::RunState::SingleStep);
-            }
-
-            
-            ImGui::Text("Clock Speed : %.2f MHz", ((float)Emulation::GetMachine().FindComponentByType<ComponentCPU>()->GetClockSpeed()) / 1000000.0);
-
-            for (auto aRegister : currentSystem->registers)
-            {
-                ImGui::Text(aRegister.first);
-                ImGui::SameLine();
-
-                auto value = aRegister.second->Read();
-
-                // evil
-                if (value.type() == typeid(uint8_t)
-                || value.type() == typeid(int8_t))
+    // main window text
+                if (Coherent::currentSystem == nullptr)
                 {
-                    uint8_t formattedValue = std::any_cast<uint8_t>(value);
-                    ImGui::Text(": %02x", formattedValue);
+                    ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 0.0f), "***** Error - No System Active *****");
                 }
-                else if (value.type() == typeid(uint16_t)
-                || value.type() == typeid(int16_t))
+                else
                 {
-                    uint16_t formattedValue = std::any_cast<uint16_t>(value);
-                    ImGui::Text(": %04x", formattedValue);
-                }
-                else if (value.type() == typeid(uint32_t)
-                || value.type() == typeid(int32_t))
-                {
-                    uint32_t formattedValue = std::any_cast<uint32_t>(value);
-                    ImGui::Text(": %08x", formattedValue);
-                }
+                    ImGui::Text("Debug Controls: ");
 
-                if ((i % 5) != 4)
                     ImGui::SameLine();
+
+                    if (currentSystem->GetRunState() == CoherentSystem::RunState::Running)
+                    {
+                        if (ImGui::Button("Pause CPU"))
+                            currentSystem->SetRunState(CoherentSystem::RunState::Paused);
+                    }
+                    else
+                    {
+                        if (ImGui::Button("Start CPU"))
+                            currentSystem->SetRunState(CoherentSystem::RunState::Running); 
+                    }
+
+                    ImGui::SameLine();
+                    if (ImGui::Button("Reset"))
+                        currentSystem->SetRunState(CoherentSystem::RunState::Reset);
+
+                    if (currentSystem->GetRunState() == CoherentSystem::RunState::Paused)
+                    {
+                        ImGui::SameLine();
+                        
+                        if (ImGui::Button("Step"))
+                            currentSystem->SetRunState(CoherentSystem::RunState::SingleStep);
+                    }
+
+                    
+                    ImGui::Text("Clock Speed : %.2f MHz", ((float)Emulation::GetMachine().FindComponentByType<ComponentCPU>()->GetClockSpeed()) / 1000000.0);
+
+                    for (auto aRegister : currentSystem->registers)
+                    {
+                        ImGui::Text(aRegister.first);
+                        ImGui::SameLine();
+
+                        auto value = aRegister.second->Read();
+
+                        // evil
+                        if (value.type() == typeid(uint8_t)
+                        || value.type() == typeid(int8_t))
+                        {
+                            uint8_t formattedValue = std::any_cast<uint8_t>(value);
+                            ImGui::Text(": %02x", formattedValue);
+                        }
+                        else if (value.type() == typeid(uint16_t)
+                        || value.type() == typeid(int16_t))
+                        {
+                            uint16_t formattedValue = std::any_cast<uint16_t>(value);
+                            ImGui::Text(": %04x", formattedValue);
+                        }
+                        else if (value.type() == typeid(uint32_t)
+                        || value.type() == typeid(int32_t))
+                        {
+                            uint32_t formattedValue = std::any_cast<uint32_t>(value);
+                            ImGui::Text(": %08x", formattedValue);
+                        }
+
+                        if ((i % 5) != 4)
+                            ImGui::SameLine();
+                        
+                        i++;
+                    }
+
+                    ImGui::NewLine();
+
+                    // todo: MUST put in a buffer...
+                    for (i = 0; i < 30; i++)
+                    {
+                        if (i == 0)
+                            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.6f, 0.9f, 1.0f));
+
+                        auto addr = currentSystem->GetPC() + pcOffset;
+
+                        ImGui::Text("0x%lx:    %s", addr, currentSystem->DisasmInstruction(addr));
+
+                        if (i == 0)
+                            ImGui::PopStyleColor();
+
+                        pcOffset += currentSystem->GetNextInstructionSize();
+                    }
+
+                }
                 
-                i++;
-            }
+                ImGui::EndChild();
+            }  
 
-            ImGui::NewLine();
+            ImGui::SameLine();
 
-            // todo: MUST put in a buffer...
-            for (i = 0; i < 30; i++)
+            if (ImGui::BeginChild("DebugControlsPane", ImVec2(200, 0)))
             {
-                if (i == 0)
-                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.6f, 0.9f, 1.0f));
+                //
+                // Breakpoints
+                //
 
-                auto addr = currentSystem->GetPC() + pcOffset;
+                if (ImGui::BeginChild("Breakpoints", childWindowSize))
+                {
+                    ImGui::Text("This is the breakpoints window");
+                    ImGui::EndChild();
 
-                ImGui::Text("0x%lx:    %s", addr, currentSystem->DisasmInstruction(addr));
+                }
 
-                if (i == 0)
-                    ImGui::PopStyleColor();
 
-                pcOffset += currentSystem->GetNextInstructionSize();
+                //
+                // Watchpoints
+                //
+
+
+                if (ImGui::BeginChild("Watchpoints", childWindowSize))
+                {
+                    ImGui::Text("This is the watchpoints window");
+                    ImGui::EndChild();
+                }
+
+                //
+                // Catchpoints
+                //
+
+                if (ImGui::BeginChild("Catchpoints", childWindowSize))
+                {
+                    ImGui::Text("This is the catchpoints window");
+                    ImGui::EndChild();
+                }
+
+                ImGui::EndChild();
             }
-
-            // start drawing the child windows 
-            ImGui::SetCursorPosY(0.0f);
-            ImGuiUtils::RightAlign(childWindowSize);
-
-            //
-            // Breakpoints
-            //
-
-            if (!ImGui::BeginChild("Breakpoints", childWindowSize))
-                goto endChild;
-
-            ImGui::Text("This is the breakpoints window");
-            ImGui::EndChild();
-
-            ImGuiUtils::RightAlign(childWindowSize);
-
-            //
-            // Watchpoints
-            //
-
-
-            if (!ImGui::BeginChild("Watchpoints", childWindowSize))
-                goto endChild;
-
-            ImGui::Text("This is the watchpoints window");
-            ImGui::EndChild();
-
-            //
-            // Catchpoints
-            //
-            ImGuiUtils::RightAlign(childWindowSize);
-
-            if (!ImGui::BeginChild("Catchpoints", childWindowSize))
-                goto endChild;
-
-            ImGui::Text("This is the catchpoints window");
           
-            // deliberate fallthrough, otherwise we pop too many and asset
-
-        endChild:
-            ImGui::EndChild();
-
-        end:
             ImGui::End();
         }
     }
