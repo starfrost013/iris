@@ -24,6 +24,7 @@ namespace Iris
 
         int i = 0;
         int pcOffset = 0;
+        ImVec2 childWindowSize = ImVec2(200.0, 200.0);
 
         for (CoherentExtension* extension : extensions)
         {
@@ -142,35 +143,47 @@ namespace Iris
             }
 
             // start drawing the child windows 
+            ImGui::SetCursorPosX(0.0f);
+            ImGui::SetCursorPosY(0.0f);
+            ImGuiUtils::RightAlign(childWindowSize);
 
-            ImGuiUtils::RightAlign(ImVec2(200.0, 200.0));
+            Logger::Log(std::format("The cursor is {} {}", ImGui::GetCursorPosX(), ImGui::GetCursorPosY()).c_str(), LogChannels::Debug);
 
             //
             // Breakpoints
             //
 
-            if (!ImGui::BeginChild("Breakpoints"))
+            if (!ImGui::BeginChild("Breakpoints", childWindowSize))
                 goto endChild;
 
+            ImGui::Text("This is the breakpoints window");
             ImGui::EndChild();
+
+            ImGuiUtils::RightAlign(childWindowSize);
 
             //
             // Watchpoints
             //
-            if (!ImGui::BeginChild("Watchpoints"))
+
+
+            if (!ImGui::BeginChild("Watchpoints", childWindowSize))
                 goto endChild;
-            
+
+            ImGui::Text("This is the watchpoints window");
             ImGui::EndChild();
 
             //
             // Catchpoints
             //
+            ImGuiUtils::RightAlign(childWindowSize);
 
-            if (!ImGui::BeginChild("Catchpoints"))
+            if (!ImGui::BeginChild("Catchpoints", childWindowSize))
                 goto endChild;
+
+            ImGui::Text("This is the catchpoints window");
           
             // deliberate fallthrough, otherwise we pop too many and asset
-            
+
         endChild:
             ImGui::EndChild();
 
