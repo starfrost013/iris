@@ -166,7 +166,10 @@ namespace Iris
 
         /// @brief Enters the Coherent system on command.
         static void Enter();
-
+        
+        /// @brief Tick the debugger. Called before all emulation components are ticked.
+        static void Tick();
+        
         /// @brief Render a frame of the debugger (see coherent_gui.cpp)
         static void Frame();
         

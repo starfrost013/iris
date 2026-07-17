@@ -164,4 +164,9 @@ namespace Iris
     {
         WriteU32(addr, (uint32_t)value);
     }
+
+    void AddrSpace::Shutdown()
+    {
+        mappings.clear();
+    }
 }

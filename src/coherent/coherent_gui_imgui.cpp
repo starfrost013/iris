@@ -39,12 +39,21 @@ namespace Iris
             if (!guard.enabled) // bp is disabled
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 0.7f, 0.7f, 1.0f));
             else if (guard.active) // bp is active
-                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 0.6f, 0.2f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 0.3f, 0.1f, 1.0f));
             else // bp is enabled but not hit
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
             if (windowType == GuardWindowBreakpoint)
-                ImGui::Text("[%d] break at 0x%lx", index, guard.addr);
+            {
+                // some flavour text
+                if (!guard.active && guard.enabled)
+                    ImGui::Text("[%d] break at 0x%lx", index, guard.addr);
+                else if (!guard.enabled)
+                    ImGui::Text("[%d] break at 0x%lx [disabled]", index, guard.addr);
+                else if (guard.active)
+                    ImGui::Text("[%d] break at 0x%lx [hit!]", index, guard.addr);
+
+            }
             else if (windowType == GuardWindowWatchpoint)
             {
                 Coherent::Watchpoint& watchpoint = (Coherent::Watchpoint&)pair.second;
@@ -77,7 +86,7 @@ namespace Iris
         }       
 
         // draw the "top" of the window
-        if (ImGui::BeginChild(headerText, size))
+        if (ImGui::BeginChild(headerText, size, ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
         {                
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.1f, 0.8f, 1.0f, 1.0f));
             ImGui::Text(headerText);
@@ -91,16 +100,19 @@ namespace Iris
                 if (windowType == GuardWindowBreakpoint)
                 {
                     Coherent::Breakpoint breakpoint = Coherent::Breakpoint(addr);
+                    breakpoint.enabled = true;
                     Coherent::AddBreakpoint(breakpoint);
                 }
                 else if (windowType == GuardWindowWatchpoint)
                 {
                     Coherent::Watchpoint watchpoint = Coherent::Watchpoint(addr);
+                    watchpoint.enabled = true;
                     Coherent::AddWatchpoint(watchpoint);
                 }
                 else if (windowType == GuardWindowCatchpoint)
                 {
                     Coherent::Catchpoint catchpoint = Coherent::Catchpoint(addr, 0);
+                    catchpoint.enabled = true;
                     Coherent::AddCatchpoint(catchpoint);
                 }
                 else
@@ -108,7 +120,7 @@ namespace Iris
             }
 
             ImGui::SameLine();
-            ImGui::InputText("Addr: ", addrBuf, STRING_MAX_LONG, ImGuiInputTextFlags_CharsHexadecimal);
+            ImGui::InputTextWithHint("##AddressInput", "Address...", addrBuf, STRING_MAX_LONG, ImGuiInputTextFlags_CharsHexadecimal);
         
             int32_t index = 0;
 

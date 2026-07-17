@@ -38,17 +38,22 @@ namespace Iris
         (Emulation::GetRenderer()->GetWindowSizeY() / 2) - 600), ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowSize(ImVec2(800, 600));
 
-        int i = 0;
-        int pcOffset = 0;
-        ImVec2 childWindowSize = ImVec2(200.0, 200.0);
+        int i = 0, pcOffset = 0;
+        ImVec2 topBarSize = ImVec2(800, 25);
+        
+        ImVec2 registerPaneSize = ImVec2(180, 600);
+        ImVec2 disasmPaneSize = ImVec2(340, 600);
+        ImVec2 debugContainerPaneSize = ImVec2(290, 600);
+        ImVec2 debugContainerChildWindowSize = ImVec2(290, 170);
 
+        // create the UI windows for any extensions if they exist
         for (CoherentExtension* extension : Coherent::extensions)
         {
             if (extension->enabled)
                 extension->AddUI(); 
         }
 
-        if (ImGui::Begin(COHERENT_VERSION, &Coherent::active, ImGuiWindowFlags_MenuBar))
+        if (ImGui::Begin("Coherent Debugger", &Coherent::active, ImGuiWindowFlags_MenuBar))
         {
             if (ImGui::BeginMenuBar())
             {
@@ -80,13 +85,12 @@ namespace Iris
                 ImGui::EndMenuBar();
             }
 
-            if (ImGui::BeginChild("DebugViewPane", ImVec2(550, 0)))
+            // top pane
+
+            if (ImGui::BeginChild("DebugViewPane", topBarSize))
             {
-    // main window text
                 if (Coherent::currentSystem == nullptr)
-                {
                     ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 0.0f), "***** Error - No System Active *****");
-                }
                 else
                 {
                     if (Coherent::currentSystem->GetRunState() == CoherentSystem::RunState::Running)
@@ -101,6 +105,7 @@ namespace Iris
                     }
 
                     ImGui::SameLine();
+
                     if (ImGui::Button("Reset"))
                         Coherent::currentSystem->SetRunState(CoherentSystem::RunState::Reset);
 
@@ -112,72 +117,78 @@ namespace Iris
                             Coherent::currentSystem->SetRunState(CoherentSystem::RunState::SingleStep);
                     }
 
-                    
-                    ImGui::Text("Clock Speed : %.2f MHz", ((float)Emulation::GetMachine().FindComponentByType<ComponentCPU>()->GetClockSpeed()) / 1000000.0);
-
-                    for (auto aRegister : Coherent::currentSystem->registers)
-                    {
-                        ImGui::Text(aRegister.first);
-                        ImGui::SameLine();
-
-                        auto value = aRegister.second->Read();
-
-                        // evil
-                        if (value.type() == typeid(uint8_t)
-                        || value.type() == typeid(int8_t))
-                        {
-                            uint8_t formattedValue = std::any_cast<uint8_t>(value);
-                            ImGui::Text(": %02x", formattedValue);
-                        }
-                        else if (value.type() == typeid(uint16_t)
-                        || value.type() == typeid(int16_t))
-                        {
-                            uint16_t formattedValue = std::any_cast<uint16_t>(value);
-                            ImGui::Text(": %04x", formattedValue);
-                        }
-                        else if (value.type() == typeid(uint32_t)
-                        || value.type() == typeid(int32_t))
-                        {
-                            uint32_t formattedValue = std::any_cast<uint32_t>(value);
-                            ImGui::Text(": %08x", formattedValue);
-                        }
-
-                        if ((i % 5) != 4)
-                            ImGui::SameLine();
-                        
-                        i++;
-                    }
-
-                    ImGui::NewLine();
-
-                    // todo: MUST put in a buffer...
-                    for (i = 0; i < 30; i++)
-                    {
-                        if (i == 0)
-                            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.6f, 0.9f, 1.0f));
-
-                        auto addr = Coherent::currentSystem->GetPC() + pcOffset;
-
-                        ImGui::Text("0x%lx:    %s", addr, Coherent::currentSystem->DisasmInstruction(addr));
-
-                        if (i == 0)
-                            ImGui::PopStyleColor();
-
-                        pcOffset += Coherent::currentSystem->GetNextInstructionSize();
-                    }
-
+                    ImGui::SameLine();
+                    ImGui::Text("Clock Speed: %.2f MHz", ((float)Emulation::GetMachine().FindComponentByType<ComponentCPU>()->GetClockSpeed()) / 1000000.0);
                 }
                 
                 ImGui::EndChild();
             }  
 
+            // "left" (register) pane
+            if (ImGui::BeginChild("RegisterPane", registerPaneSize))
+            {
+                for (auto aRegister : Coherent::currentSystem->registers)
+                {
+                    auto value = aRegister.second->Read();
+
+                    // evil
+                    if (value.type() == typeid(uint8_t)
+                    || value.type() == typeid(int8_t))
+                    {
+                        uint8_t formattedValue = std::any_cast<uint8_t>(value);
+                        ImGui::Text("%s: %02x", aRegister.first, formattedValue);
+                    }
+                    else if (value.type() == typeid(uint16_t)
+                    || value.type() == typeid(int16_t))
+                    {
+                        uint16_t formattedValue = std::any_cast<uint16_t>(value);
+                        ImGui::Text("%s: %04x", aRegister.first, formattedValue);
+                    }
+                    else if (value.type() == typeid(uint32_t)
+                    || value.type() == typeid(int32_t))
+                    {
+                        uint32_t formattedValue = std::any_cast<uint32_t>(value);
+                        ImGui::Text("%s: %08x", aRegister.first, formattedValue);
+                    }
+                    
+                    i++;
+                }
+
+                ImGui::EndChild();
+            }
+
             ImGui::SameLine();
 
-            if (ImGui::BeginChild("DebugControlsPane", ImVec2(200, 0)))
+            // middle pane; disassembly pane
+            if (ImGui::BeginChild("DisassemblyPane", disasmPaneSize))
             {
-                CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowBreakpoint, childWindowSize);
-                CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowWatchpoint, childWindowSize);
-                CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowCatchpoint, childWindowSize);
+                // todo: MUST put in a buffer...
+                for (i = 0; i < 30; i++)
+                {
+                    if (i == 0)
+                        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.6f, 0.9f, 1.0f));
+
+                    auto addr = Coherent::currentSystem->GetPC() + pcOffset;
+
+                    ImGui::Text("0x%lx:    %s", addr, Coherent::currentSystem->DisasmInstruction(addr));
+
+                    if (i == 0)
+                        ImGui::PopStyleColor();
+
+                    pcOffset += Coherent::currentSystem->GetNextInstructionSize();
+                }
+
+                ImGui::EndChild();
+            }
+
+            ImGui::SameLine();
+
+            // right pane: debug controls
+            if (ImGui::BeginChild("DebugControlsPane", debugContainerPaneSize))
+            {
+                CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowBreakpoint, debugContainerChildWindowSize);
+                CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowWatchpoint, debugContainerChildWindowSize);
+                CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowCatchpoint, debugContainerChildWindowSize);
 
                 ImGui::EndChild();
             }

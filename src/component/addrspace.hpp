@@ -41,6 +41,8 @@ namespace Iris
             static void WriteS32(size_t addr, int32_t value);
  
             static void AddMapping(AddrSpaceMapping mapping);
+
+            static void Shutdown();
         private: 
             inline static std::unordered_map<size_t, AddrSpaceMapping> mappings;
 

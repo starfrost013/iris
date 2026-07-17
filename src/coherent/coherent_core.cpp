@@ -63,8 +63,37 @@ namespace Iris
         active = true;
     }
 
+    void Coherent::Tick()
+    {
+        if (breakpoints.size() == 0)
+            return;
+
+        // Check for guards
+
+        for (auto& [ key, value ] : breakpoints)
+        {
+            auto pc = currentSystem->GetPC();
+
+            if (pc == value.addr
+            && value.enabled
+            && !value.active) // no point repeatedly pausing
+            {
+                value.active = true; 
+
+                // pause the emulation
+                currentSystem->SetRunState(CoherentSystem::RunState::Paused);
+            }
+            else if (value.active && pc != value.addr)
+                value.active = false;
+        }
+    }
+
     void Coherent::Leave()
     {   
+        // shuts down session specific data
+        breakpoints.clear();
+        catchpoints.clear();
+        watchpoints.clear();
         active = false; 
     }
 

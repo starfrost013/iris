@@ -69,6 +69,10 @@ namespace Iris
     {
         while (running)
         {
+            // do this after processing everything for the current tick
+            if (Coherent::active)
+                Coherent::Tick();
+
             if (!paused)
                 machine.Tick();
         }
@@ -85,9 +89,9 @@ namespace Iris
         if (emuThread->joinable())
             emuThread->join();
 
-        
         Coherent::Leave();
         machine.Shutdown();
+        AddrSpace::Shutdown();
     }
 
     void Emulation::Shutdown()
