@@ -36,9 +36,12 @@ namespace Iris
 
         static void DrawMainWindow();
         static void DrawLogWindow();
+        static void DrawAboutWindow();
 
         // SHOULD NOT BE PUBLIC, but because of some things with the design of SSLS 5, it is.
         static void AddTextToLogWindowBuffer(const char* str);
+
+        static inline bool aboutActive = false;
 
     private: 
         inline static char addrBufForWatchpoints[STRING_MAX_LONG];

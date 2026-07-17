@@ -15,6 +15,21 @@
 
 namespace Iris
 {
+    /// @brief a basic about window since coherent is retargetable
+    void CoherentUI::DrawAboutWindow()
+    {
+        if (ImGui::Begin("About", &CoherentUI::aboutActive))
+        {
+            ImGui::TextColored(ImVec4(0.2f, 1.0f, 0.2f, 1.0f), COHERENT_VERSION);
+            ImGui::Text("An architecture-agnostic, retargetable, embedded debugger for emulators");
+            ImGui::Text("© 2026 starfrost (https://starfrost.net/)");
+
+            if (ImGui::Button("Close"))
+                CoherentUI::aboutActive = false; 
+
+            ImGui::End();
+        }
+    }
 
     void CoherentUI::DrawMainWindow()
     {
@@ -37,6 +52,8 @@ namespace Iris
         {
             if (ImGui::BeginMenuBar())
             {
+                // Extensions
+
                 if (ImGui::BeginMenu("Peripherals"))
                 {
                     // see which extensions are enabled 
@@ -46,6 +63,16 @@ namespace Iris
                         if (ImGui::MenuItem(extension->component->GetName()))
                             extension->enabled = true; 
                     }
+
+                    ImGui::EndMenu();
+                }
+
+                // Help / about window 
+
+                if (ImGui::BeginMenu("Help"))
+                {
+                    if (ImGui::MenuItem("About"))
+                        CoherentUI::aboutActive = true;
 
                     ImGui::EndMenu();
                 }
@@ -163,5 +190,8 @@ namespace Iris
     {
         CoherentUI::DrawMainWindow();
         CoherentUI::DrawLogWindow();
+
+        if (CoherentUI::aboutActive)
+            CoherentUI::DrawAboutWindow();
     }
 }

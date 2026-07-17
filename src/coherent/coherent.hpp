@@ -148,7 +148,6 @@ namespace Iris
         /// @brief set the run state of the system
         void SetRunState(CoherentSystem::RunState runState);
 
-     
     protected: 
         /// @brief the run state of the system
         inline static RunState runState;
@@ -284,10 +283,6 @@ namespace Iris
 
         /// @brief the current coherent system
         inline static CoherentSystem* currentSystem;
-
-
-
-
 
         // key is the size_t
         inline static std::unordered_map<size_t, Breakpoint> breakpoints;
