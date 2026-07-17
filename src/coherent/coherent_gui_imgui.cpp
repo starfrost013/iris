@@ -39,7 +39,7 @@ namespace Iris
             if (!guard.enabled) // bp is disabled
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 0.7f, 0.7f, 1.0f));
             else if (guard.active) // bp is active
-                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 0.3f, 0.1f, 1.0f));
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.1f, 1.0f));
             else // bp is enabled but not hit
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 

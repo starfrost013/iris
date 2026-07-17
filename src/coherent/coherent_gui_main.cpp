@@ -129,26 +129,26 @@ namespace Iris
             {
                 for (auto aRegister : Coherent::currentSystem->registers)
                 {
-                    auto value = aRegister.second->Read();
+                    auto value = aRegister->Read();
 
                     // evil
                     if (value.type() == typeid(uint8_t)
                     || value.type() == typeid(int8_t))
                     {
                         uint8_t formattedValue = std::any_cast<uint8_t>(value);
-                        ImGui::Text("%s: %02x", aRegister.first, formattedValue);
+                        ImGui::Text("%s: %02x", aRegister->name, formattedValue);
                     }
                     else if (value.type() == typeid(uint16_t)
                     || value.type() == typeid(int16_t))
                     {
                         uint16_t formattedValue = std::any_cast<uint16_t>(value);
-                        ImGui::Text("%s: %04x", aRegister.first, formattedValue);
+                        ImGui::Text("%s: %04x", aRegister->name, formattedValue);
                     }
                     else if (value.type() == typeid(uint32_t)
                     || value.type() == typeid(int32_t))
                     {
                         uint32_t formattedValue = std::any_cast<uint32_t>(value);
-                        ImGui::Text("%s: %08x", aRegister.first, formattedValue);
+                        ImGui::Text("%s: %08x", aRegister->name, formattedValue);
                     }
                     
                     i++;

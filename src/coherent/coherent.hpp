@@ -71,6 +71,8 @@ namespace Iris
         class RegisterBase
         {
         public:
+            const char* name;
+
             virtual std::any Read() = 0; 
             virtual void Write(std::any& value) = 0;
         };
@@ -79,8 +81,9 @@ namespace Iris
         class Register : public RegisterBase
         {
         public:
-            Register(T* value)
+            Register(T* value, const char* name)
             {
+                this->name = name;
                 this->value = value;
             }
             
@@ -121,22 +124,22 @@ namespace Iris
         /// @param reg The Register<T> object to ad.
         /// @param name The friendly name of the register.
         template <typename T>
-        void AddRegister(Register<T>* reg, const char* name)
+        void AddRegister(Register<T>* reg)
         {
-            Logger::Log(std::format("CoherentSystem::AddRegister - Adding register with name {}", name).c_str(), LogChannels::Debug);
-            registers[name] = reg; 
+            Logger::Log(std::format("CoherentSystem::AddRegister - Adding register with name {}", reg->name).c_str(), LogChannels::Debug);
+            registers.push_back(reg); 
         }
 
         void Shutdown()
         {
-            for (auto value : registers)
-                delete value.second;
+            for (auto reg : registers)
+                delete reg;
 
             registers.clear();
         }
 
         /// @brief might be slow. this really needs to have a custom access only iterators.
-        std::unordered_map<const char*, RegisterBase*> registers;
+        std::vector<RegisterBase*> registers;
 
         /// getters for private fields
         size_t GetNextInstructionSize() { return nextInstructionSize; };
