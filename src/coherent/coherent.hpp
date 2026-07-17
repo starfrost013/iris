@@ -9,14 +9,15 @@
 #pragma once
 #include <Iris.hpp>
 #include <base/emulation.hpp>
+#include <component/addrspace.hpp>
 #include <component/component.hpp>
+#include <coherent/coherent_gui_imgui.hpp>
 
 namespace Iris
 {
     #define COHERENT_LOG_PREFIX     "Debugger"
     #define COHERENT_VERSION        "Coherent Debugging Engine v0.4 (July 2026)"
-    #define LOGBUF_MAX_SIZE         16384
-    #define LOGBUF_PURGE_SIZE       2048
+
 
     extern Cvar* startPaused;
 
@@ -157,6 +158,8 @@ namespace Iris
 
     class Coherent
     {
+        friend class CoherentUI;
+
     public: 
     
         /// @brief Initialise the coherent system
@@ -175,25 +178,56 @@ namespace Iris
             currentSystem->SetRunState(CoherentSystem::RunState::Paused);
         }
 
+        /// This is the base class for all types of guards.
         class Guard
         {
         public: 
             size_t addr; 
             bool enabled;
+            bool active; 
+
+            Guard()
+            {
+                this->addr = 0x0;
+                this->enabled = false;
+                this->active = false; 
+            }
+        
+            Guard(size_t addr)
+            {
+                this->addr = addr;
+                this->enabled = false;
+                this->active = false; 
+            }
         };
 
         /// defines a breakpoint
         class Breakpoint : public Guard
         {
+        public:
+            Breakpoint() : Guard() { }
+            Breakpoint(size_t addr) : Guard(addr) { }
         };
 
         class Watchpoint : public Guard
         {
+        public: 
+            Watchpoint() : Guard() { }
+            Watchpoint(size_t addr) : Guard(addr) { }
+
+            // TODO: Add templates for these & use std::any
+            uint32_t GetValue() { return AddrSpace::ReadU32(addr); }; 
         }; 
 
         class Catchpoint : public Guard
         {
         public: 
+            Catchpoint() : Guard() { }
+            Catchpoint(size_t addr, size_t exceptionId) : Guard(addr) 
+            { 
+                this->exceptionId = exceptionId;
+            }
+
             size_t exceptionId;
         };
 
@@ -240,8 +274,6 @@ namespace Iris
         /// @brief If this is true, the coherent system is currently active. (needs to be public because of imgui)
         inline static bool active;
 
-        // SHOULD NOT BE PUBLIC, but because of some things with the design of SSLS 5, it is.
-        static void AddTextToLogWindowBuffer(const char* str);
 
     private:
         /// @brief If this value is true, the coherent system has been initialised. 
@@ -253,13 +285,9 @@ namespace Iris
         /// @brief the current coherent system
         inline static CoherentSystem* currentSystem;
 
-        // Methods for drawing specific user interfaces
 
-        static void DrawMainWindow();
-        static void DrawLogWindow();
 
-        /// @brief internal thing used to store the emulator log. need a cache
-        inline static char logBuffer[LOGBUF_MAX_SIZE] = {0};
+
 
         // key is the size_t
         inline static std::unordered_map<size_t, Breakpoint> breakpoints;

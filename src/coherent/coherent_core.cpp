@@ -40,12 +40,12 @@ namespace Iris
     // Coherent class
     //
 
-    /// @brief a C trampoline. since the logging system is portable across projects which may use various paradigms, its function poitners use the lowest common 
-    /// denominator (ie a function pointer.)
+    /// @brief a C trampoline. since the logging system is portable across projects which may use various programming paradigms, it has to us lowest common 
+    /// denominator for pointing to a function (ie a C-style function pointer.)
     /// @param str 
     void Coherent_CTrampolineForLog(const char* str)
     {
-        Coherent::AddTextToLogWindowBuffer(str);
+        CoherentUI::AddTextToLogWindowBuffer(str);
     }
 
     void Coherent::Init()
@@ -100,7 +100,7 @@ namespace Iris
     // Debug system
     //
 
-    /// @brief Called when the coherent system was requested to remove a breakpoint.
+    /// @brief Called when the coherent system was requested to add a breakpoint.
     void Coherent::AddBreakpoint(Breakpoint bp)
     {
         if (breakpoints.count(bp.addr) > 0)
@@ -112,6 +112,7 @@ namespace Iris
         breakpoints[bp.addr] = bp;
     }
 
+    /// @brief Called when the coherent system was requested to add a watchpoint.
     void Coherent::AddWatchpoint(Watchpoint wp)
     {
         if (watchpoints.count(wp.addr) > 0)
@@ -123,6 +124,7 @@ namespace Iris
         watchpoints[wp.addr] = wp;
     }
 
+    /// @brief Called when the coherent system was requested to add a catchpoint.
     void Coherent::AddCatchpoint(Catchpoint cp)
     {
         if (catchpoints.count(cp.addr) > 0)

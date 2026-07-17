@@ -5,20 +5,47 @@
 
     Coherent is an extensible debugger for emulators that is intended to allow the debugging of multiple types of CPU cores in an easy way.
 
-    coherent_gui_imgui.hpp: Provides all includes for IMGUI type of Coherent GUI & utilities for IMGUI
+    coherent_gui_imgui.hpp: CoherentUI (Dear imgui implementation)
 */
 
 #pragma once
-
+#include <Iris.hpp>
 #include <imgui.h>
 
 namespace Iris 
-{
-    class ImGuiUtils
+{    
+    #define LOGBUF_MAX_SIZE         16384
+    #define LOGBUF_PURGE_SIZE       2048
+
+    class CoherentUI
     {
     public:
         static void LeftAlign();
         static void CentreAlign(ImVec2 contentSize);
         static void RightAlign(ImVec2 contentSize);
+
+        enum GuardWindowType
+        {
+            GuardWindowWatchpoint = 0,
+            GuardWindowCatchpoint = 1,
+            GuardWindowBreakpoint = 2,
+        };
+
+        static void DrawGuardWindow(GuardWindowType windowType, ImVec2 size);
+        // Methods for drawing specific user interfaces
+
+        static void DrawMainWindow();
+        static void DrawLogWindow();
+
+        // SHOULD NOT BE PUBLIC, but because of some things with the design of SSLS 5, it is.
+        static void AddTextToLogWindowBuffer(const char* str);
+
+    private: 
+        inline static char addrBufForWatchpoints[STRING_MAX_LONG];
+        inline static char addrBufForCatchpoints[STRING_MAX_LONG];
+        inline static char addrBufForBreakpoints[STRING_MAX_LONG];
+
+        /// @brief internal thing used to store the emulator log. need a cache
+        inline static char logBuffer[LOGBUF_MAX_SIZE] = {0};
     };
 }

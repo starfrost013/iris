@@ -13,14 +13,14 @@
 
 namespace Iris
 {
-    void Coherent::DrawLogWindow()
+    void CoherentUI::DrawLogWindow()
     {        
-        size_t length = strlen(logBuffer);
+        size_t length = strlen(CoherentUI::logBuffer);
         size_t offset = 0;
         size_t copySize = LOGBUF_PURGE_SIZE;
         bool newlineFound = true;
         
-        if (!active)
+        if (!Coherent::active)
             goto postend; // don't even bother
 
         // don't bother doing anything if there is no buffer
@@ -29,7 +29,7 @@ namespace Iris
 
         ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
 
-        if (!ImGui::Begin("Emulator Log", &active))
+        if (!ImGui::Begin("Emulator Log", &Coherent::active))
             goto end;
 
         // this code is a test
@@ -73,7 +73,7 @@ namespace Iris
         postend: 
     }
 
-    void Coherent::AddTextToLogWindowBuffer(const char* str)
+    void CoherentUI::AddTextToLogWindowBuffer(const char* str)
     {
         size_t bufLength = strlen(logBuffer);
         size_t strLength = strlen(str);

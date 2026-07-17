@@ -15,7 +15,8 @@
 
 namespace Iris
 {
-    void Coherent::DrawMainWindow()
+
+    void CoherentUI::DrawMainWindow()
     {
         ImGui::SetNextWindowPos(ImVec2(
         (Emulation::GetRenderer()->GetWindowSizeX() / 2) - 800,
@@ -26,13 +27,13 @@ namespace Iris
         int pcOffset = 0;
         ImVec2 childWindowSize = ImVec2(200.0, 200.0);
 
-        for (CoherentExtension* extension : extensions)
+        for (CoherentExtension* extension : Coherent::extensions)
         {
             if (extension->enabled)
                 extension->AddUI(); 
         }
 
-        if (ImGui::Begin(COHERENT_VERSION, &active, ImGuiWindowFlags_MenuBar))
+        if (ImGui::Begin(COHERENT_VERSION, &Coherent::active, ImGuiWindowFlags_MenuBar))
         {
             if (ImGui::BeginMenuBar())
             {
@@ -40,7 +41,7 @@ namespace Iris
                 {
                     // see which extensions are enabled 
 
-                    for (CoherentExtension* extension : extensions)
+                    for (CoherentExtension* extension : Coherent::extensions)
                     {
                         if (ImGui::MenuItem(extension->component->GetName()))
                             extension->enabled = true; 
@@ -61,37 +62,33 @@ namespace Iris
                 }
                 else
                 {
-                    ImGui::Text("Debug Controls: ");
-
-                    ImGui::SameLine();
-
-                    if (currentSystem->GetRunState() == CoherentSystem::RunState::Running)
+                    if (Coherent::currentSystem->GetRunState() == CoherentSystem::RunState::Running)
                     {
                         if (ImGui::Button("Pause CPU"))
-                            currentSystem->SetRunState(CoherentSystem::RunState::Paused);
+                            Coherent::currentSystem->SetRunState(CoherentSystem::RunState::Paused);
                     }
                     else
                     {
                         if (ImGui::Button("Start CPU"))
-                            currentSystem->SetRunState(CoherentSystem::RunState::Running); 
+                            Coherent::currentSystem->SetRunState(CoherentSystem::RunState::Running); 
                     }
 
                     ImGui::SameLine();
                     if (ImGui::Button("Reset"))
-                        currentSystem->SetRunState(CoherentSystem::RunState::Reset);
+                        Coherent::currentSystem->SetRunState(CoherentSystem::RunState::Reset);
 
-                    if (currentSystem->GetRunState() == CoherentSystem::RunState::Paused)
+                    if (Coherent::currentSystem->GetRunState() == CoherentSystem::RunState::Paused)
                     {
                         ImGui::SameLine();
                         
                         if (ImGui::Button("Step"))
-                            currentSystem->SetRunState(CoherentSystem::RunState::SingleStep);
+                            Coherent::currentSystem->SetRunState(CoherentSystem::RunState::SingleStep);
                     }
 
                     
                     ImGui::Text("Clock Speed : %.2f MHz", ((float)Emulation::GetMachine().FindComponentByType<ComponentCPU>()->GetClockSpeed()) / 1000000.0);
 
-                    for (auto aRegister : currentSystem->registers)
+                    for (auto aRegister : Coherent::currentSystem->registers)
                     {
                         ImGui::Text(aRegister.first);
                         ImGui::SameLine();
@@ -132,14 +129,14 @@ namespace Iris
                         if (i == 0)
                             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.6f, 0.9f, 1.0f));
 
-                        auto addr = currentSystem->GetPC() + pcOffset;
+                        auto addr = Coherent::currentSystem->GetPC() + pcOffset;
 
-                        ImGui::Text("0x%lx:    %s", addr, currentSystem->DisasmInstruction(addr));
+                        ImGui::Text("0x%lx:    %s", addr, Coherent::currentSystem->DisasmInstruction(addr));
 
                         if (i == 0)
                             ImGui::PopStyleColor();
 
-                        pcOffset += currentSystem->GetNextInstructionSize();
+                        pcOffset += Coherent::currentSystem->GetNextInstructionSize();
                     }
 
                 }
@@ -151,38 +148,9 @@ namespace Iris
 
             if (ImGui::BeginChild("DebugControlsPane", ImVec2(200, 0)))
             {
-                //
-                // Breakpoints
-                //
-
-                if (ImGui::BeginChild("Breakpoints", childWindowSize))
-                {
-                    ImGui::Text("This is the breakpoints window");
-                    ImGui::EndChild();
-
-                }
-
-
-                //
-                // Watchpoints
-                //
-
-
-                if (ImGui::BeginChild("Watchpoints", childWindowSize))
-                {
-                    ImGui::Text("This is the watchpoints window");
-                    ImGui::EndChild();
-                }
-
-                //
-                // Catchpoints
-                //
-
-                if (ImGui::BeginChild("Catchpoints", childWindowSize))
-                {
-                    ImGui::Text("This is the catchpoints window");
-                    ImGui::EndChild();
-                }
+                CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowBreakpoint, childWindowSize);
+                CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowWatchpoint, childWindowSize);
+                CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowCatchpoint, childWindowSize);
 
                 ImGui::EndChild();
             }
@@ -193,7 +161,7 @@ namespace Iris
     
     void Coherent::Frame()
     {
-        DrawMainWindow();
-        DrawLogWindow();
+        CoherentUI::DrawMainWindow();
+        CoherentUI::DrawLogWindow();
     }
 }
