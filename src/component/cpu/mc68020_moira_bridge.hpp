@@ -5,7 +5,6 @@
 #include <component/component.hpp>
 #include <component/cpu/cpu.hpp>
 #include <component/cpu/moira/Moira.h>
-#include <component/cpu/moira/MoiraDebugger.h>
 #include <base/emulation.hpp>
 
 namespace Iris

@@ -404,15 +404,6 @@ static constexpr int TRACE_EXC      = (1 << 5);
 // CPU checks for pending interrupts only if this flag is set. Cleared when no interrupt is possible.
 static constexpr int CHECK_IRQ      = (1 << 6);
 
-// Enables checking for breakpoints.
-static constexpr int CHECK_BP       = (1 << 7);
-
-// Enables checking for watchpoints.
-static constexpr int CHECK_WP       = (1 << 8);
-
-// Enables checking for catchpoints.
-static constexpr int CHECK_CP       = (1 << 9);
-
 }
 
 /* Instruction Flags

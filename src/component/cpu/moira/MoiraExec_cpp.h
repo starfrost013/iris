@@ -34,21 +34,6 @@ Moira::execLineA(u16 opcode)
 {
     AVAILABILITY(Core::C68000)
 
-    // Check if a software trap is set for this instruction
-    if (debugger.swTraps.traps.contains(opcode)) {
-
-        auto &trap = debugger.swTraps.traps[opcode];
-
-        // Restore the original instruction
-        reg.pc = reg.pc0;
-        queue.irc = trap.instruction;
-        prefetch<C>();
-
-        // Inform the delegate
-        didReachSoftwareTrap(reg.pc0);
-        return;
-    }
-
     execException<C>(M68kException::LINEA);
 
     CYCLES_68000(34)

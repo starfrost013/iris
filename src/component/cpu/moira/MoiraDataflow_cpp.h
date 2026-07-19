@@ -373,11 +373,6 @@ Moira::read(u32 addr)
         throw AddressError(makeFrame<F>(addr));
     }
 
-    // Check if a watchpoint has been reached
-    if ((flags & State::CHECK_WP) && debugger.watchpointMatches(addr, S)) {
-        didReachWatchpoint(addr);
-    }
-
     if constexpr (S == Byte) {
 
         if (F & POLL) POLL_IPL;
@@ -424,11 +419,6 @@ Moira::write(u32 addr, u32 val)
     // Check for address errors
     if (misaligned<C, S>(addr)) {
         throw AddressError(makeFrame<F|AE_WRITE>(addr));
-    }
-
-    // Check if a watchpoint has been reached
-    if ((flags & State::CHECK_WP) && debugger.watchpointMatches(addr, S)) {
-        didReachWatchpoint(addr);
     }
 
     if constexpr (S == Byte) {
@@ -684,9 +674,6 @@ Moira::jumpToVector(int nr)
     queue.irc = (u16)read<C, AddrSpace::PROG, Word>(reg.pc);
     SYNC(2);
     prefetch<C, POLL>();
-
-    // Stop emulation if the exception should be catched
-    if (debugger.catchpointMatches(nr)) didReachCatchpoint(u8(nr));
 
     didJumpToVector(nr, reg.pc);
 }

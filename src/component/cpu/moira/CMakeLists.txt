@@ -3,7 +3,6 @@
 add_library(moira STATIC
 
 Moira.cpp
-MoiraDebugger.cpp
 )
 
 if (NOT MSVC)

@@ -9,17 +9,15 @@
 
 #include "MoiraConfig.h"
 #include "MoiraTypes.h"
-#include "MoiraDebugger.h"
+#include "StrWriter.h"
 
 namespace Iris::Lisburn {
 
 class Moira {
     
-    friend class Debugger;
     friend class Breakpoints;
     friend class Watchpoints;
     friend class Catchpoints;
-    
     
     //
     // Configuration
@@ -46,10 +44,6 @@ protected:
     
 public:
     
-    // Debugger handling breakpoints, watchpoints, catchpoints, and instruction tracing
-    Debugger debugger = Debugger(*this);
-    
-    
     //
     // Internals
     //
@@ -61,20 +55,17 @@ public:
 
     // Current value on the IPL (Interrupt Priority Level) pins
     u8 ipl {};
+
 protected:
     
     // Number of elapsed cycles since power-up
     i64 clock {};
-    
-
     
     // Prefetch queue for fetching instructions
     PrefetchQueue queue {};
     
     // Interrupt mode
     IrqMode irqMode {IrqMode::AUTO};
-    
-
     
     // Value on the lower two function code pins (FC1|FC0)
     u8 fcl {2};
@@ -100,7 +91,6 @@ protected:
     // State flags used internally
     int flags {};
     
-    
     //
     // Lookup tables
     //
@@ -120,8 +110,7 @@ private:
     
     // Table holding instruction information
     InstrInfo *info = nullptr;
-    
-    
+
     //
     // Constructing
     //
@@ -354,26 +343,6 @@ protected:
     
     // Called when the CAAR register is modified
     virtual void didChangeCAAR(u32 value) { }
-
-    
-    //
-    // Debugger delegates
-    //
-    
-    // Called when a soft stop is reached
-    virtual void didReachSoftstop(u32 addr) { }
-    
-    // Called when a breakpoint is hit
-    virtual void didReachBreakpoint(u32 addr) { }
-    
-    // Called when a watchpoint is hit
-    virtual void didReachWatchpoint(u32 addr) { }
-    
-    // Called when a catchpoint is hit
-    virtual void didReachCatchpoint(u8 vector) { }
-    
-    // Called when a software trap is hit
-    virtual void didReachSoftwareTrap(u32 addr) { }
     
     //
     // Accessing the clock

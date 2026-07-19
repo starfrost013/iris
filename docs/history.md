@@ -6,7 +6,13 @@
 
 * May 3, 1982: "TB1" board existed by this time (test board 1). The earliest date that development can be said to have started as the BPC1 debug tools were created.
 
+* September 11, 1982: By this time the BPC2 existed.
+
+* February 17, 1983: UC2 board was "obsolete" at this time
+
 * Late 1983 / Early 1984: IRIS 1000 released, shortly followed by IRIS 1200
+
+* 1983: Copyright date on GE2 board
 
 * October 12, 1983 "PM2.1 Boot Proms V1.0" released.
 
@@ -46,11 +52,11 @@
 * November 1983: IRIS 1000 / 1200 - Terminal. PM1 (8MHz 68000) Sun licensed, EXOS101 Ethernet, GF1, UC3, DC3, BP2 (Iris 1200 has a floppy drive and 10 multibus slots) and "MicroRAM" Multibus RAM port. Operating system was simply called "SGI Unix System V" e.g. v1.5 with GL1 API
 Same time-ish: IRIS 1400 / 1500: Workstation. PM2M1 (10MHz 68010) Sun licensed, Excelan EXOS101, but otherwise the same boards. but with a hard drive now. (ST506).
 
-* 1984-85: IRIS 2000 / 2200: Terminal with PM2 bus and cut down GL2 OS. New GL2 API. GF2, UC4, DC4, BP3 boards. 6MHz GEs, later upgraded to 8MHz.  Excelan EXOS201 ethernet. By this time the software was called GL2 e.g. GL2-W2.5 (for workstation) or T2.5 (for terminal)
+* 1984-85: IRIS 2000 / 2200: Terminal with PM2 bus and cut down GL2 OS. New GL2 API. GF2, UC4, DC4, BP3 boards. 6MHz GEs, later upgraded to 8MHz.  Excelan EXOS201 ethernet. By this tise the software was called GL2 e.g. GL2-W2.5 (for workstation) or T2.5 (for terminal)
 
 * 1984-85: IRIS 2300 / 2400 / 2500: Workstation and full GL2 OS. ST-506 for 2300/2400, ESDI(?) for 2500.
 
-* IRIS 2300/2400/2500 Turbo: IRIS 2300/2400/2500 with Microram board and PM2M1 (aka IP1) processor board replaced with IP2 (Inhouse SGI) and IM1 board. These boards have a 16MHz 68020 instead of a 10mhz 68010 and the ram is on a private bus rather than Multibus so it's faster.
+* IRIS 2300/2400/2500 Turbo: IRIS 2300/2400/2500 with Microram board and PM2M1 (aka IP1) processor board replaced with IP2 (Inhouse SGI, also called PM3) and IM1 board. These boards have a 16MHz 68020 instead of a 10mhz 68010 and the ram is on a private bus rather than Multibus so it's faster.
 
 * IRIS 3000 is February 1986: 
  

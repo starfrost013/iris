@@ -236,9 +236,6 @@ Moira::reset()
     SYNC(2);
     prefetch<C>();
 
-    // Reset subcomponents
-    debugger.reset();
-
     // Inform the delegate
     cpuDidReset();
 }
@@ -323,12 +320,7 @@ Moira::execute()
             sync(2);
             return;
         }
-
-        // If logging is enabled, record the executed instruction
-        if (flags & LOGGING) {
-            debugger.logInstruction();
-        }
-
+        
         // Execute the instruction
         reg.pc += 2;
 
@@ -348,18 +340,6 @@ Moira::execute()
 
     done:
 
-        // Check if a breakpoint has been reached
-        if (flags & CHECK_BP) {
-
-            // Don't break if the instruction won't be executed due to tracing
-            if (flags & TRACE_EXC) return;
-
-            // Check if a softstop has been reached
-            if (debugger.softstopMatches(reg.pc0)) didReachSoftstop(reg.pc0);
-
-            // Check if a breakpoint has been reached
-            if (debugger.breakpointMatches(reg.pc0)) didReachBreakpoint(reg.pc0);
-        }
     }
 
     // Check the integrity of the program counter again
