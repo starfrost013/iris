@@ -74,15 +74,15 @@ namespace Iris
         void OnWrite32(size_t addr, uint32_t value) override; 
 
         // well probably need to change these so just make them public
-        uint32_t osBase;
-        uint32_t status;
-        uint32_t parity;
-        uint32_t multibusProtect;
-        uint32_t pagetable[PAGETABLE_MAX_PAGES];
-        uint32_t textdataBase;
-        uint32_t textdataLimit;
-        uint32_t stackBase;
-        uint32_t stackLimit;
+        uint32_t osBase = 0x0;
+        uint32_t status = 0x0;
+        uint32_t parity = 0x0;
+        uint32_t multibusProtect = 0x0;
+        uint32_t pagetable[PAGETABLE_MAX_PAGES] = {0};
+        uint32_t textdataBase = 0x0;
+        uint32_t textdataLimit = 0x0;
+        uint32_t stackBase = 0x0;
+        uint32_t stackLimit = 0x0;
 
         MMU_IP2()
         {

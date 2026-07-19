@@ -30,11 +30,10 @@ namespace Iris
         // buf used for inserting the guard's addrss
         char* addrBuf = addrBufForWatchpoints;
 
-
         // so this is what lambdas are used for
-        auto processItem = [](const auto& pair, GuardWindowType windowType, int32_t index)
+        auto processItem = [](auto& pair, GuardWindowType windowType, int32_t index)
         {
-            const Coherent::Guard& guard = pair.second;
+            Coherent::Guard& guard = pair.second;
 
             if (!guard.enabled) // bp is disabled
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 0.7f, 0.7f, 1.0f));
@@ -43,29 +42,35 @@ namespace Iris
             else // bp is enabled but not hit
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
+            char addrBuf[STRING_MAX_LONG] = {0};
+
             if (windowType == GuardWindowBreakpoint)
             {
                 // some flavour text
                 if (!guard.active && guard.enabled)
-                    ImGui::Text("[%d] break at 0x%lx", index, guard.addr);
+                    snprintf(addrBuf, STRING_MAX_LONG, "[%d] break at 0x%lx", index, guard.addr);
                 else if (!guard.enabled)
-                    ImGui::Text("[%d] break at 0x%lx [disabled]", index, guard.addr);
+                    snprintf(addrBuf, STRING_MAX_LONG, "[%d] break at 0x%lx [disabled]", index, guard.addr);
                 else if (guard.active)
-                    ImGui::Text("[%d] break at 0x%lx [hit!]", index, guard.addr);
+                    snprintf(addrBuf, STRING_MAX_LONG, "[%d] break at 0x%lx [hit!]", index, guard.addr);
+
 
             }
             else if (windowType == GuardWindowWatchpoint)
             {
                 Coherent::Watchpoint& watchpoint = (Coherent::Watchpoint&)pair.second;
-                ImGui::Text("[%d] addr [%lx] = %x", index, guard.addr, watchpoint.GetValue());
+                snprintf(addrBuf, STRING_MAX_LONG, "[%d] addr [%lx] = %x", index, guard.addr, watchpoint.GetValue());
             }
             else if (windowType == GuardWindowCatchpoint)
             {
                 // should be fine
-                const Coherent::Catchpoint& catchpoint = (Coherent::Catchpoint&)pair.second;
-                ImGui::Text("[%d] catch on exception #%ld from 0x%lx", index, catchpoint.exceptionId, guard.addr);
+                Coherent::Catchpoint& catchpoint = (Coherent::Catchpoint&)pair.second;
+                snprintf(addrBuf, STRING_MAX_LONG, "[%d] catch on exception #%ld from 0x%lx", index, catchpoint.exceptionId, guard.addr);
             }
 
+            if (ImGui::Selectable(addrBuf))
+                guard.selected = true;
+            
             ImGui::PopStyleColor();
         };
 
@@ -127,20 +132,19 @@ namespace Iris
             switch (windowType)
             {
                 case GuardWindowBreakpoint:
-                    for (const auto& guard : Coherent::breakpoints) processItem(guard, windowType, index++);
+                    for (auto& guard : Coherent::breakpoints) processItem(guard, windowType, index++);
                     break;
                 case GuardWindowCatchpoint:
-                    for (const auto& guard : Coherent::catchpoints) processItem(guard, windowType, index++);
+                    for (auto& guard : Coherent::catchpoints) processItem(guard, windowType, index++);
                     break;
                 case GuardWindowWatchpoint:
-                    for (const auto& guard : Coherent::watchpoints) processItem(guard, windowType, index++);
+                    for (auto& guard : Coherent::watchpoints) processItem(guard, windowType, index++);
                     break;
             }   
 
             ImGui::Button("Remove");
-
-            ImGui::EndChild();
         }
         
+        ImGui::EndChild();
     }
 }

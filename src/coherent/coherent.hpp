@@ -16,8 +16,7 @@
 namespace Iris
 {
     #define COHERENT_LOG_PREFIX     "Debugger"
-    #define COHERENT_VERSION        "Coherent Debugging Engine v0.4 (July 2026)"
-
+    #define COHERENT_VERSION        "Coherent Debugging Engine v0.5 (July 2026)"
 
     extern Cvar* startPaused;
 
@@ -64,6 +63,25 @@ namespace Iris
     {
 
     public: 
+
+        class ExceptionVectorBase
+        {
+        public: 
+            const char* name; 
+        };
+
+        // exception vectors can be different sizes
+        template <typename T>
+        class ExceptionVector : public ExceptionVectorBase
+        {
+            T id; 
+        public:
+            ExceptionVector(const char* name, T id)
+            {
+                this->id = id;
+                this->name = name;
+            }
+        };
 
         // We can allow the user to write custom implementations of the Register class with this.
         // Member templates are not allowed for variables, so provide a common base and make the templated register inherit from it. 
@@ -117,7 +135,6 @@ namespace Iris
             Reset = 2,
             SingleStep = 3,
         };
-
 
         /// @brief Add a register to this system
         /// @tparam T The type of the register to add.
@@ -190,6 +207,9 @@ namespace Iris
             size_t addr; 
             bool enabled;
             bool active; 
+
+            /// @brief help for ui. set to true if the user selected this
+            bool selected; 
 
             Guard()
             {

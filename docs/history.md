@@ -1,8 +1,10 @@
 # History
 
-* 1979-1980: Original Geometry Engine paper.
+* 1979-1980: Original Geometry Engine research project.
 
-* 1982: Wire-wrapped GF1 prototype.
+* ~December 30, 1979: 5-bit slice of the W-coordinate ALU taped out at 4 micrometer ("Geometry Engine (c)1979 James Clark") and clock chip ("Chuck's Hourglass (c)1979 James Clark"), proving the concept works.
+
+* 1982: Wire-wrapped GF1 prototype. ("Alpha")
 
 * May 3, 1982: "TB1" board existed by this time (test board 1). The earliest date that development can be said to have started as the BPC1 debug tools were created.
 
@@ -15,6 +17,8 @@
 * 1983: Copyright date on GE2 board
 
 * October 12, 1983 "PM2.1 Boot Proms V1.0" released.
+
+* April 1984: IRIS 1400 released (1500 when ? )
 
 * May 5, 1984: "SGI Unix System V" "beta-1.5" released
 

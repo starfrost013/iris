@@ -1,9 +1,11 @@
-// -----------------------------------------------------------------------------
-// This file is part of Moira - A Motorola 68k emulator
-//
-// Copyright (C) Dirk W. Hoffmann. www.dirkwhoffmann.de
-// Published under the terms of the MIT License
-// -----------------------------------------------------------------------------
+/*
+    "Lisburn" 68020 core (just down the road from Moira)
+    Moira with amiga stuff cleaned up and no debugger (replaced with Coherent)
+    Copyright (c) 2019-2025 Dirk W. Hoffmann. www.dirkwhoffmann.de
+    Copyright (c) 2026 Connor Hyde (starfrost). www.starfrost.net
+
+    Published under the terms of the MIT license
+*/
 
 #pragma once
 

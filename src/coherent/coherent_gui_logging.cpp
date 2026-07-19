@@ -21,56 +21,54 @@ namespace Iris
         bool newlineFound = true;
         
         if (!Coherent::active)
-            goto postend; // don't even bother
+            return;
 
         // don't bother doing anything if there is no buffer
         if (strlen(logBuffer) == 0)
-            goto postend;
+            return;
 
         ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
 
-        if (!ImGui::Begin("Emulator Log", &Coherent::active))
-            goto end;
-
-        // this code is a test
-        char logWindowBuf[LOGBUF_PURGE_SIZE];
-
-        // copy only the last 1024 characters if > 1024
-        if (length > LOGBUF_PURGE_SIZE)
-            offset = length - LOGBUF_PURGE_SIZE;
-
-        // make sure the buffer starts on a new line
-
-        while (logBuffer[offset] != '\n')
+        if (ImGui::Begin("Emulator Log", &Coherent::active))
         {
-            offset++;
-            copySize--;
+    // this code is a test
+            char logWindowBuf[LOGBUF_PURGE_SIZE];
 
-            if (offset >= LOGBUF_MAX_SIZE
-            || copySize == 0)
+            // copy only the last 1024 characters if > 1024
+            if (length > LOGBUF_PURGE_SIZE)
+                offset = length - LOGBUF_PURGE_SIZE;
+
+            // make sure the buffer starts on a new line
+
+            while (logBuffer[offset] != '\n')
             {
-                newlineFound = false;
-                break;
+                offset++;
+                copySize--;
+
+                if (offset >= LOGBUF_MAX_SIZE
+                || copySize == 0)
+                {
+                    newlineFound = false;
+                    break;
+                }
             }
-        }
 
-        // start ont he character after the newline so we don't have a stray newline
-        if (newlineFound)
-        {
-            offset++;
-            copySize--;
-        }
+            // start ont he character after the newline so we don't have a stray newline
+            if (newlineFound)
+            {
+                offset++;
+                copySize--;
+            }
 
-        strncpy(logWindowBuf, (logBuffer + offset), copySize);
-        logWindowBuf[copySize] = '\0';
-        ImGui::Text(logWindowBuf);
+            strncpy(logWindowBuf, (logBuffer + offset), copySize);
+            logWindowBuf[copySize] = '\0';
+            ImGui::Text(logWindowBuf);
 
-        ImGui::SetScrollHereY(1.0f);
-        
-        end:
-            ImGui::End();
+            ImGui::SetScrollHereY(1.0f);
+            
+        } 
 
-        postend: 
+        ImGui::End();
     }
 
     void CoherentUI::AddTextToLogWindowBuffer(const char* str)

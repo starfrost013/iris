@@ -26,9 +26,10 @@ namespace Iris
 
             if (ImGui::Button("Close"))
                 CoherentUI::aboutActive = false; 
-
-            ImGui::End();
         }
+
+        ImGui::End();
+
     }
 
     void CoherentUI::DrawMainWindow()
@@ -121,8 +122,9 @@ namespace Iris
                     ImGui::Text("Clock Speed: %.2f MHz", ((float)Emulation::GetMachine().FindComponentByType<ComponentCPU>()->GetClockSpeed()) / 1000000.0);
                 }
                 
-                ImGui::EndChild();
             }  
+
+            ImGui::EndChild();
 
             // "left" (register) pane
             if (ImGui::BeginChild("RegisterPane", registerPaneSize))
@@ -150,13 +152,19 @@ namespace Iris
                         uint32_t formattedValue = std::any_cast<uint32_t>(value);
                         ImGui::Text("%s: %08x", aRegister->name, formattedValue);
                     }
-                    
+                    else if (value.type() == typeid(uint64_t)
+                    || value.type() == typeid(int64_t))
+                    {
+                        uint32_t formattedValue = std::any_cast<uint32_t>(value);
+                        ImGui::Text("%s: %16x", aRegister->name, formattedValue);
+                    }         
+
                     i++;
                 }
 
-                ImGui::EndChild();
             }
 
+            ImGui::EndChild();
             ImGui::SameLine();
 
             // middle pane; disassembly pane
@@ -177,9 +185,9 @@ namespace Iris
 
                     pcOffset += Coherent::currentSystem->GetNextInstructionSize();
                 }
-
-                ImGui::EndChild();
             }
+
+            ImGui::EndChild();
 
             ImGui::SameLine();
 
@@ -190,11 +198,12 @@ namespace Iris
                 CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowWatchpoint, debugContainerChildWindowSize);
                 CoherentUI::DrawGuardWindow(CoherentUI::GuardWindowType::GuardWindowCatchpoint, debugContainerChildWindowSize);
 
-                ImGui::EndChild();
             }
-          
-            ImGui::End();
+           
+            ImGui::EndChild();
         }
+
+        ImGui::End();
     }
     
     void Coherent::Frame()
