@@ -95,8 +95,18 @@ namespace Iris
             ImGui::Text(headerText);
             ImGui::PopStyleColor();
 
-            // if the user clicked the add button add the guard type
+            // if the user clicked the add button or hit enter, add the guard
+            bool createGuard = false;
+
             if (ImGui::Button("Add"))
+                createGuard = true;
+
+            ImGui::SameLine();
+
+            if (ImGui::InputTextWithHint("##AddressInput", "Address...", addrBuf, STRING_MAX_LONG, ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_EnterReturnsTrue))
+                createGuard = true;
+        
+            if (createGuard)
             {
                 auto addr = (size_t)strtol(addrBuf, NULL, 16);
 
@@ -122,9 +132,7 @@ namespace Iris
                     ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "***** INVALID guard window type *****");
             }
 
-            ImGui::SameLine();
-            ImGui::InputTextWithHint("##AddressInput", "Address...", addrBuf, STRING_MAX_LONG, ImGuiInputTextFlags_CharsHexadecimal);
-        
+
             int32_t index = 0;
 
             switch (windowType)
