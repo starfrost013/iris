@@ -86,6 +86,9 @@ namespace Iris
                 headerText = "Watchpoints";
                 addrBuf = addrBufForWatchpoints;
                 break;
+            default: 
+                ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "***** INVALID guard window type created *****");
+                return; // code will die anyway
         }       
 
         // draw the "top" of the window
@@ -104,9 +107,13 @@ namespace Iris
             ImGui::SameLine();
 
             if (ImGui::InputTextWithHint("##AddressInput", "Address...", addrBuf, STRING_MAX_LONG, ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_EnterReturnsTrue))
+            {
                 createGuard = true;
+                ImGui::SetKeyboardFocusHere(-1); // we want the input box to automatically reselect
+            }
         
-            if (createGuard)
+            if (createGuard
+            && strlen(addrBuf) > 0)
             {
                 auto addr = (size_t)strtol(addrBuf, NULL, 16);
 
@@ -128,10 +135,10 @@ namespace Iris
                     catchpoint.enabled = true;
                     Coherent::AddCatchpoint(catchpoint);
                 }
-                else
-                    ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "***** INVALID guard window type *****");
-            }
 
+                // effectively clears the buffer
+                addrBuf[0] = '\0';
+            }
 
             int32_t index = 0;
 
