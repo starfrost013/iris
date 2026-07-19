@@ -20,6 +20,17 @@ namespace Iris
     class CoherentUI
     {
     public:
+        /// @brief The current UI style.
+        enum UIStyle
+        {
+            Default = 0,
+            MEX = 1,
+        };
+
+        static void InitStyle(UIStyle style);
+        static void InitStyleDefault(UIStyle style, ImGuiStyle& styleObj);
+        static void InitStyleMex(UIStyle style, ImGuiStyle& styleObj);
+
         static void LeftAlign();
         static void CentreAlign(ImVec2 contentSize);
         static void RightAlign(ImVec2 contentSize);
@@ -44,9 +55,9 @@ namespace Iris
         static inline bool aboutActive = false;
 
     private: 
-        inline static char addrBufForWatchpoints[STRING_MAX_LONG];
-        inline static char addrBufForCatchpoints[STRING_MAX_LONG];
-        inline static char addrBufForBreakpoints[STRING_MAX_LONG];
+        inline static char addrBufForWatchpoints[STRING_MAX_LONG] = {0};
+        inline static char addrBufForCatchpoints[STRING_MAX_LONG] = {0};
+        inline static char addrBufForBreakpoints[STRING_MAX_LONG] = {0};
 
         /// @brief internal thing used to store the emulator log. need a cache
         inline static char logBuffer[LOGBUF_MAX_SIZE] = {0};

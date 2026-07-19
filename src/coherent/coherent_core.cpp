@@ -55,6 +55,7 @@ namespace Iris
         Logger::Log(COHERENT_LOG_PREFIX, COHERENT_VERSION " initialised");
         Logger::settings.SetPostLogFunction(Coherent_CTrampolineForLog);
 
+        CoherentUI::InitStyle(CoherentUI::UIStyle::Default);
         initialised = true; 
     }
 

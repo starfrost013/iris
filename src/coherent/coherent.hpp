@@ -216,15 +216,15 @@ namespace Iris
                 this->addr = 0x0;
                 this->enabled = false;
                 this->active = false; 
+                this->selected = false; 
             }
         
-            Guard(size_t addr)
+            Guard(size_t addr) : Guard()
             {
                 this->addr = addr;
-                this->enabled = false;
-                this->active = false; 
             }
         };
+        
 
         /// defines a breakpoint
         class Breakpoint : public Guard

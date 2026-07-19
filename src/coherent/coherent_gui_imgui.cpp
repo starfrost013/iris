@@ -53,8 +53,6 @@ namespace Iris
                     snprintf(addrBuf, STRING_MAX_LONG, "[%d] break at 0x%lx [disabled]", index, guard.addr);
                 else if (guard.active)
                     snprintf(addrBuf, STRING_MAX_LONG, "[%d] break at 0x%lx [hit!]", index, guard.addr);
-
-
             }
             else if (windowType == GuardWindowWatchpoint)
             {
@@ -69,7 +67,7 @@ namespace Iris
             }
 
             if (ImGui::Selectable(addrBuf))
-                guard.selected = true;
+                guard.selected = !guard.selected;
             
             ImGui::PopStyleColor();
         };
@@ -142,7 +140,23 @@ namespace Iris
                     break;
             }   
 
-            ImGui::Button("Remove");
+            // remove button
+
+            if (ImGui::Button("Remove"))
+            {
+                switch (windowType)
+                {
+                    case GuardWindowBreakpoint:
+                        std::erase_if(Coherent::breakpoints, [](const auto& pair) { return pair.second.selected; });
+                        break;
+                    case GuardWindowCatchpoint:
+                        std::erase_if(Coherent::catchpoints, [](const auto& pair) { return pair.second.selected; });
+                        break;
+                    case GuardWindowWatchpoint:
+                        std::erase_if(Coherent::watchpoints, [](const auto& pair) { return pair.second.selected; });
+                        break;
+                }
+            }
         }
         
         ImGui::EndChild();
