@@ -62,7 +62,7 @@ namespace Iris
             return ret;
         }
 
-        Logger::Log(LOG_PREFIX_IP2MMU, std::format("IP2 MMU read 0x{:x} from address 0x{:x} (check debug window)", ret, addr).c_str(), LogChannels::Message);
+        //Logger::Log(LOG_PREFIX_IP2MMU, std::format("IP2 MMU read 0x{:x} from address 0x{:x} (check debug window)", ret, addr).c_str(), LogChannels::Message);
         return ret;
     }
 
@@ -121,7 +121,7 @@ namespace Iris
             return;
         }
 
-        Logger::Log(LOG_PREFIX_IP2MMU, std::format("IP2 MMU write 0x{:x} to address 0x{:x} (check debug window)", value, addr).c_str(), LogChannels::Message);
+        //Logger::Log(LOG_PREFIX_IP2MMU, std::format("IP2 MMU write 0x{:x} to address 0x{:x} (check debug window)", value, addr).c_str(), LogChannels::Message);
         return;
     }
 }

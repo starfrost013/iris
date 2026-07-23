@@ -21,6 +21,7 @@ namespace Iris
         Logger::settings.SetAppName(APP_NAME);
         Logger::settings.SetDestinations((LogDestination)(LogDestination::Stdout | LogDestination::File));
         Logger::settings.SetFatalFunction(fatal);
+        Logger::settings.SetChannelMask((LogChannels)(LogChannels::Debug | LogChannels::Message | LogChannels::Warning | LogChannels::Error | LogChannels::FatalError | LogChannels::UnsafeShutdown));
         Logger::settings.sendAnsiCodesToFile = false;
         Logger::settings.postLogMessageIgnoresAnsiCodes = true; //coherent
         Logger::Init();

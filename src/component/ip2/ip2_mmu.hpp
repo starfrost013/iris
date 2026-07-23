@@ -45,9 +45,6 @@ namespace Iris
     };
 
     // not sure hwy sgi decided that addresses must be so sparse that bit fucking 24 needed to be the register selector.
-
-
-
     // FOR COMPONENTS, WE DON'T NEED TO BOUNDS CHECK BECAUSE WE ALREADY MAPPED IT!
 
     class MMU_IP2 : public Component
@@ -88,10 +85,14 @@ namespace Iris
         {
             mmuExtension = new CoherentExtensionIP2MMU(this);
             Coherent::RegisterExtension(mmuExtension);
+
+            mmuChannel = LogChannel("IP2 MMU", ConsoleColor::BrightCyan, ConsoleColor::White);
         }
 
     private: 
         CoherentExtensionIP2MMU* mmuExtension; 
+
+        LogChannel mmuChannel;
 
     };
 

@@ -1,19 +1,23 @@
 // 
-// Starfrost Shared Logging System-NG (NextGen) Version 5.0
+// Starfrost Shared Logging System-NG (NextGen) Version 5.3.0
 // Copyright © 2023-2026 starfrost
 //
 // This is a completely rewritten, C++ header only version of SSLS. 
 // It adds the capacity to have custom channels, custom prefixes, custom date formats, stderr support and uses C++ concepts. 
-// It almost eliminates fixed-sized buffers and uses streams. It's fully self-contained.
+// It almost eliminates fixed-sized buffers and uses streams. It's a fully self-contained header-only library.
 //
-// For C projects, use SSLS 4.7
+// For C projects, use SSLS 4.x.
 //
-// Version history:
 // 5.0.0            May 21, 2026        Initial release of SSLS C++ (custom channels, prefixes, channel mask, last-chance unsafe method etc)
 // 5.0.1            June 25, 2026       Message prefix take on the same colour as the channel of a message
 // 5.1.0            June 30, 2026       Add post-log message functions, which run after every call to LogOut, as well as Logger::SetPostLogFunction. Used e.g. for redirecting to UI
 // 5.2.0            July 2, 2026        Allow the ability to suppress ANSI escape codes in post-log messages. Allow the ability to not send ANSI escape codes to the file destination.
-
+//
+// 5.3.0            July 23, 2026       Removed stupid "StarfrostLib" branding.
+//                                      Change custom channels from using a mask to using a boolean since masks would be very hard to manage for a large project.
+//                                      Add SetChannelEnabled(const char*, bool) to allow a channel to be enabled based on its name.
+//                                      Add ChannelExists(const char*) to check if a channel exists.
+//                                      Fix channel masks in settings not doing anything.
 #pragma once
 
 // Includes
@@ -37,8 +41,8 @@
 
 // Strings, change to localise or whatever
 
-#define STRING_VERSION                  "5.2.0 (July 2, 2026)"                  // Version number as a string (we don't need it in any other form)
-#define STRING_SIGN_ON                  "StarfrostLib/SSLS-NG (Starfrost Shared Logging System - Next Gen) " STRING_VERSION " initialised" 
+#define STRING_VERSION                  "5.3.0 (July 23, 2026)"                  // Version number as a string (we don't need it in any other form)
+#define STRING_SIGN_ON                  "SSLS-NG (Starfrost Shared Logging System - Next Gen) " STRING_VERSION " initialised" 
 #define STRING_ANSI_PREFIX              "\x1B["                                 // Some ANSI command prefixes use this
 
 #ifdef LOGGER_USE_NAMESPACE
@@ -74,16 +78,21 @@ namespace LOGGER_NAMESPACE
         friend class Logger;
 
         char name[LOGGER_MAX_STRING_SHORT];             // the name to use for this log channel.
-        size_t mask;                                    // The mask to use for selecting this log channel.
+        bool enabled;                                   // determines if this channel is enabled.
 
         ConsoleColor colorFg;                           // The current foreground colour
         ConsoleColor colorBg;                           // The current background colour 
 
     public:
-        LogChannel(const char* name, size_t mask, ConsoleColor colorFg = ConsoleColor::Black, ConsoleColor colorBg = ConsoleColor::White)
+        LogChannel()
+        {
+            strncpy(this->name, "Please name this channel!!!", LOGGER_MAX_STRING_SHORT);
+        }
+
+        LogChannel(const char* name, ConsoleColor colorFg = ConsoleColor::Black, ConsoleColor colorBg = ConsoleColor::White)
         {
             strncpy(this->name, name, LOGGER_MAX_STRING_SHORT);
-            this->mask = mask; 
+            this->enabled = false; 
             this->colorBg = colorBg;
             this->colorFg = colorFg;
         }
@@ -151,7 +160,7 @@ namespace LOGGER_NAMESPACE
 
         /// @brief Allows you to set a post-logging function that will be run after a log message (e.g. for redirecitng the log to UI)
         /// @param postLogFunc Function pointer to be run.
-        void SetPostLogFunction (void (*postLogFunc)(const char* str)) { this->postLogFunc = postLogFunc; };
+        void SetPostLogFunction(void (*postLogFunc)(const char* str)) { this->postLogFunc = postLogFunc; };
         
         // These are safe to set directly
 
@@ -187,114 +196,7 @@ namespace LOGGER_NAMESPACE
     /// @brief Container for Logger static methods.
     class Logger
     {
-    private: 
 
-        /// @brief Maps console colours to ANSI escape codes for foreground colours
-        inline static std::unordered_map<ConsoleColor, const char*> colorToAnsiTableFg =
-        {
-            { Black,    STRING_ANSI_PREFIX "30m" },
-            { Red,      STRING_ANSI_PREFIX "31m" },
-            { Green,    STRING_ANSI_PREFIX "32m" },
-            { Yellow,   STRING_ANSI_PREFIX "33m" },
-            { Blue,     STRING_ANSI_PREFIX "34m" },
-            { Magenta,  STRING_ANSI_PREFIX "35m" },
-            { Cyan,     STRING_ANSI_PREFIX "36m" },
-            { White,    STRING_ANSI_PREFIX "37m" },
-            { BrightBlack,    STRING_ANSI_PREFIX "90m" },
-            { BrightRed,      STRING_ANSI_PREFIX "91m" },
-            { BrightGreen,    STRING_ANSI_PREFIX "92m" },
-            { BrightYellow,   STRING_ANSI_PREFIX "93m" },
-            { BrightBlue,     STRING_ANSI_PREFIX "94m" },
-            { BrightMagenta,  STRING_ANSI_PREFIX "95m" },
-            { BrightCyan,     STRING_ANSI_PREFIX "96m" },
-            { BrightWhite,    STRING_ANSI_PREFIX "97m" },
-        };
-
-        /// @brief Maps console colours to ANSI escape codes for background colours
-        inline static std::unordered_map<ConsoleColor, const char*> colorToAnsiTableBg =
-        {
-            { Black,    STRING_ANSI_PREFIX "40m" },
-            { Red,      STRING_ANSI_PREFIX "41m" },
-            { Green,    STRING_ANSI_PREFIX "42m" },
-            { Yellow,   STRING_ANSI_PREFIX "43m" },
-            { Blue,     STRING_ANSI_PREFIX "44m" },
-            { Magenta,  STRING_ANSI_PREFIX "45m" },
-            { Cyan,     STRING_ANSI_PREFIX "46m" },
-            { White,    STRING_ANSI_PREFIX "47m" },
-            { BrightBlack,    STRING_ANSI_PREFIX "100m" },
-            { BrightRed,      STRING_ANSI_PREFIX "101m" },
-            { BrightGreen,    STRING_ANSI_PREFIX "102m" },
-            { BrightYellow,   STRING_ANSI_PREFIX "103m" },
-            { BrightBlue,     STRING_ANSI_PREFIX "104m" },
-            { BrightMagenta,  STRING_ANSI_PREFIX "105m" },
-            { BrightCyan,     STRING_ANSI_PREFIX "106m" },
-            { BrightWhite,    STRING_ANSI_PREFIX "107m" },
-        };
-
-        inline static const char* colorResetFgStr = STRING_ANSI_PREFIX "39m";
-        inline static const char* colorResetBgStr = STRING_ANSI_PREFIX "49m";
-        
-        inline static std::vector<LogChannel> customChannels;       // internal vector of custom channels 
-
-        inline static bool initialised;                             // determines if we were initialised successfully
-
-        /// @brief Internal method to send to multiple streams if we need to
-        /// @param msg The message to send
-        /// @param stream The std::ostream to send the msg too
-        /// @param newline The line to send to.
-        inline static void LogOutToStream(const char* msg, std::ostream* stream, bool newline = false)
-        {
-            *stream << msg;
-
-            if (newline)
-                *stream << std::endl;
-        }
-
-        /// @brief Send a message ot the log destination.
-        /// @param msg The message to send.
-        /// @param newline If a newline should be sent after.
-        inline static void LogOut(const char* msg, bool newline = false)
-        {
-            if (settings.destinations & LogDestination::Stdout)
-                LogOutToStream(msg, &std::cout, newline);
-            
-            if (settings.destinations & LogDestination::Stderr)
-                LogOutToStream(msg, &std::cerr, newline);
-
-            // sometimes we may not want to actually send the ansi codes out so check for them adn suppress them in certian cases
-            // we do multiple checks to reduce strstr calls as much as possible
-            
-            bool send = true;
-
-            if (settings.destinations & LogDestination::File)
-            {
-                send = true;
-
-                if (!settings.sendAnsiCodesToFile
-                && (strstr(msg, STRING_ANSI_PREFIX)))
-                    send = false;
-                    
-                if (send)
-                    LogOutToStream(msg, &settings.logStream, newline);
-            }
-            
-            if (settings.postLogFunc)
-            {
-                send = true; 
-
-                if (settings.postLogMessageIgnoresAnsiCodes
-                && (strstr(msg, STRING_ANSI_PREFIX)))
-                    send = false;
-
-                if (send)
-                    settings.postLogFunc(msg);
-
-                // coherent
-                if (newline)
-                    settings.postLogFunc("\n");
-            }
-        }
-       
     public: 
         inline static LoggerSettings settings;                // the settings
 
@@ -352,14 +254,46 @@ namespace LOGGER_NAMESPACE
             customChannels.push_back(channel);
         }
 
+        /// @brief Check if a channel exists.
+        /// @param name The name of the channel to check.
+        /// @return A boolean indicating if the channel exists
+        inline static bool ChannelExists(const char* channelName)
+        {
+            for (auto customChannel : customChannels)
+            {
+                if (!strcmp(customChannel.name, channelName))
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// @brief Sets the enablement state of a custom channel.
+        /// @param channelName The name of the channel to enable.
+        /// @return True if the channel was successfully enabled, otherwise false.
+        inline static bool SetChannelEnabled(const char* channelName, bool enabled = true)
+        {
+            for (auto customChannel : customChannels)
+            {
+                if (!strcmp(customChannel.name, channelName))
+                {
+                    customChannel.enabled = true;
+                    return true;
+                }
+            }
+
+            return false; 
+        }
+
         /// @brief Send a single message to the log. Also the internal log method called by all the others
         /// @param prefix Component prefix
         /// @param msg The message to send to the log
-        /// @param channel The channel to send it to.
+        /// @param channelName A custom channel name if present. NULLPTR to use the channel mask.
+        /// @param channelMask The channel to send it to.
         /// @param sendChannelName if the channel name should be sent or not.
         /// @param newline Also send a newline.
-        inline static void Log(const char* prefix, const char* msg, size_t channelMask = LogChannels::Message, 
-            bool newline = true, bool sendChannelName = true, bool sendDate = true)
+        inline static void Log(const char* prefix, const char* msg, const char* channelName, size_t channelMask, bool newline = true,
+            bool sendChannelName = true, bool sendDate = true)
         {
             // check if the logging was actually initialised properly
             if (!initialised)
@@ -368,6 +302,13 @@ namespace LOGGER_NAMESPACE
                 return;
             }
 
+            LogChannel customChannel;
+
+            if (channelName == nullptr)
+            {
+                if (!(settings.channelMask & channelMask))
+                    return;
+            }
             // for easier checking
             size_t logDest = (size_t)(settings.destinations);
             
@@ -389,45 +330,56 @@ namespace LOGGER_NAMESPACE
             // send our new channel name
             if (sendChannelName)
             {
-                if (channelMask & LogChannels::Message)
+                // check above only accounts for the case where custom channels are disabled:
+                // so we repeat the check here in case we want to log to only a custom chnanel, and those channels are enabled
+
+                if (channelMask & LogChannels::Message
+                && settings.channelMask & LogChannels::Message)
                     LogOut(messageNameStr);
 
-            // universal to all projects
+                // this code could be simplified but we want to allow multiple channels to be logged to at once. so we do this
             #ifndef NDEBUG 
-                if (channelMask & LogChannels::Debug)
+                if (channelMask & LogChannels::Debug
+                && settings.channelMask & LogChannels::Debug)
                 {
                     LogOut(colorToAnsiTableFg[ConsoleColor::BrightBlue]);
                     LogOut(debugNameStr);
                 }
             #endif
 
-                if (channelMask & LogChannels::Warning)
+                if (channelMask & LogChannels::Warning
+                && settings.channelMask & LogChannels::Warning)
                 {
                     LogOut(colorToAnsiTableFg[ConsoleColor::BrightYellow]);
                     LogOut(warningNameStr);
                 }
+                
+                bool errorEnabled = (settings.channelMask & LogChannels::Error);
+                bool fatalEnabled = (settings.channelMask & LogChannels::FatalError);
+                bool unsafeEnabled  = (settings.channelMask & LogChannels::UnsafeShutdown);
 
                 // these will all use the same colour
-                if (channelMask & LogChannels::Error 
-                || channelMask & LogChannels::FatalError
-                || channelMask & LogChannels::UnsafeShutdown)
+                if (((channelMask & LogChannels::Error) && errorEnabled)
+                || ((channelMask & LogChannels::FatalError) && fatalEnabled)
+                || ((channelMask & LogChannels::UnsafeShutdown) && unsafeEnabled))
                 {
                     LogOut(colorToAnsiTableFg[ConsoleColor::BrightRed]);
                 }
 
-                if (channelMask & LogChannels::Error)
+                if ((channelMask & LogChannels::Error) && errorEnabled)
                     LogOut(errorNameStr);
-                if (channelMask & LogChannels::FatalError)
+                if ((channelMask & LogChannels::FatalError) && fatalEnabled)
                     LogOut(fatalNameStr);
-                if (channelMask & LogChannels::UnsafeShutdown)
+                if ((channelMask & LogChannels::UnsafeShutdown) && unsafeEnabled)
                     LogOut(unsafeNameStr);
 
-                // If there are some custom channels dump their names out
-                if (channelMask > LogChannels::LastPrebuilt)
+                if (channelName != nullptr)
                 {
+                    // If there are some custom channels dump their names out
                     for (LogChannel channel : customChannels)
                     {
-                        if (((size_t)channelMask) & channel.mask)
+                        if (channel.enabled
+                        && !strcmp(channel.name, channelName))
                         {
                             LogOut(colorToAnsiTableFg[channel.colorFg]);
                             LogOut(colorToAnsiTableBg[channel.colorBg]);
@@ -516,10 +468,22 @@ namespace LOGGER_NAMESPACE
                 std::abort();
             }
         }
+        
+        /// @brief Send a single message to the log. 
+        /// @param prefix Component prefix
+        /// @param msg The message to send to the log
+        /// @param channel The channel to send it to.
+        /// @param sendChannelName if the channel name should be sent or not.
+        /// @param newline Also send a newline.
+        inline static void Log(const char* prefix, const char* msg, size_t channelMask = LogChannels::Message, 
+            bool newline = true, bool sendChannelName = true, bool sendDate = true)
+        {
+            Log(prefix, msg, nullptr, channelMask, newline, sendChannelName, sendDate);
+        }
 
         /// @brief Send a single message to the log with no prefix.
         /// @param msg The mesasge to send to the log.
-        /// @param channel The channel to send it to.
+        /// @param channel The channels to send it to.
         /// @param sendChannelName if the channel name should be sent or not.
         /// @param newline Also send a newline.
         inline static void Log(const char* msg, size_t channels = LogChannels::Message, bool newline = true, bool sendChannelName = true,
@@ -535,6 +499,113 @@ namespace LOGGER_NAMESPACE
                 settings.logStream.close();
 
             initialised = false;
+        }
+        private: 
+
+        /// @brief Maps console colours to ANSI escape codes for foreground colours
+        inline static std::unordered_map<ConsoleColor, const char*> colorToAnsiTableFg =
+        {
+            { Black,            STRING_ANSI_PREFIX "30m" },
+            { Red,              STRING_ANSI_PREFIX "31m" },
+            { Green,            STRING_ANSI_PREFIX "32m" },
+            { Yellow,           STRING_ANSI_PREFIX "33m" },
+            { Blue,             STRING_ANSI_PREFIX "34m" },
+            { Magenta,          STRING_ANSI_PREFIX "35m" },
+            { Cyan,             STRING_ANSI_PREFIX "36m" },
+            { White,            STRING_ANSI_PREFIX "37m" },
+            { BrightBlack,      STRING_ANSI_PREFIX "90m" },
+            { BrightRed,        STRING_ANSI_PREFIX "91m" },
+            { BrightGreen,      STRING_ANSI_PREFIX "92m" },
+            { BrightYellow,     STRING_ANSI_PREFIX "93m" },
+            { BrightBlue,       STRING_ANSI_PREFIX "94m" },
+            { BrightMagenta,    STRING_ANSI_PREFIX "95m" },
+            { BrightCyan,       STRING_ANSI_PREFIX "96m" },
+            { BrightWhite,      STRING_ANSI_PREFIX "97m" },
+        };
+
+        /// @brief Maps console colours to ANSI escape codes for background colours
+        inline static std::unordered_map<ConsoleColor, const char*> colorToAnsiTableBg =
+        {
+            { Black,            STRING_ANSI_PREFIX "40m" },
+            { Red,              STRING_ANSI_PREFIX "41m" },
+            { Green,            STRING_ANSI_PREFIX "42m" },
+            { Yellow,           STRING_ANSI_PREFIX "43m" },
+            { Blue,             STRING_ANSI_PREFIX "44m" },
+            { Magenta,          STRING_ANSI_PREFIX "45m" },
+            { Cyan,             STRING_ANSI_PREFIX "46m" },
+            { White,            STRING_ANSI_PREFIX "47m" },
+            { BrightBlack,      STRING_ANSI_PREFIX "100m" },
+            { BrightRed,        STRING_ANSI_PREFIX "101m" },
+            { BrightGreen,      STRING_ANSI_PREFIX "102m" },
+            { BrightYellow,     STRING_ANSI_PREFIX "103m" },
+            { BrightBlue,       STRING_ANSI_PREFIX "104m" },
+            { BrightMagenta,    STRING_ANSI_PREFIX "105m" },
+            { BrightCyan,       STRING_ANSI_PREFIX "106m" },
+            { BrightWhite,      STRING_ANSI_PREFIX "107m" },
+        };
+
+        inline static const char* colorResetFgStr = STRING_ANSI_PREFIX "39m";
+        inline static const char* colorResetBgStr = STRING_ANSI_PREFIX "49m";
+        
+        inline static std::vector<LogChannel> customChannels;       // internal vector of custom channels 
+
+        inline static bool initialised;                             // determines if we were initialised successfully
+
+        /// @brief Internal method to send to multiple streams if we need to
+        /// @param msg The message to send
+        /// @param stream The std::ostream to send the msg too
+        /// @param newline The line to send to.
+        inline static void LogOutToStream(const char* msg, std::ostream* stream, bool newline = false)
+        {
+            *stream << msg;
+
+            if (newline)
+                *stream << std::endl;
+        }
+
+        /// @brief Send a message ot the log destination.
+        /// @param msg The message to send.
+        /// @param newline If a newline should be sent after.
+        inline static void LogOut(const char* msg, bool newline = false)
+        {
+            if (settings.destinations & LogDestination::Stdout)
+                LogOutToStream(msg, &std::cout, newline);
+            
+            if (settings.destinations & LogDestination::Stderr)
+                LogOutToStream(msg, &std::cerr, newline);
+
+            // sometimes we may not want to actually send the ansi codes out so check for them adn suppress them in certian cases
+            // we do multiple checks to reduce strstr calls as much as possible
+            
+            bool send = true;
+
+            if (settings.destinations & LogDestination::File)
+            {
+                send = true;
+
+                if (!settings.sendAnsiCodesToFile
+                && (strstr(msg, STRING_ANSI_PREFIX)))
+                    send = false;
+                    
+                if (send)
+                    LogOutToStream(msg, &settings.logStream, newline);
+            }
+            
+            if (settings.postLogFunc)
+            {
+                send = true; 
+
+                if (settings.postLogMessageIgnoresAnsiCodes
+                && (strstr(msg, STRING_ANSI_PREFIX)))
+                    send = false;
+
+                if (send)
+                    settings.postLogFunc(msg);
+
+                // coherent
+                if (newline)
+                    settings.postLogFunc("\n");
+            }
         }
     }; 
 

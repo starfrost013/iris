@@ -24,6 +24,16 @@
 
 * October 1984: "IRIS Terminal Guide, Version 1.3"
 
+* November 5-6, 1984: SGI Diagnostics archive files were built:
+    * "3321" (UC3 / DC3 / INTER2 / PM1) diagnostic PROM (Mon Nov  5 19:54:36 PST 1984)
+    * "3322" (UC3 / DC3 / INTER2 / PM2) diagnostic PROM (Mon Nov  5 20:24:07 PST 1984) based on PM2.1 Prom.1.1 August 8, 1984
+    * "3421" (UC3 / DC4 / INTER2 / PM1) diagnostic PROM (Mon Nov  5 18:09:18 PST 1984) 
+    * "3422" (UC3 / DC4 / INTER2 / PM2) diagnostic PROM (Mon Nov  5 20:14:14 PST 1984) based on PM2.1 Prom.1.1 August 8, 1984 
+    * "4331" (DC4 / UC3 / INTER3 / PM1) diagnostic PROM (Mon Nov  5 17:49:11 PST 1984)
+    * "4332" (DC4 / UC3 / INTER3 / PM2) diagnostic PROM (Mon Nov  5 20:04:03 PST 1984) based on PM2.1 Prom.1.1 August 8, 1984
+    * "4431" (DC4 / UC4 / INTER3 / PM1) diagnostic PROM (Mon Nov  5 20:04:03 PST 1984)
+    * "4432" (DC4 / UC4 / INTER3 / PM1) diagnostic PROM (Tue Nov  6 08:53:14 PST 1984)
+
 * 1984: "IRIS Workstation Guide, Version 1.0" (1400 / 1500 released around this time)
 
 * January 1985: PROM 3.x released
@@ -35,13 +45,20 @@
     * Stack probes removed
     * Remote graphics library
 
+* June 4, 1985: SGI Diagnostic Archive Diagnostic PROMs:
+    "4432" (DC4 / UC4 / INTER3 / PM2) built Tue Jun  4 18:52:27 PDT 1985
+    also "4432.clean" (DC4 / UC4 / INTER3 / PM2)
 * August 1, 1985: 8MHz Geometry Engines released; 6MHz discontinued
+
+* 1985: 2.1a / 3.1a releasd
 
 * Autumn 1985: IRIS 2x00 Turbo (68020) released 
 
 * February 1986: IRIS 3010 / 3020 / 3030 released
 
 * Early 1986: 3.3.1 released
+
+* March 12, 1986: SGI Diagnostic Archive "4433" (UC4, DC4, INTER3, IP2/PM3) built (Wed Mar 12 14:47:44 PST 1986)
 
 * May 1986: 2.4 / 3.4 released
 
