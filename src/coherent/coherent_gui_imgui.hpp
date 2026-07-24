@@ -31,6 +31,7 @@ namespace Iris
         static void InitStyle(UIStyle style);
         static void InitStyleDefault(UIStyle style, ImGuiStyle& styleObj);
         static void InitStyleMex(UIStyle style, ImGuiStyle& styleObj);
+        static void InitStyleExperimental(UIStyle style, ImGuiStyle& styleObj);
 
         static void LeftAlign();
         static void CentreAlign(ImVec2 contentSize);

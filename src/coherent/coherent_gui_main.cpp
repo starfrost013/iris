@@ -29,7 +29,6 @@ namespace Iris
         }
 
         ImGui::End();
-
     }
 
     void CoherentUI::DrawMainWindow()
@@ -143,6 +142,10 @@ namespace Iris
             // "left" (register) pane
             if (ImGui::BeginChild("RegisterPane", registerPaneSize))
             {
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.1f, 0.8f, 1.0f, 1.0f));
+                ImGui::Text("Registers");
+                ImGui::PopStyleColor();
+
                 for (auto aRegister : Coherent::currentSystem->registers)
                 {
                     auto value = aRegister->Read();
@@ -184,6 +187,10 @@ namespace Iris
             // middle pane; disassembly pane
             if (ImGui::BeginChild("DisassemblyPane", disasmPaneSize))
             {
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.1f, 0.8f, 1.0f, 1.0f));
+                ImGui::Text("Disassembly");
+                ImGui::PopStyleColor();
+
                 // todo: MUST put in a buffer...
                 for (i = 0; i < 30; i++)
                 {
