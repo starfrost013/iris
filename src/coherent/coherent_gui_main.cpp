@@ -93,6 +93,8 @@ namespace Iris
 
                     if (ImGui::MenuItem("Experimental"))
                         CoherentUI::InitStyle(UIStyle::Experimental);
+
+                    ImGui::EndMenu();
                 }
  
                 ImGui::EndMenuBar();
