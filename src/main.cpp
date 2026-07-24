@@ -18,6 +18,8 @@ namespace Iris
 
     int main(int argc, char** argv)
     {
+        CommandLine::Parse(argc, argv);
+
         Logger::settings.SetAppName(APP_NAME);
         Logger::settings.SetDestinations((LogDestination)(LogDestination::Stdout | LogDestination::File));
         Logger::settings.SetFatalFunction(fatal);
