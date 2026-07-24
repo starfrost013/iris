@@ -83,6 +83,18 @@ namespace Iris
                     ImGui::EndMenu();
                 }
 
+                if (ImGui::BeginMenu("Style"))
+                {
+                    if (ImGui::MenuItem("IMGUI Default"))
+                        CoherentUI::InitStyle(UIStyle::Default);
+                    
+                    if (ImGui::MenuItem("SGI mex-style"))
+                        CoherentUI::InitStyle(UIStyle::MEX);
+
+                    if (ImGui::MenuItem("Experimental"))
+                        CoherentUI::InitStyle(UIStyle::Experimental);
+                }
+ 
                 ImGui::EndMenuBar();
             }
 

@@ -11,6 +11,8 @@
 
 namespace Iris
 {
+    Cvar* logIP2MMU; 
+
     uint8_t MMU_IP2::OnRead8(size_t addr)
     {
         uint32_t ret = OnRead32(addr);
@@ -62,7 +64,9 @@ namespace Iris
             return ret;
         }
 
-        //Logger::Log(LOG_PREFIX_IP2MMU, std::format("IP2 MMU read 0x{:x} from address 0x{:x} (check debug window)", ret, addr).c_str(), LogChannels::Message);
+        if (logEnabled)
+            Logger::Log(LOG_PREFIX_IP2MMU, std::format("IP2 MMU read 0x{:x} from address 0x{:x} (check debug window)", ret, addr).c_str(), MMU_LOG_CHANNEL_NAME);
+        
         return ret;
     }
 
@@ -76,12 +80,7 @@ namespace Iris
     void MMU_IP2::OnWrite16(size_t addr, uint16_t value)
     {
         uint32_t newVal = OnRead32(addr);
-
         WRITE_32TO16(newVal, value, addr);
-
-        // newVal &= (~0xFFFF << (addr & 3) << 3);
-        // newVal |= (value << ((addr & 3) << 3));
-
         OnWrite32(addr, newVal);
     }
 
@@ -121,7 +120,9 @@ namespace Iris
             return;
         }
 
-        //Logger::Log(LOG_PREFIX_IP2MMU, std::format("IP2 MMU write 0x{:x} to address 0x{:x} (check debug window)", value, addr).c_str(), LogChannels::Message);
-        return;
+        if (logEnabled)
+            Logger::Log(LOG_PREFIX_IP2MMU, std::format("IP2 MMU write 0x{:x} to address 0x{:x} (check debug window)", value, addr).c_str(), MMU_LOG_CHANNEL_NAME);
+        
+            return;
     }
 }

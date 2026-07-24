@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Iris.hpp>
-#include <coherent/coherent.hpp>
 #include <component/addrspace.hpp>
 #include <component/component.hpp>
 
@@ -19,8 +18,8 @@ namespace Iris
         Machine()
         {
             components.reserve(COMPONENTS_INITIAL_RESERVED);
-            AddrSpace::maxAddr = 0xFFFFFFFF;  // 32-bit address space by default
-            ramCapacity = 16777216;             // Maximum RAM for IRIS 3130
+            AddrSpace::maxAddr = 0xFFFFFFFF;                    // 32-bit address space by default
+            ramCapacity = 16777216;                             // Maximum RAM for IRIS 3130
         }
 
         char* GetName() { return name; };
@@ -53,78 +52,28 @@ namespace Iris
             return nullptr;
         }
 
-        void Start()
-        {
-            for (Component* component : components)
-                component->Start();
-        }
+        /// @brief Start the machine.
+        void Start();
 
         /// @brief Tick each component of the emulation.
-        void Tick()
-        {
-            for (Component* component : components)
-            {
-                // 0 clockspeed = run AFAP
-                // THis may not be a good idea. We may have to add fake cycles.
-                if (component->clockSpeed > 0)
-                {
-                    // maybe microseconds would be better ???
-                    auto ns = Chrono_GetTicksNS(Chrono_GetTime());
-                    bool run = false; 
+        void Tick();
 
-                    if (component->delayNs != 0)
-                    {
-                        auto nsPerTick = (1.0 / (double)component->clockSpeed) * 1000000000; // use maximum precision available
-
-                        if (component->lastTickNs != 0
-                        || (ns - component->lastTickNs) > nsPerTick)
-                            run = true;
-                    }
-                    else // slower, delay timing
-                    {
-                        if ((ns - component->lastTickNs) > component->delayNs)
-                            run = true;
-                    }
-
-                    if (run)
-                    {
-                        component->lastTickNs = ns;
-                        goto run;
-                    }
-                    
-                }
-                else
-                    goto run;
-                    
-            run:
-                component->Tick();
-            }
-
-        }
-
-
+        /// @brief Single step the machine.
         void SingleStep()
         {
             // run tick once
             Tick();
         }
 
-        void Shutdown()
-        {
-            for (Component* component : components)
-            {
-                component->Shutdown();
-                components.pop_back();
-                delete component;
-            }
-        }
+        void Shutdown();
 
         // not sure if this is a good idea?
         size_t ramCapacity;
-        
+
+        // Setters for private fields
     private: 
-        char name[STRING_MAX_SHORT];
-        char friendlyName[STRING_MAX_LONG];         // User's name for this machine
+        char name[STRING_MAX_SHORT] = {0};          // Emulator's name for this machine
+        char friendlyName[STRING_MAX_LONG] = {0};   // User's name for this machine
 
         AddrSpace addressSpace;                     // The address space of the machine. Components can use this to read/write memory.  
     };

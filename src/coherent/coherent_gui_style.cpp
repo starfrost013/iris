@@ -22,12 +22,20 @@ namespace Iris
 
     void CoherentUI::InitStyleMex(UIStyle style, ImGuiStyle& styleObj)
     {
+        // MEX 
     }
 
     void CoherentUI::InitStyle(UIStyle style)
     {
         ImGuiStyle& styleObj = ImGui::GetStyle();
 
+        // reset the style bu tdon't do it if we already set it 
+
+        if (alreadySetStyle)
+            ImGui::StyleColorsDark();
+
+        alreadySetStyle = true; 
+        
         switch (style)
         {
             case UIStyle::Default:

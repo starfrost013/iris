@@ -20,7 +20,7 @@ namespace Iris
 
         cvar->name = name;
         cvar->SetInternal(value);
-
+       
         return cvar;
     }
 

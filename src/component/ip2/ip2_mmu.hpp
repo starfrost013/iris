@@ -15,6 +15,10 @@
 
 namespace Iris
 {
+    extern Cvar* logIP2MMU;
+
+    #define MMU_LOG_CHANNEL_NAME    "IP2 MMU"
+
     //
     // Registers
     //
@@ -55,10 +59,22 @@ namespace Iris
             // map the private ram
             AddrSpaceMapping mapping = AddrSpaceMapping();
 
+            logIP2MMU = Cvar::Get("logIP2MMU", "0");
+
             mapping.startAddr = MMU_START;
             mapping.endAddr = MMU_END;
             mapping.component = this;
             AddrSpace::AddMapping(mapping);
+
+            mmuExtension = new CoherentExtensionIP2MMU(this);
+            Coherent::RegisterExtension(mmuExtension);
+
+            mmuChannel = LogChannel(MMU_LOG_CHANNEL_NAME, ConsoleColor::BrightCyan, ConsoleColor::White);
+
+            logEnabled = logIP2MMU->GetValue();
+
+            if (logEnabled)
+                Logger::SetChannelEnabled(MMU_LOG_CHANNEL_NAME);
         }
 
         const char* GetName() { return "IRIS 3130 TTL MMU"; };
@@ -81,12 +97,11 @@ namespace Iris
         uint32_t stackBase = 0x0;
         uint32_t stackLimit = 0x0;
 
+        bool logEnabled = false; 
+
         MMU_IP2()
         {
-            mmuExtension = new CoherentExtensionIP2MMU(this);
-            Coherent::RegisterExtension(mmuExtension);
 
-            mmuChannel = LogChannel("IP2 MMU", ConsoleColor::BrightCyan, ConsoleColor::White);
         }
 
     private: 

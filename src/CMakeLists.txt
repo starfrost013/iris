@@ -22,6 +22,7 @@ add_executable(motion
     # Motion Emulator
     main.cpp
     base/emulation.cpp
+    base/machine/machine.cpp
     base/filesystem/filesystem.cpp
     base/cvar/cvar.cpp
     component/component.cpp

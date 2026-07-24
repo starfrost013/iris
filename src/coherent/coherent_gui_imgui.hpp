@@ -25,6 +25,7 @@ namespace Iris
         {
             Default = 0,
             MEX = 1,
+            Experimental = 2,
         };
 
         static void InitStyle(UIStyle style);
@@ -61,5 +62,7 @@ namespace Iris
 
         /// @brief internal thing used to store the emulator log. need a cache
         inline static char logBuffer[LOGBUF_MAX_SIZE] = {0};
+
+        static inline bool alreadySetStyle = false;
     };
 }

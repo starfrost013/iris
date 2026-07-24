@@ -18,7 +18,6 @@ namespace Iris
 
     int main(int argc, char** argv)
     {
-        CommandLine::Parse(argc, argv);
 
         Logger::settings.SetAppName(APP_NAME);
         Logger::settings.SetDestinations((LogDestination)(LogDestination::Stdout | LogDestination::File));
@@ -30,6 +29,7 @@ namespace Iris
 
         Logger::Log(APP_NAME " " APP_VERSION);
         Logger::Log(APP_SIGNON, LogChannels::Message);
+        CommandLine::Parse(argc, argv);
 
         Emulation::Init();
         

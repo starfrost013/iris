@@ -292,7 +292,7 @@ namespace LOGGER_NAMESPACE
         /// @param channelMask The channel to send it to.
         /// @param sendChannelName if the channel name should be sent or not.
         /// @param newline Also send a newline.
-        inline static void Log(const char* prefix, const char* msg, const char* channelName, size_t channelMask, bool newline = true,
+        inline static void Log(const char* prefix, const char* msg, const char* channelName, size_t channelMask = 0, bool newline = true,
             bool sendChannelName = true, bool sendDate = true)
         {
             // check if the logging was actually initialised properly
